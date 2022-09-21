@@ -18,13 +18,30 @@ library(nycflights13) # used in Wickham Chapter 3
 # Chapter 3 
 ## Data Transformations with dplyr 
 
-```{r}
-# load flights data 
 
-flights_dat nycflights13::flights
+```{r}
+# explore data set
+head(mtcars) 
+```
+
+## 3.2.4 Exercises
+### Run ggplot(data = mpg). What do you see?
+We see an empty graph because we have not specified any additional layers in our code. For example, we have not told R to return a specific type of plot, like a dot plot, nor have we provided variables to visualize some relationship within the data. 
+
+```{r}
+ggplot(data = mpg) 
 ```
 
 
+How many rows are in mpg? How many columns?
+
+
+
+What does the drv variable describe? Read the help for ?mpg to find out.
+
+Make a scatterplot of hwy vs cyl.
+
+What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
 
 
 
