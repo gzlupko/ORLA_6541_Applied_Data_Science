@@ -1,0 +1,30 @@
+---
+title: "ORLA 6541 - Exercise 1"
+author: "Gian Zlupko"
+date: '2022-09-21'
+output: html_document
+---
+
+ORLA 6541 - Exercise 1 
+
+Wickham & Grolemund (2017): Chapters 3 through 6
+Bulut & Dejardins (2019): Chapter 4
+
+```{r libaries}
+library(tidyverse) 
+library(nycflights13) # used in Wickham Chapter 3 
+```
+
+# Chapter 3 
+## Data Transformations with dplyr 
+
+```{r}
+# load flights data 
+
+flights_dat nycflights13::flights
+```
+
+
+
+
+
