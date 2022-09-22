@@ -25,15 +25,15 @@ head(mtcars)
 ```
 
 ## 3.2.4 Exercises
-### Run ggplot(data = mpg). What do you see?
-We see an empty graph because we have not specified any additional layers in our code. For example, we have not told R to return a specific type of plot, like a dot plot, nor have we provided variables to visualize some relationship within the data. 
+#### 1. Run ggplot(data = mpg). What do you see?
+We see an empty graph because we have not specified any additional layers in our code. For example, we have not told R to return a specific type of plot, like a scatterplot, nor have we provided variables to visualize some relationship within the data. 
 
 ```{r}
 ggplot(data = mpg) 
 ```
 
 
-How many rows are in mpg? How many columns?
+#### 2. How many rows are in mpg? How many columns?
 
 32 rows and 11 columns. 
 
@@ -47,7 +47,7 @@ ncol(mtcars)
 ```
 
 
-What does the drv variable describe? Read the help for ?mpg to find out.
+#### 3. What does the drv variable describe? Read the help for ?mpg to find out.
 
 Running `?mpg`, R tells us that the 'drv' variable is the following: the type of drive train, where f = front-wheel drive, r = rear wheel drive,4 = 4wd 
 
@@ -56,17 +56,93 @@ Running `?mpg`, R tells us that the 'drv' variable is the following: the type of
 ```
 
 
-Make a scatterplot of hwy vs cyl.
+#### 4. Make a scatterplot of hwy vs cyl.
 
 ```{r}
 
 ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = hwy, y = cyl))
+  geom_point(mapping = aes(x = cyl, y = hwy)) + ylab("Highway Miles per Gallon") + 
+  xlab("Number of Cylinders") 
 
 ```
 
 
-What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+#### 5. What happens if you make a scatter plot of class vs drv? Why is the plot not useful?
+
+There is no variation in one variable as a function of the other variable. Both variables are categorical so there is no trend to depict. These variables are therefore not very useful when plotted together. Instea, they would make for useful grouping variables to test differences between groups or to add additional layers to scatter plots that depict relationships between numeric variables. 
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y  = drv))
+```
+
+
+
+
+## 3.3.1 Exercises
+#### 1. What’s gone wrong with this code? Why are the points not blue?
+
+In order to turn all of the points blue, color needs needs to be called outside of the `aes()` function. Doing so tells ggplot2 to change all dots to blue. To turn the dots in the scatter plot blue, updated code is provided below (see second plot)
+```{r}
+# original code with color mis-specified 
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+
+# updated code 
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+#### 2. Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
+
+The following variables in the mpg data set are categorical: manufacturer, trans, drv, cyl, fl, year, and class. The following variables are continuous: displ and city. 
+
+
+```{r}
+# check variable types: 
+str(mpg) 
+```
+
+
+#### 3. Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables?
+
+ 
+When used as color, size, or shape aesthetics, continuous variables present a range of a given aesthetic, like light to dark for colors, or transparent to opaque for the alpha aesthetic. Often doing so presents too much information for the audience. For example, in the first plot below, engine displacement is layered into the plot as a color aesthetic. Due to the many values for engine displacement in the data set, it is hard to distinguish between the various hues to make any meaningful interpretation about how displacement is relating to the two other variables plotted. In the second plot, R throws an error when trying to take city mpg as a shape aesthetic because there are too many values for the variable to be used as a grouping aesthetic. Finally, the same issue appears in the third plot that is mentioned with regards to the first plot; there are too many values stored in the continuous variable to use it meaningfully as a grouping aesthetic. 
+
+```{r}
+# engine displacement as color aesthetic
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = cty, color = displ)) 
+
+# engine displacement as shape aesthetic
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = displ, shape = cty))
+
+# engine displacement as size aesthetic
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = cty, size = displ)) 
+
+```
+
+
+#### 4. What happens if you map the same variable to multiple aesthetics?
+
+```{r}
+# displ variable as color and alpha (e.g. opacity) and city mpg on y-axis and as shape
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = cty, color = displ, size = cty))  
+```
+
+
+#### 5. What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
+
+#### 6. What happens if you map an aesthetic to something other than a variable name, like aes(colour = displ < 5)? Note, you’ll also need to specify x and y.
+
+
+
+
+
+
 
 
 
