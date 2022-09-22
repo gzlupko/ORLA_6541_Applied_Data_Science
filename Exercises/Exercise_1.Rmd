@@ -35,11 +35,36 @@ ggplot(data = mpg)
 
 How many rows are in mpg? How many columns?
 
+32 rows and 11 columns. 
+
+```{r}
+
+# number of rows 
+nrow(mtcars)
+# number of columns
+ncol(mtcars) 
+
+```
 
 
 What does the drv variable describe? Read the help for ?mpg to find out.
 
+Running `?mpg`, R tells us that the 'drv' variable is the following: the type of drive train, where f = front-wheel drive, r = rear wheel drive,4 = 4wd 
+
+```{r}
+?mpg 
+```
+
+
 Make a scatterplot of hwy vs cyl.
+
+```{r}
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = hwy, y = cyl))
+
+```
+
 
 What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
 
