@@ -160,18 +160,22 @@ Due to slow loading speeds when importing the full pisa data set, even with `fre
 ```{r}
 
 # read in the random data set 
-random6 <- fread("random6.csv") 
+random6 <- fread("random6.csv", na.strings = "") 
 
 # check object size - 0.2 gigabytes 
 print(object.size(random6), unit = "GB") 
 
+# read in pisa data set 
+#pisa <- fread("pisa2015.csv") 
+
 ```
 
 ## 4.3.1 Exercises
-#### Subset all the Female students (ST004D01T) in Germany. 
-#### How many female students are there in Germany?
+#### 1. Subset all the Female students (ST004D01T) in Germany. 
+#### 2. How many female students are there in Germany?
+#### 3. The .N function returns the length of a vector/number of rows. Use chaining with the .N function to answer Exercise 2.
 
-Using data.table syntax to subset the data set, we found that there are 3,197 female students from Germany in the data set. 
+Using data.table syntax to subset the data set, we found that there are 3,197 female students from Germany in the data set. In addition, an alternative method using the ` .N ` function to return the number of rows is shown below as well. 
 
 ```{r}
 # explore data; first 5 and last 5 rows returned when printing a data.table object 
@@ -180,11 +184,123 @@ random6
 # subset all female students from the field ST004D01T 
 
 random6[CNT == "Germany" & ST004D01T == "Female"]
+
+# return row count with .N function and chaining 
+random6[CNT == "Germany" & ST004D01T == "Female", .N]
+
+```
+
+
+
+## 4.4.1 Exercises
+#### The computer and software variables that were created above ask a student whether they had a computer in their home that they can use for school work (computer) and whether they had educational software in their home (software). Find the proportion of students in the Germany and Uruguay that have a computer in their home or have educational software.
+
+```{r}
+
+# first create custom function to convert bin to numeric  
+
+bin.to.num <- function(x){
+  if (is.na(x)) NA
+  else if (x == "Yes") 1L
+  else if (x == "No") 0L
+}
+
+
+# using the custom function, create new variables, computer and software, that we can use to calculate the proportion of students with access to these resources  
+
+
+random6[, `:=` 
+     (female = ifelse(ST004D01T == "Female", 1, 0),
+       sex = ST004D01T,
+       
+       # At my house we have ...
+       desk = sapply(ST011Q01TA, bin.to.num),
+       own.room = sapply(ST011Q02TA, bin.to.num),
+       quiet.study = sapply(ST011Q03TA, bin.to.num),
+       computer = sapply(ST011Q04TA, bin.to.num),
+       software = sapply(ST011Q05TA, bin.to.num),
+       internet = sapply(ST011Q06TA, bin.to.num),
+       lit = sapply(ST011Q07TA, bin.to.num),
+       poetry = sapply(ST011Q08TA, bin.to.num),
+       art = sapply(ST011Q09TA, bin.to.num),
+       book.sch = sapply(ST011Q10TA, bin.to.num),
+       tech.book = sapply(ST011Q11TA, bin.to.num),
+       dict = sapply(ST011Q12TA, bin.to.num),
+       art.book = sapply(ST011Q16NA, bin.to.num))]
+
+
+
+```
+
+In Germany, 95% of students in Germany have a computer in their home and 45% of students have educational software. 
+```{r}
+random6[CNTRYID == "Germany", table(computer)] # 247 No's and 5438 Yes' 
+# computer prop 
+5438 /(5438 + 247)*100 #  95% of students in data set in Germany have a computer in
+
+random6[CNTRYID == "Germany", table(software)] # 3038 No's and 2481 Yes' 
+# educational software prop 
+2481/(2481 + 3038) # 45% have access to educational software 
+
+```
+
+In Uruguay, 88% of students have a computer in the home and 43% of students have educational software. 
+```{r}
+random6[CNTRYID == "Uruguay", table(computer)] # 635 No's and 5099 Yes' 
+# computer in home prop 
+5099/(5099 + 635) # 88% have access to educational software 
+
+
+random6[CNTRYID == "Uruguay", table(software)] # 3013 No's and 2313 Yes' 
+# educational software prop 
+2313/(2313 + 3013) # 43% have access to educational software 
+```
+
+
+
+#### For just female students, find the proportion of students who have their own room (own.room) or a quiet place to study (quiet.study).
+
+Among female students in the random6 data set, 72% stated that they have their own room and 85% stated that they have a quiet place to study. 
+```{r}
+
+random6[female == 1, table(own.room)] # 4805 No's and 12644 Yes' 
+# prop own.room
+
+12644 / (12644 + 4805) #72% 
+
+random6[female == 1, table(quiet.study)] #2606 No's and 14801 Yes' 
+# prop quiet.study 
+
+14801 / (14801 + 2606) # 85% 
+
+```
+
+
+## 4.5.1 Exercises
+#### Calculate the proportion of students who have art in their home (art) and the average age (AGE) of the students by gender.
+
+51% of students have art in their home. The average age of male and female students are 15.8 years. 
+
+```{r}
+
+# proportion of students who have art in their homes: 
+
+random6[, .(art = mean(art, na.rm = TRUE), AGE = mean(AGE, na.rm = TRUE)), by = .(sex)] 
+     .(AGE = mean(AGE, na.rm = TRUE)), by = .(sex)]
+
+
+
+
 ```
 
 
 
 
+#### Within a by argument you can discretize a variable to create a grouping variable. Perform a median split for age within the by argument and assess whether there are age difference associated with having your own room (own.room) or a desk (desk).
 
-#### The .N function returns the length of a vector/number of rows. Use chaining with the .N function to answer Exercise 2.
+
+
+
+
+
 
