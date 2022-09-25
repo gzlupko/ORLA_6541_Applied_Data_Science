@@ -7,15 +7,17 @@ output: html_document
 
 ORLA 6541 - Exercise 1 
 
-Wickham & Grolemund (2017): Chapters 3 through 6
-Bulut & Dejardins (2019): Chapter 4
+The following code and write-up contains answers to in-text exercises in
+Wickham & Grolemund (2017): Chapters 3-6 and Bulut & Dejardins (2019) Chapter 4. 
+
+
 
 ```{r libaries}
 library(tidyverse) 
 library(nycflights13) # used in Wickham Chapter 3 
 ```
 
-# Chapter 3 
+# Wickham & Grolemund (2017): Chapter 3 
 ## Data Transformations with dplyr 
 
 
@@ -115,8 +117,8 @@ ggplot(data = mpg) +
 
 # engine displacement as shape aesthetic
 
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = cyl, y = displ, shape = cty))
+#ggplot(data = mpg) + 
+  #geom_point(mapping = aes(x = cyl, y = displ, shape = cty))
 
 # engine displacement as size aesthetic
 ggplot(data = mpg) + 
@@ -141,8 +143,48 @@ ggplot(data = mpg) +
 
 
 
+# Bulut & Dejardins (2019) Chapter 4 
+
+This chapter demonstrates the application of the `data.table` in R as an alternative to tidyverse and base R methods of data wrangling. The authors suggest that  `data.table` is particularly useful for working with large volumes of data (e.g. 10 - 100 GB)
+
+```{r}
+library(data.table) 
+```
+
+##  4.2.1 Exercises
+#### Read in the pisa data set. Either the full data set (recommended to have > 8 Gb of RAM) or one of the smaller data sets.
+
+Due to slow loading speeds when importing the full pisa data set, even with `fread()` from data.table, we decided to use the smaller 'random6' data set that the authors also made a available. According to the authors, the random data set contains data collected from a random sample of a single country with records from all 6 of its regions. 
+
+
+```{r}
+
+# read in the random data set 
+random6 <- fread("random6.csv") 
+
+# check object size - 0.2 gigabytes 
+print(object.size(random6), unit = "GB") 
+
+```
+
+## 4.3.1 Exercises
+#### Subset all the Female students (ST004D01T) in Germany. 
+#### How many female students are there in Germany?
+
+Using data.table syntax to subset the data set, we found that there are 3,197 female students from Germany in the data set. 
+
+```{r}
+# explore data; first 5 and last 5 rows returned when printing a data.table object 
+random6
+
+# subset all female students from the field ST004D01T 
+
+random6[CNT == "Germany" & ST004D01T == "Female"]
+```
 
 
 
 
+
+#### The .N function returns the length of a vector/number of rows. Use chaining with the .N function to answer Exercise 2.
 
