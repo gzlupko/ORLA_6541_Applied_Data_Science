@@ -288,15 +288,149 @@ random6[female == 1, table(quiet.study)] #2606 No's and 14801 Yes'
 random6[, .(art = mean(art, na.rm = TRUE), AGE = mean(AGE, na.rm = TRUE)), by = .(sex)] 
      .(AGE = mean(AGE, na.rm = TRUE)), by = .(sex)]
 
+```
 
+
+#### Within a by argument you can discretize a variable to create a grouping variable. Perform a median split for age within the by argument and assess whether there are age difference associated with having your own room (own.room) or a desk (desk).
+
+```{r}
+
+# create custom function to split a column of data by above or below median 
+median_cut = function(x) { 
+  ifelse(x > median(x), "above_median", "below_median")
+}
+
+
+random6[,
+     .(own.room = mean(own.room, na.rm = TRUE), 
+       desk_mean = mean(desk, na.rm = TRUE)), 
+     by = .(median_cut(AGE)) ] 
+
+
+```
+
+```{r}
+#
+random6$id <- 1:nrow(random6) 
+athome <- subset(random6, select = c(id, desk:art.book))
+
+
+# reshape data to long format using melt function 
+athome.l <- melt(athome, 
+                 id.vars = "id",
+                 measure.vars = c("desk", "own.room", "quiet.study", "lit",
+                                  "poetry", "art", "book.sch", "tech.book",
+                                  "dict", "art.book"))
+# view at home long format 
+athome.l
 
 
 ```
 
 
+## 4.8 Lab 
+
+#### 1. This afternoon when we discuss supervised learning, we’ll ask you to develop some models to predict the response to the question Do you expect your child will go into a ?" (PA032Q03TA). Recode this variable so that a “Yes” is 1 and a “No” is a -1 and save the variable as sci_car.
+
+```{r}
+
+# recode and store as 'sci_car'; use table to confirm re-coding
+random6[, 
+        "sci_car" := sapply(PA032Q03TA, 
+                            function(x) { 
+                              if (is.na(x)) NA
+                              else if (x == "No") -1L 
+                              else if (x == "Yes") 1L 
+                              
+                              }) ][,
+                                    table(sci_car)]
+
+```
 
 
-#### Within a by argument you can discretize a variable to create a grouping variable. Perform a median split for age within the by argument and assess whether there are age difference associated with having your own room (own.room) or a desk (desk).
+
+#### Calculate descriptives for this variable by sex and country. Specifically, the proportion of test takers whose parents said “Yes” or 1.
+
+Because we are using the more limited random6 data set, we specify to return Germany and  Mexico specifically, since the other countries are not in the data set. 
+
+
+```{r}
+
+random6[CNTRYID %in% c("Germany", "Mexico"), 
+        .(mean(sci_car, na.rm = TRUE)), 
+        by = .(sex, CNTRYID)]
+
+
+```
+
+#### Means and standard deviations (sd) for the variables that you think will be most predictive of sci_car.
+
+```{r}
+
+# means and sd of variables hypothesized to predict sci_car
+random6[, 
+        .(environ_avg =  mean(ENVAWARE, na.rm = TRUE), 
+          environ_sd = sd(ENVAWARE, na.rm = TRUE), 
+          joy_avg = mean(JOYSCIE, na.rm = TRUE), 
+          joy_sd = sd(JOYSCIE, na.rm = TRUE), 
+          self_eff_avg = mean(SCIEEFF, na.rm = TRUE), 
+          self_eff_sd = sd(SCIEEFF, na.rm = TRUE)
+          )]
+
+
+```
+
+#### Calculate these same descriptives by groups (by sci_car and by sex).
+
+```{r}
+# means and sd of focal variables, grouped by sci_car and sex 
+random6[, 
+        .(environ_avg =  mean(ENVAWARE, na.rm = TRUE), 
+          environ_sd = sd(ENVAWARE, na.rm = TRUE), 
+          joy_avg = mean(JOYSCIE, na.rm = TRUE), 
+          joy_sd = sd(JOYSCIE, na.rm = TRUE), 
+          self_eff_avg = mean(SCIEEFF, na.rm = TRUE), 
+          self_eff_sd = sd(SCIEEFF, na.rm = TRUE)
+          ), by = .(sci_car, sex)]
+
+```
+
+#### Calculate correlations between these variables and sci_car
+
+```{r}
+
+# first store smaller data set containing observations for all focal variables and sci_car 
+
+sci_car_variables <- random6[, 
+        .(sci_car, ENVAWARE, JOYSCIE, SCIEEFF)]
+
+# correlation matrix with sci_car 
+library(tidyverse) 
+
+var_clean <- sci_car_variables %>% 
+  filter(!sci_car == "NA")
+
+# run point biserial correlation since sci_car has only two possible values (e.g. non-continous variable)
+
+install.packages("ltm") 
+library(ltm) # used to run point biserial correlation 
+
+var_clean <- var_clean %>% 
+  mutate(sci_car_clean = ifelse(sci_car == -1, 0, 1)) 
+
+var_clean$sci_car_clean <- as.factor(var_clean$sci_car_clean) 
+
+
+
+
+glm(sci_car_clean ~ ENVAWARE, data = var_clean, family = "binomial") 
+
+?biserial.cor
+str(var_clean) 
+
+
+```
+
 
 
 
