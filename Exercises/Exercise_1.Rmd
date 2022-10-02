@@ -466,11 +466,13 @@ random6[, .(Mean = rowMeans(.SD)), by = CNTRYID, .SDcols = c("JOYSCIE", "INTBRSC
 
 ```{r}
 
+# create column subset to convert to numeric
+cols_to_convert <- c("MISCED", "FISCED") 
 
-data_new2[ ,                                    # Change class of certain columns
-           (change_columns) := lapply(.SD, as.numeric),
+# convert to numeric with subset index and using lapply() 
+random6[ , 
+           (cols_to_convert) := lapply(.SD, as.numeric),
            .SDcols = c("MISCED", "FISCED")]
-
 
 
 ```
@@ -478,6 +480,20 @@ data_new2[ ,                                    # Change class of certain column
 #### Examine other variables in the pisa data set that you think might be predictive of PA032Q03TA.
 
 ```{r}
+library(psych) 
+
+random6[, lapply(.SD, mean), .SDcols = c("DISCLISCI", "TEACHSUP", "IBTEACH", "TDTEACH")]
+
+
+# run descriptive statistics for three additional variables hypothesized to relate to PA032Q03TA 
+descriptive_stats <- random6[ ,lapply(.SD, psych::describe), 
+         .SDcols = c("DISCLISCI", "TEACHSUP","TDTEACH")] 
+
+# reshape table into long format so that it is easier to read the output
+melt(descriptive_stats) 
+
+
+
 
 ```
 
