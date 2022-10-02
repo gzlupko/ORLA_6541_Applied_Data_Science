@@ -1,6 +1,6 @@
 ---
 title: "ORLA 6541 - Exercise 1"
-author: "Gian Zlupko"
+author: "Nilima Ajaikumar, Hagay Jalon, and Gian Zlupko"
 date: '2022-09-21'
 output: html_document
 ---
