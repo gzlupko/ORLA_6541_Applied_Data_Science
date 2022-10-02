@@ -146,7 +146,7 @@ ggplot(data = mpg) +
 
 This chapter demonstrates the application of the `data.table` in R as an alternative to tidyverse and base R methods of data wrangling. The authors suggest that  `data.table` is particularly useful for working with large volumes of data (e.g. 10 - 100 GB)
 
-```{r}
+```{r, message = FALSE}
 library(data.table) 
 ```
 
@@ -157,7 +157,6 @@ Due to slow loading speeds when importing the full pisa data set, even with `fre
 
 
 ```{r}
-
 # read in the random data set 
 random6 <- fread("random6.csv", na.strings = "") 
 
@@ -178,7 +177,7 @@ Using data.table syntax to subset the data set, we found that there are 3,197 fe
 
 ```{r}
 # explore data; first 5 and last 5 rows returned when printing a data.table object 
-random6
+#random6 # don't run for now due to loading speed 
 
 # subset all female students from the field ST004D01T 
 
@@ -394,7 +393,6 @@ random6[,
 #### Calculate correlations between these variables and sci_car
 
 
-
 ```{r}
 
 # first store smaller data set containing observations for all focal variables and sci_car 
@@ -458,9 +456,7 @@ melt(math_reading_cor)
 
 ```{r}
 
-random6[, 
-        combined := JOYSCIE + INTBRSCI][, 
-                                        mean_combined := mean(combined), by = CNTRYID][, .(mean_combined)]
+random6[, .(Mean = rowMeans(.SD)), by = CNTRYID, .SDcols = c("JOYSCIE", "INTBRSCI")][,,by = sci_car]
 
 ```
 
@@ -469,6 +465,13 @@ random6[,
 #### Transform variables, specifically recode MISCED and FISCED from characters to numeric variables.
 
 ```{r}
+
+
+data_new2[ ,                                    # Change class of certain columns
+           (change_columns) := lapply(.SD, as.numeric),
+           .SDcols = c("MISCED", "FISCED")]
+
+
 
 ```
 
