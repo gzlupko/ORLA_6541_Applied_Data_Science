@@ -864,6 +864,57 @@ melt(descriptive_stats)
 
 ```
 
+# Wickham & Grolemund Chapter 5 
+
+
+## 5.6 
+
+#### 4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+There does not appear to be a recurring or cyclical pattern of cancellations within the month but certain days like the 8th day of the month showed substantially more cancellations than other days in 2013. Looking at the proportion of cancelled flights and average delays, there does appear to be a relationship. Specifically, as the average arrival delay increases, the proportion of daily cancellations increases. This relationship appears to be exponential. A simple bivariate correlation shows that this relationship is strong and positive (r = 0.59). 
+
+```{r}
+library(nycflights13) 
+
+nycflights13::flights
+
+# create summary columns for cancellation counts per day and proportions 
+flights_cancelled <-
+
+  flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  mutate(not_cancelled = (!is.na(arr_delay) | !is.na(dep_delay))) %>%
+  group_by(year,month,day)%>%
+  summarise(
+    cancelled_num = sum(cancelled),
+    not_cancelled_num = sum(not_cancelled), 
+    prop_cancelled = (cancelled_num /(cancelled_num + not_cancelled_num)),
+    delay = mean (arr_delay, na.rm = TRUE)
+  )
+
+
+# show the total number of cancellations per day (totaled over all months)
+flights_cancelled %>% 
+   group_by(day) %>%
+  mutate(cancel_total_per_day = sum(cancelled_num)) %>%
+  select(day, cancel_total_per_day) %>%
+  distinct(day, .keep_all = TRUE)  %>%
+  ggplot(aes(day, cancel_total_per_day)) + geom_bar(stat = "identity") + ggtitle("Total Number of Cancellations per Day of Month") 
+
+# scatter plot shows relationship between avg delay and proportion cancelled 
+# relationship looks exponential 
+flights_cancelled %>% 
+  ggplot(aes(delay, prop_cancelled)) + geom_point() + geom_smooth() 
+
+# simple bivariate correlation shows strong association between avg delay and proportion cancelled 
+cor(flights_cancelled$delay, y = flights_cancelled$prop_cancelled) 
+
+
+
+
+
+```
+
 
 
 
