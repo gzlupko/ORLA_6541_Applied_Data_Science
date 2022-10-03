@@ -1,7 +1,7 @@
 ---
 title: "ORLA 6541 - Exercise 1"
 author: "Nilima Ajaikumar, Hagay Jalon, and Gian Zlupko"
-date: '2022-09-21'
+date: '2022-10-03'
 output: html_document
 ---
 
@@ -10,40 +10,40 @@ ORLA 6541 - Exercise 1
 The following code and write-up contains answers to in-text exercises in
 Wickham & Grolemund (2017): Chapters 3-6 and Bulut & Dejardins (2019) Chapter 4. 
 
-```{r, message = FALSE}
-library(tidyverse)
-```
-
-
 # Wickham & Grolemund (2017):
+### Chapter 3: Data Visualization 
+
+
 ## 3.2.4 Exercises
 
-### 1.	Run ggplot(data = mpg). What do you see?
+#### 1.	Run ggplot(data = mpg). What do you see?
 A blank grey square
 
-```{r}
+```{r, message = FALSE}
+library(tidyverse)
+
 ggplot(data=mpg)
 ```
 
-### 2.	How many rows are in mpg? How many columns?
+#### 2.	How many rows are in mpg? How many columns?
 234 rows and 11 columns
 
 ```{r}
 mpg
 ```
-### 3. What does the drv variable describe? Read the help for ?mpg to find out.
+#### 3. What does the drv variable describe? Read the help for ?mpg to find out.
 The drv variable describes the type of drive train for each car in the data set, where f = front-wheel drive, r = rear wheel drive, 4 = 4wd. 
 
 ```{r}
 ?mpg
 ```
 
-### 4.	Make a scatterplot of hwy vs cyl.
+#### 4.	Make a scatterplot of hwy vs cyl.
 ```{r}
 ggplot(data = mpg)+geom_point(mapping=aes(x=cyl, y=hwy))
 ```
 
-### 5.	What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
+#### 5.	What happens if you make a scatterplot of class vs drv? Why is the plot not useful?
 
 Since both variables are categorical, the points align based on the intersection of both categories, which does not provide any useful information. Scatterplots are more useful for mapping the relationship between two continuous variables. 
 
@@ -52,7 +52,7 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = class, y = drv))
 ```
 ## 3.3.1 Exercises
-### 1.	What’s gone wrong with this code? Why are the points not blue? 
+#### 1.	What’s gone wrong with this code? Why are the points not blue? 
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
   
@@ -65,7 +65,7 @@ ggplot(data = mpg) +
 ```
 
 
-### 2.	Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
+#### 2.	Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
 
 ```{r}
 ?mpg
@@ -76,7 +76,7 @@ Continuous: displ, year, cyl, cty, hwy
 
 You can see this information when running ?mpg under each variable's name
 
-### 3.	Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables?
+#### 3.	Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables?
 
 Assigning color to a continuous variable provides a numerical scale of colors while assigning color to a categorical variable categorizes all levels of the variable by different colors.
 
@@ -95,7 +95,7 @@ ggplot(data = mpg) +
     geom_point(mapping = aes(x = displ, y = hwy, size = cty))
 ```
 
-### 4.	What happens if you map the same variable to multiple aesthetics? 
+#### 4.	What happens if you map the same variable to multiple aesthetics? 
 
 You get a scatterpllot with an overlap of two aesthetics, both convey the same information. 
 
@@ -104,7 +104,7 @@ ggplot(data = mpg) +
     geom_point(mapping = aes(x = displ, y = hwy, color = cty, alpha=cty))
 ```
 
-### 5.	What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
+#### 5.	What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
 
 It is used to modify the width of the border of shapes with borders. 
 
@@ -113,7 +113,7 @@ It is used to modify the width of the border of shapes with borders.
 ```
 
 
-### 6.	What happens if you map an aesthetic to something other than a variable name, like aes(colour = displ < 5)? Note, you’ll also need to specify x and y.
+#### 6.	What happens if you map an aesthetic to something other than a variable name, like aes(colour = displ < 5)? Note, you’ll also need to specify x and y.
 
 It categorizes the variable assigned to the x-axis (in this case, displ) to < or > 5 by two different colors. 
 
@@ -124,7 +124,7 @@ ggplot(data = mpg) +
 
 ## 3.5.1 Exercises
 
-### 1.	What happens if you facet on a continuous variable?
+#### 1.	What happens if you facet on a continuous variable?
 
 We get a new column for each value of the variable.
 
@@ -135,7 +135,7 @@ ggplot(data = mpg) +
 ```
 
 
-## 2.	What do the empty cells in plot with facet_grid(drv ~ cyl) mean? How do they relate to this plot?
+#### 2.	What do the empty cells in plot with facet_grid(drv ~ cyl) mean? How do they relate to this plot?
 
 
 ```{r}
@@ -146,7 +146,7 @@ ggplot(data = mpg) +
 The empty cells in `facet_grid` suggest that the variables did not intersect within these values. This relates to the first plot because we can notice that in the first plot, there is much empty space and if we were to facet it, we are likely to have empty cells as well.
 
 
-### 3.	What plots does the following code make? What does . do?
+#### 3.	What plots does the following code make? What does . do?
 
 `.` allows us to facet the plot by all levels of the variable provided without needing to specify the levels. 
 
@@ -164,7 +164,7 @@ ggplot(data = mpg) +
   facet_grid(. ~ cyl)
 ```
 
-### 4. Take the first faceted plot in this section: What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
+#### 4. Take the first faceted plot in this section: What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
 
 
 ```{r}
@@ -175,27 +175,27 @@ ggplot(data = mpg) +
 Advantages: it is easier to identify patterns within each value of a variable; we can have a larger number of facets while still being able to identify which facet represents which value, while with a large number of colors, it may be  difficult to discriminate between values. 
 Disadvantages: It may be more challenging to compare patterns between values of the variable and to identify overall patterns.
 
-### 5. Read ?facet_wrap. What does nrow do? What does ncol do? What other options control the layout of the individual panels? Why doesn’t facet_grid() have nrow and ncol arguments?
+#### 5. Read ?facet_wrap. What does nrow do? What does ncol do? What other options control the layout of the individual panels? Why doesn’t facet_grid() have nrow and ncol arguments?
 
 ```{r}
 ?facet_wrap
 ```
 `nrow` determines the number of rows in the facet. Other options that control the layout of the individual panels are: `ncol`, scale, and dir. `ncol` determines the number of columns in the facet. `facet_grid`() does not have number of `nrow` and `ncol` arguments because they are determined by the number of unique levels the variables have.
 
-### When using facet_grid() you should usually put the variable with more unique levels in the columns. Why?
+#### 6. When using facet_grid() you should usually put the variable with more unique levels in the columns. Why?
 
 Because if you put the variable with the more unique levels in the rows, it would create a taller then wider plot, which may be hard to follow and interpret on most computers.
 
 ## 3.6.1 Exercises
 
-### 1. What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
+#### 1. What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
 
 line chart - `geom_line()`
 boxplot - `geom_boxplot()`
 histogram - `geom_histogram()`
 
 
-## 2. Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+#### 2. Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
 
 This will create a scatter plot with displ as the x variable and hwy as the y variable. drv will be represented by both lines and errors colored by the levels of the variable, and their standard error would not appear.
 
@@ -206,16 +206,16 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
 ```
 
 
-### 3. What does show.legend = FALSE do? What happens if you remove it? Why do you think I used it earlier in the chapter?
+#### 3. What does show.legend = FALSE do? What happens if you remove it? Why do you think I used it earlier in the chapter?
 
 show.legend = FALSE hides the legend box in the of the plot. It plausible that it was removed to ensure the plot's size is consistent with previous plots.
 
 
-### 4. What does the se argument to geom_smooth() do?
+#### 4. What does the se argument to geom_smooth() do?
 
 It visulizes the confidence intervals of the line as shaded areas; TRUE to show, FALSE to hide.
 
-### 5. Will these two graphs look different? Why/why not?
+#### 5. Will these two graphs look different? Why/why not?
 
 
 ```{r, message = FALSE}
@@ -233,7 +233,7 @@ ggplot() +
 
 No, they will be identical since Because both geom_point() and geom_smooth() will uses the same data and mapping noted in the ggplot(), which is the same for both plots. 
 
-### 6. Recreate the R code necessary to generate the following graphs.
+#### 6. Recreate the R code necessary to generate the following graphs.
 
 
 ```{r, message = FALSE}
@@ -278,7 +278,7 @@ geom_point(size = 5, color = "white") +
 
 ## 3.7.1 Exercises
 
-### 1. What is the default geom associated with stat_summary()? How could you rewrite the previous plot to use that geom function instead of the stat function?
+#### 1. What is the default geom associated with stat_summary()? How could you rewrite the previous plot to use that geom function instead of the stat function?
 
 ```{r}
 ?stat_summary
@@ -297,7 +297,7 @@ ggplot(data = diamonds) +
 ```
 
 
-## 2. What does geom_col() do? How is it different to geom_bar()?
+#### 2. What does geom_col() do? How is it different to geom_bar()?
 
 ```{r}
 ?geom_col
@@ -309,11 +309,11 @@ ggplot(data = diamonds) +
 
 There are two types of bar charts: geom_bar() and geom_col(). geom_bar() makes the height of the bar proportional to the number of cases in each group (or if the weight aesthetic is supplied, the sum of the weights). If you want the heights of the bars to represent values in the data, use geom_col() instead. geom_bar() uses stat_count() by default: it counts the number of cases at each x position. geom_col() uses stat_identity(): it leaves the data as is.
 
-## 3. Most geoms and stats come in pairs that are almost always used in concert. Read through the documentation and make a list of all the pairs. What do they have in common?
+#### 3. Most geoms and stats come in pairs that are almost always used in concert. Read through the documentation and make a list of all the pairs. What do they have in common?
 
 Pairs of geoms and stats share names in common and typically have the same default stat.
 
-## 4. What variables does stat_smooth() compute? What parameters control its behaviour?
+#### 4. What variables does stat_smooth() compute? What parameters control its behaviour?
 
 ```{r}
 ?stat_smooth
@@ -336,7 +336,7 @@ standard error
 
 
 
-### 5.In our proportion bar chart, we need to set group = 1. Why? In other words what is the problem with these two graphs?
+#### 5.In our proportion bar chart, we need to set group = 1. Why? In other words what is the problem with these two graphs?
 
 ```{r}
 ggplot(data = diamonds) + 
@@ -349,9 +349,9 @@ ggplot(data = diamonds) +
 The problems is that all of the bars are the same height, which is inaccurate. Setting group=1 ensures that the proportions for each stack are calculated using each subset. 
   
   
-### 3.8.1 Exercises
+## 3.8.1 Exercises
 
-## 1. What is the problem with this plot? How could you improve it?
+#### 1. What is the problem with this plot? How could you improve it?
 
 
 ```{r}
@@ -367,7 +367,7 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 ```
 
 
-### 2. What parameters to geom_jitter() control the amount of jittering?
+#### 2. What parameters to geom_jitter() control the amount of jittering?
 
 Width, controlling the horizontal random noise, and height, controlling the vertical random noise.
 ```{r}
@@ -375,7 +375,7 @@ Width, controlling the horizontal random noise, and height, controlling the vert
 ```
 
 
-### 3. Compare and contrast geom_jitter() with geom_count().
+#### 3. Compare and contrast geom_jitter() with geom_count().
 
 ```{r}
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
@@ -384,7 +384,7 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 While `geom_jitter` adds random noise to each point to reduce over plotting of points, `geom_count` changes the size of each point per the number of observation for its specific value. Although geom_count can help to reduce over plotting; however, it may create over plotting by itself due to the size of the points.
 
 
-### 4. What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
+#### 4. What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
 
 
 ```{r}
@@ -400,9 +400,9 @@ ggplot(data = mpg, aes(x = drv, y = hwy)) +
 ```
 
 
-### 3.9.1 Exercises
+## 3.9.1 Exercises
 
-## Turn a stacked bar chart into a pie chart using coord_polar().
+#### 1. Turn a stacked bar chart into a pie chart using coord_polar().
 
 ```{r}
 ggplot(mpg, aes(x = class, fill = drv)) + geom_bar()
@@ -413,7 +413,7 @@ ggplot(mpg, aes(x = class, fill = drv)) + geom_bar()
 ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 ```
 
-### 2. What does labs() do? Read the documentation.
+#### 2. What does labs() do? Read the documentation.
 
 ```{r}
 ?labs()
@@ -421,7 +421,7 @@ ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 
 `labs()` allows users to set plot labels. Within the `labs()` function, users can provide details for host of plot labels, like title, subtitle, caption, and more. 
 
-### 3. What’s the difference between coord_quickmap() and coord_map()?
+#### 3. What’s the difference between coord_quickmap() and coord_map()?
 
 
 ```{r}
@@ -431,7 +431,7 @@ ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 `coord_map()` from ggplot2 allows users to map their data onto a 2D projection of the earth. Due to the curvature of the earth, the documentation notes that map projections do not preserve straigth lines. As such, `coord_quickmap()` can be used alternatively, which performs calculations to provide an approximation of the requested area of the globe but with straight lines. 
 
 
-### 4. What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
+#### 4. What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
 
 The plot below suggests a strong positive relationship between city miles per gallon to highway miles per gallon; as one rises, so does that other. 
 
@@ -463,11 +463,12 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 
 
 # Wickham & Grolemund Chapter 4 
+### Workflow: basics
 
 
 ## 4.4 Exercises
 
-### 1. Why does this code not work?
+#### 1. Why does this code not work?
 
 my_variable <- 10
 my_varıable
@@ -475,7 +476,7 @@ my_varıable
 
 This code does not work because the "I" in the second row of the code is capital, which does not match the "i" above. 
 
-### 2. Tweak each of the following R commands so that they run correctly:
+#### 2. Tweak each of the following R commands so that they run correctly:
 
 `library(tidyverse)`
 
@@ -496,7 +497,7 @@ filter(mpg, cyl == 8)
 filter(diamonds, carat > 3)
 ```
 
-### 3. Press Alt + Shift + K. What happens? How can you get to the same place using the menus?
+#### 3. Press Alt + Shift + K. What happens? How can you get to the same place using the menus?
 
 A menu with all shortcuts appear. I can access this menu through Tools, keyboard shortcuts helps.
 
@@ -508,7 +509,7 @@ library(tidyverse)
 
 
 # Bulut & Dejardins (2019) Chapter 4 
-## Wrangling big data with data.table
+### Wrangling big data with data.table
 
 This chapter demonstrates the application of the `data.table` in R as an alternative to tidyverse and base R methods of data wrangling. The authors suggest that  `data.table` is particularly useful for working with large volumes of data (e.g. 10 - 100 GB)
 
@@ -517,7 +518,7 @@ library(data.table)
 ```
 
 ##  4.2.1 Exercises
-#### Read in the pisa data set. Either the full data set (recommended to have > 8 Gb of RAM) or one of the smaller data sets.
+#### 1. Read in the pisa data set. Either the full data set (recommended to have > 8 Gb of RAM) or one of the smaller data sets.
 
 Due to slow loading speeds when importing the full pisa data set, even with `fread()` from data.table, we decided to use the smaller 'random6' data set that the authors also made a available. According to the authors, the random data set contains data collected from a random sample of a single country with records from all 6 of its regions. 
 
@@ -547,17 +548,17 @@ Using data.table syntax to subset the data set, we found that there are 3,197 fe
 
 # subset all female students from the field ST004D01T 
 
-random6[CNT == "Germany" & ST004D01T == "Female"]
+#random6[CNT == "Germany" & ST004D01T == "Female"]
 
 # return row count with .N function and chaining 
-random6[CNT == "Germany" & ST004D01T == "Female", .N]
+#random6[CNT == "Germany" & ST004D01T == "Female", .N] # don't print code as the output is very large in the markdown report 
 
 ```
 
 
 
 ## 4.4.1 Exercises
-#### The computer and software variables that were created above ask a student whether they had a computer in their home that they can use for school work (computer) and whether they had educational software in their home (software). Find the proportion of students in the Germany and Uruguay that have a computer in their home or have educational software.
+#### 1. The computer and software variables that were created above ask a student whether they had a computer in their home that they can use for school work (computer) and whether they had educational software in their home (software). Find the proportion of students in the Germany and Uruguay that have a computer in their home or have educational software.
 
 ```{r}
 
@@ -622,7 +623,7 @@ random6[CNTRYID == "Uruguay", table(software)] # 3013 No's and 2313 Yes'
 
 
 
-#### For just female students, find the proportion of students who have their own room (own.room) or a quiet place to study (quiet.study).
+#### 2. For just female students, find the proportion of students who have their own room (own.room) or a quiet place to study (quiet.study).
 
 Among female students in the random6 data set, 72% stated that they have their own room and 85% stated that they have a quiet place to study. 
 ```{r}
@@ -641,7 +642,7 @@ random6[female == 1, table(quiet.study)] #2606 No's and 14801 Yes'
 
 
 ## 4.5.1 Exercises
-#### Calculate the proportion of students who have art in their home (art) and the average age (AGE) of the students by gender.
+#### 1. Calculate the proportion of students who have art in their home (art) and the average age (AGE) of the students by gender.
 
 51% of students have art in their home. The average age of male and female students are 15.8 years. 
 
@@ -652,7 +653,7 @@ random6[, .(art = mean(art, na.rm = TRUE), AGE = mean(AGE, na.rm = TRUE)), by = 
 ```
 
 
-#### Within a by argument you can discretize a variable to create a grouping variable. Perform a median split for age within the by argument and assess whether there are age difference associated with having your own room (own.room) or a desk (desk).
+#### 2. Within a by argument you can discretize a variable to create a grouping variable. Perform a median split for age within the by argument and assess whether there are age difference associated with having your own room (own.room) or a desk (desk).
 
 ```{r}
 
@@ -711,7 +712,7 @@ random6[,
 
 
 
-#### Calculate descriptives for this variable by sex and country. Specifically, the proportion of test takers whose parents said “Yes” or 1.
+#### 2. Calculate descriptives for this variable by sex and country. Specifically, the proportion of test takers whose parents said “Yes” or 1.
 
 Because we are using the more limited random6 data set, we specify to return Germany and Mexico specifically, since the other countries are not in the data set. 
 
@@ -724,7 +725,7 @@ random6[CNTRYID %in% c("Germany", "Mexico"),
 
 ```
 
-#### Means and standard deviations (sd) for the variables that you think will be most predictive of sci_car.
+#### 3. Means and standard deviations (sd) for the variables that you think will be most predictive of sci_car.
 
 ```{r}
 
@@ -741,7 +742,7 @@ random6[,
 
 ```
 
-#### Calculate these same descriptives by groups (by sci_car and by sex).
+#### 4. Calculate these same descriptives by groups (by sci_car and by sex).
 
 ```{r}
 # means and sd of focal variables, grouped by sci_car and sex 
@@ -756,7 +757,7 @@ random6[,
 
 ```
 
-#### Calculate correlations between these variables and sci_car
+#### 5. Calculate correlations between these variables and sci_car
 
 
 ```{r}
@@ -775,7 +776,7 @@ sci_car_variables[,
 
 ```
 
-#### Create new variables: Discretize the math and reading variables using the OECD means (490 for math and 493) and code them as 1 (at or above the mean) and -1 (below the mean), but do in the data.table way without using the $ operator.
+#### 6. Create new variables: Discretize the math and reading variables using the OECD means (490 for math and 493) and code them as 1 (at or above the mean) and -1 (below the mean), but do in the data.table way without using the $ operator.
 
 ```{r,warning=FALSE}
 
@@ -818,7 +819,7 @@ melt(math_reading_cor)
 
 ```
 
-#### Chain together a set of operations: For example, create an intermediate variable that is the average of JOYSCIE and INTBRSCI, and then calculate the mean by country by sci_car through chaining.
+#### 7. Chain together a set of operations: For example, create an intermediate variable that is the average of JOYSCIE and INTBRSCI, and then calculate the mean by country by sci_car through chaining.
 
 ```{r}
 
@@ -828,7 +829,7 @@ random6[, .(Mean = rowMeans(.SD)), by = CNTRYID, .SDcols = c("JOYSCIE", "INTBRSC
 
 
 
-#### Transform variables, specifically recode MISCED and FISCED from characters to numeric variables.
+#### 8. Transform variables, specifically recode MISCED and FISCED from characters to numeric variables.
 
 ```{r}
 
@@ -843,7 +844,7 @@ random6[ ,
 
 ```
 
-#### Examine other variables in the pisa data set that you think might be predictive of PA032Q03TA.
+#### 9. Examine other variables in the pisa data set that you think might be predictive of PA032Q03TA.
 
 ```{r}
 library(psych) 
