@@ -910,12 +910,42 @@ flights_cancelled %>%
 cor(flights_cancelled$delay, y = flights_cancelled$prop_cancelled) 
 
 
+```
 
+
+#### Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about flights %>% group_by(carrier, dest) %>% summarise(n()))
+
+ F9, EV, and YV had the highest average delays. US and HA had the lowest average delays in 2013. 
+
+```{r}
+
+flights %>%
+  filter(!is.na(dep_delay)) %>% 
+  group_by(carrier) %>%
+  summarise(carrier_delay = mean(dep_delay)) %>% 
+  arrange(desc(carrier_delay)) 
+
+
+flights %>%
+  group_by(carrier) %>% 
+  filter(!is.na(dep_delay)) %>% 
+  summarize(avg_delay = mean(dep_delay)) 
+
+flights 
 
 
 ```
 
 
 
+### What does the sort argument to count() do. When might you use it?
+
+The sort argument of the `count()` function allows the user to show the largest groups that were counted at the top of the data frame that is returned. This would be a good argument to use when wanting to print counts in descending order, similar to `arrange(desc(x))`. The code below uses the sort argument in `count()` to show which airlines logged the most flights in the data set. 
+
+```{r}
+
+flights %>%
+  count(carrier, sort = TRUE) 
+```
 
 
