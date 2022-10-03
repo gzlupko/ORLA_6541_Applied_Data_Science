@@ -311,20 +311,19 @@ There are two types of bar charts: geom_bar() and geom_col(). geom_bar() makes t
 
 ## 3. Most geoms and stats come in pairs that are almost always used in concert. Read through the documentation and make a list of all the pairs. What do they have in common?
 
-
-Pairs of geoms and stats share names in commmon and typically have the same default stat.
+Pairs of geoms and stats share names in common and typically have the same default stat.
 
 ## 4. What variables does stat_smooth() compute? What parameters control its behaviour?
 
 ```{r}
 ?stat_smooth
 ```
-stat_smooth() provides the following variables, some of which depend on the orientation:
+Two parameters that control `stat_smooth()'`s behavior are `method` and `formula.` Method specifies the kind of smoothing function to apply, like a linear model (lm) or a generalized linear model (glm), and formula allows the user to provide the variables of interest for the given modeling strategy. In addition, users can also adjust the `fullrange` parameter, which tells R to either fit the smoothing for just the data or the full plot. 
 
-# NEED HELP WITH THE PARAMETERS
+stat_smooth() generates the following variables: 
 
 y or x
-predicted value
+predicted value of the given variable(s) 
 
 ymin or xmin
 lower pointwise confidence interval around the mean
@@ -347,7 +346,7 @@ ggplot(data = diamonds) +
 ```
 
 
-  The problems is that all of the bars are the same height, which is innacurate. Setting group=1 ensures that the proportions for each stack are calculated using each subset. 
+The problems is that all of the bars are the same height, which is inaccurate. Setting group=1 ensures that the proportions for each stack are calculated using each subset. 
   
   
 ### 3.8.1 Exercises
@@ -370,7 +369,7 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 
 ### 2. What parameters to geom_jitter() control the amount of jittering?
 
-Width, controlling the horizantol random noise, and height, controlling the vertical random noise.
+Width, controlling the horizontal random noise, and height, controlling the vertical random noise.
 ```{r}
 ?geom_jitter
 ```
@@ -382,7 +381,7 @@ Width, controlling the horizantol random noise, and height, controlling the vert
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
   geom_count()
 ```
-While geom_jitter adds random noise to each point to reduce overplotting of points, geom_count changes the size of each point per the number of observation for its specific value. Altough geom_count can help to reduce overplotting; however, it may create overplotting by itself due to the size of the points.
+While `geom_jitter` adds random noise to each point to reduce over plotting of points, `geom_count` changes the size of each point per the number of observation for its specific value. Although geom_count can help to reduce over plotting; however, it may create over plotting by itself due to the size of the points.
 
 
 ### 4. What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
@@ -401,7 +400,6 @@ ggplot(data = mpg, aes(x = drv, y = hwy)) +
 ```
 
 
-
 ### 3.9.1 Exercises
 
 ## Turn a stacked bar chart into a pie chart using coord_polar().
@@ -409,6 +407,8 @@ ggplot(data = mpg, aes(x = drv, y = hwy)) +
 ```{r}
 ggplot(mpg, aes(x = class, fill = drv)) + geom_bar()
 ```
+
+
 ```{r}
 ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 ```
@@ -419,8 +419,7 @@ ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 ?labs()
 ```
 
-"Modify axis, legend, and plot labels. Good labels are critical for making your plots accessible to a wider audience. Always ensure the axis and legend labels display the full variable name. Use the plot title and subtitle to explain the main findings. It's common to use the caption to provide information about the data source. tag can be used for adding identification tags to differentiate between multiple plots."
-
+`labs()` allows users to set plot labels. Within the `labs()` function, users can provide details for host of plot labels, like title, subtitle, caption, and more. 
 
 ### 3. What’s the difference between coord_quickmap() and coord_map()?
 
