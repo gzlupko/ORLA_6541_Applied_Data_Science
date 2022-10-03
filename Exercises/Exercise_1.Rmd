@@ -428,11 +428,12 @@ ggplot(mpg, aes(x = class, fill = drv)) + geom_bar() + coord_polar()
 ?coord_quickmap
 ```
 
-"coord_map() projects a portion of the earth, which is approximately spherical, onto a flat 2D plane using any projection defined by the mapproj package. Map projections do not, in general, preserve straight lines, so this requires considerable computation. coord_quickmap() is a quick approximation that does preserve straight lines. It works best for smaller areas closer to the equator."
+`coord_map()` from ggplot2 allows users to map their data onto a 2D projection of the earth. Due to the curvature of the earth, the documentation notes that map projections do not preserve straigth lines. As such, `coord_quickmap()` can be used alternatively, which performs calculations to provide an approximation of the requested area of the globe but with straight lines. 
+
 
 ### 4. What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
 
-The plot below suggests a strong positive relationship between city miles per galon to highway miles per galon; as one rises, so does that other. 
+The plot below suggests a strong positive relationship between city miles per gallon to highway miles per gallon; as one rises, so does that other. 
 
 coord_fixed() is important because it ensures a fixed ratio between the physical representation of data points on the X and Y axes. This makes it easier to identify patterns in the plot.
 
@@ -445,6 +446,8 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   geom_abline() +
   coord_fixed()
 ```
+
+
 ```{r}
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   geom_point() + 
@@ -458,18 +461,8 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   coord_fixed()
 ```
 
-```{r}
-?mpg
-```
 
-```{r}
-?coord_fixed
-```
-
-
-```{r}
-?geom_abline
-```
+# Wickham & Grolemund Chapter 4 
 
 
 ## 4.4 Exercises
@@ -484,19 +477,20 @@ This code does not work because the "I" in the second row of the code is capital
 
 ### 2. Tweak each of the following R commands so that they run correctly:
 
-library(tidyverse)
+`library(tidyverse)`
 
-ggplot(dota = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy))
+`ggplot(dota = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))`
 
-fliter(mpg, cyl = 8)
+`fliter(mpg, cyl = 8)
 filter(diamond, carat > 3)
-
+`
 
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
+
 ```{r}
 filter(mpg, cyl == 8)
 filter(diamonds, carat > 3)
@@ -507,138 +501,14 @@ filter(diamonds, carat > 3)
 A menu with all shortcuts appear. I can access this menu through Tools, keyboard shortcuts helps.
 
 
-
 ```{r libaries, message = FALSE}
 library(tidyverse) 
 ```
 
-# Wickham & Grolemund (2017): Chapter 3 
-## Data Transformations with dplyr 
-
-
-```{r}
-# explore data set
-head(mtcars) 
-```
-
-## 3.2.4 Exercises
-#### 1. Run ggplot(data = mpg). What do you see?
-We see an empty graph because we have not specified any additional layers in our code. For example, we have not told R to return a specific type of plot, like a scatterplot, nor have we provided variables to visualize some relationship within the data. 
-
-```{r}
-ggplot(data = mpg) 
-```
-
-
-#### 2. How many rows are in mpg? How many columns?
-
-32 rows and 11 columns. 
-
-```{r}
-
-# number of rows 
-nrow(mtcars)
-# number of columns
-ncol(mtcars) 
-
-```
-
-
-#### 3. What does the drv variable describe? Read the help for ?mpg to find out.
-
-Running `?mpg`, R tells us that the 'drv' variable is the following: the type of drive train, where f = front-wheel drive, r = rear wheel drive,4 = 4wd 
-
-```{r}
-?mpg 
-```
-
-
-#### 4. Make a scatterplot of hwy vs cyl.
-
-```{r}
-
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = cyl, y = hwy)) + ylab("Highway Miles per Gallon") + 
-  xlab("Number of Cylinders") 
-
-```
-
-
-#### 5. What happens if you make a scatter plot of class vs drv? Why is the plot not useful?
-
-There is no variation in one variable as a function of the other variable. Both variables are categorical so there is no trend to depict. These variables are therefore not very useful when plotted together. Instea, they would make for useful grouping variables to test differences between groups or to add additional layers to scatter plots that depict relationships between numeric variables. 
-
-```{r}
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = class, y  = drv))
-```
-
-
-
-
-## 3.3.1 Exercises
-#### 1. What’s gone wrong with this code? Why are the points not blue?
-
-In order to turn all of the points blue, color needs needs to be called outside of the `aes()` function. Doing so tells ggplot2 to change all dots to blue. To turn the dots in the scatter plot blue, updated code is provided below (see second plot)
-```{r}
-# original code with color mis-specified 
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
-
-# updated code 
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
-```
-#### 2. Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
-
-The following variables in the mpg data set are categorical: manufacturer, trans, drv, cyl, fl, year, and class. The following variables are continuous: displ and city. 
-
-
-```{r}
-# check variable types: 
-str(mpg) 
-```
-
-
-#### 3. Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables?
-
- 
-When used as color, size, or shape aesthetics, continuous variables present a range of a given aesthetic, like light to dark for colors, or transparent to opaque for the alpha aesthetic. Often doing so presents too much information for the audience. For example, in the first plot below, engine displacement is layered into the plot as a color aesthetic. Due to the many values for engine displacement in the data set, it is hard to distinguish between the various hues to make any meaningful interpretation about how displacement is relating to the two other variables plotted. In the second plot, R throws an error when trying to take city mpg as a shape aesthetic because there are too many values for the variable to be used as a grouping aesthetic. Finally, the same issue appears in the third plot that is mentioned with regards to the first plot; there are too many values stored in the continuous variable to use it meaningfully as a grouping aesthetic. 
-
-```{r}
-# engine displacement as color aesthetic
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = cyl, y = cty, color = displ)) 
-
-# engine displacement as shape aesthetic
-
-#ggplot(data = mpg) + 
-  #geom_point(mapping = aes(x = cyl, y = displ, shape = cty))
-
-# engine displacement as size aesthetic
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = cyl, y = cty, size = displ)) 
-
-```
-
-
-#### 4. What happens if you map the same variable to multiple aesthetics?
-
-```{r}
-# displ variable as color and alpha (e.g. opacity) and city mpg on y-axis and as shape
-ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = cyl, y = cty, color = displ, size = cty))  
-```
-
-
-#### 5. What does the stroke aesthetic do? What shapes does it work with? (Hint: use ?geom_point)
-
-#### 6. What happens if you map an aesthetic to something other than a variable name, like aes(colour = displ < 5)? Note, you’ll also need to specify x and y.
-
-
 
 
 # Bulut & Dejardins (2019) Chapter 4 
+## Wrangling big data with data.table
 
 This chapter demonstrates the application of the `data.table` in R as an alternative to tidyverse and base R methods of data wrangling. The authors suggest that  `data.table` is particularly useful for working with large volumes of data (e.g. 10 - 100 GB)
 
