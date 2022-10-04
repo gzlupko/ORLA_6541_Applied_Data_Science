@@ -526,6 +526,800 @@ To follow Dr. Hirst's tip, in RStudio, go to: File > Help  > Cheat Sheets
 #### 2. What other common mistakes will RStudio diagnostics report? Read https://support.rstudio.com/hc/en-us/articles/205753617-Code-Diagnostics to find out.
 Warn if variable used has no definition in scope: Warn if a symbol is used with no definition in the current, or parent, scope. Warn if variable is defined but not used: helps to identify is a variable is created but never used. Provide R style diagnostics (e.g. whitespace): checks to see if your code conforms to Hadley Wickham’s style guide, and reports style warnings when encountered.
 
+
+# Wickham & Grolemund Chapter 5 
+
+
+# Load relevant packages
+
+```{r package-setup, message = FALSE, warning = FALSE}
+
+library(nycflights13)
+library(tidyverse)
+
+```
+
+## 5.2.4
+
+
+#### 1.1 Find all flights that: 
+    - Had an arrival delay of two or more hours
+    - Flew to Houston (IAH or HOU)
+    - Were operated by United, American, or Delta
+    - Departed in summer (July, August, and September)
+    - Arrived more than two hours late, but didn’t leave late
+    - Were delayed by at least an hour, but made up over 30 minutes in flight
+    - Departed between midnight and 6am (inclusive)
+
+- There were 10,200 flights that had an arrival delay of two or more hours
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, arr_delay >= 120)
+
+```
+
+#### 1.2. 
+
+- 9,313 flights flew to Houston (IAH or HOU)
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, dest == "IAH" | dest == "HOU")
+
+```
+
+#### 1.3. 
+
+- 139,504 flights were operated by United (UA), American (AA), or Delta (DL)
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, carrier %in% c("UA", "AA", "DL"))
+
+```
+
+#### 1.4. 
+
+- 86,326 flights  departed in summer (July, August, and September)
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, month %in% c(7, 8, 9))
+
+```
+
+#### 1.5. 
+
+- 29 flights arrived more than two hours late, but didn’t leave late
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, arr_delay > 120, dep_delay <= 0)
+
+```
+
+#### 1.6. 
+
+- 206 flights were delayed by at least an hour, but made up over 30 minutes in flight
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, dep_delay >= 60 , arr_delay < 30)
+
+```
+#### 1.7. 
+
+- 9373 flights departed between midnight and 6am (inclusive)
+
+```{r, message = FALSE, warning = FALSE}
+
+summary(flights$dep_time)
+
+# max departure time is 2400, this represents midnight
+
+filter(flights, dep_time <= 600 | dep_time == 2400)
+
+
+```
+
+
+
+#### 2. 
+
+- The between(x, left, right) function allows you to filter values where x is greater than or equal to left and less than or equal to right. 
+
+- The code for exercise 1.4 can be simplified using the between() function as follows:
+
+```{r, message = FALSE, warning = FALSE}
+
+# Simplifying code using between() function
+
+filter(flights, between(month, 7, 9))
+
+```
+
+
+#### 3. 
+
+- 8,255 flights have a missing departure time (dep_time). 
+- For these flights the following details are also missing, departure delay (dep_delay), scheduled arrival time (arr_time), arrival delay (arr_delay)and amount of time spent in the air (air_time). 
+- These are likely flights that never took off.
+
+```{r, message = FALSE, warning = FALSE}
+
+filter(flights, is.na(dep_time))
+
+```
+
+#### 4. 
+
+ - NA^1 is not missing since mathematically any variable to the power of 0 is 1
+ 
+ - NA | TRUE is true, since NA represents an unknown value and TRUE appears after the boolean operator "or", therefore it returns TRUE 
+ 
+ -  NA & FALSE is false since NA represents an unknown value and FALSE appears after the boolean operator "and", therefore it returns FALSE
+
+```{r, message = FALSE, warning = FALSE}
+
+NA^0
+NA | TRUE
+NA & FALSE
+NA *0
+
+```
+
+## 5.3.1
+
+#### 1. 
+
+- Using arrange() to sort all missing values to the start (within the dep_delay column)
+
+```{r, message = FALSE, warning = FALSE}
+
+arrange(flights, desc(is.na(dep_delay)), dep_delay)
+
+
+```
+
+
+#### 2. 
+
+- Sorting flights to find the most delayed flights. 
+- The most delayed flight was HA 51 traveling from JFK to HNL on Jan 09, 2013
+
+```{r, message = FALSE, warning = FALSE}
+
+# arrange dep_delay column in descending order
+
+arrange(flights, desc(dep_delay))
+
+```
+
+
+- Sorting flights to find the flights that left the earliest.
+- The flight that left the earliest was B6 97 traveling from JFK to DEN on Dec 07, 2013
+- The flight departed 43 minutes ahead of scheduled time
+
+```{r, message = FALSE, warning = FALSE}
+
+# arrange dep_delay column in ascending order
+
+arrange(flights, dep_delay)
+
+```
+#### 3.
+
+- Sorting flights to find the fastest (highest speed) flights.
+- speed = distance / time
+- fastest flights were determined by dividing distance/air_time and then arranging in descending order
+- Fastest flight was DL 1499 travelling from LGA to ATL on May 25, 2013
+
+```{r, message = FALSE, warning = FALSE}
+
+arrange(flights, desc(distance/air_time))
+
+```
+#### 4.
+
+- Flight that traveled the farthest is HA 51 travelling form JFK to HNL which traveled 4983 miles
+
+
+```{r, message = FALSE, warning = FALSE}
+
+arrange(flights, desc(distance))
+
+
+```
+- Flight that travelled the shortest is US 1632 travelling form EWR to LGA which travelled 17 miles
+
+
+```{r, message = FALSE, warning = FALSE}
+
+arrange(flights, distance)
+
+
+```
+
+
+## 5.4.1
+
+#### 1. 
+
+- Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+
+- A) By specifying the four column names
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, dep_time, dep_delay, arr_time, arr_delay)
+
+```
+- B) By specifying the respective column numbers of the four varialbes
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, 4, 6, 7, 9)
+
+```
+
+
+- C) By specifying the start_with
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, starts_with("dep"),starts_with("arr"))
+
+```
+
+- C) By specifying variables within all_of
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, all_of(c("dep_time", "dep_delay", "arr_time", "arr_delay")))
+
+```
+- D) By specifying variables within any_of
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, any_of(c("dep_time", "dep_delay", "arr_time", "arr_delay")))
+
+```
+
+#### 2. 
+
+- What happens if you include the name of a variable multiple times in a select() call?
+
+- The variable is only displayed once. The duplicate is essentially ignored by the select() function 
+
+
+
+```{r, message = FALSE, warning = FALSE}
+
+select (flights, dep_time, dep_time, dep_time)
+
+```
+
+#### 3. 
+
+- What does the any_of() function do? Why might it be helpful in conjunction with this vector?
+
+- The any_of() function displays any of the variables, specified within the function
+
+- Using it in conjunction with the vector that's been defined as vars below allows you to define the variables to filter out in one vector, prior to using the any_of() function within select()
+
+- This helps simplify the code written within select ()
+
+- Further, if you are looking to find any of the same variables, within multiple tables, it allows for cleaner duplication of the code (without having to list the variables multiple times) 
+
+#### 4.
+
+- Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
+
+- It is surprising that the specified function ignores the case, by default
+
+```{r, message = FALSE, warning = FALSE}
+
+select(flights, contains("TIME"))
+
+```
+
+- Adding the following argument however changes the default to NOT ignore case
+
+```{r, message = FALSE, warning = FALSE}
+
+select(flights, contains("TIME", ignore.case = FALSE))
+
+```
+
+## 5.5.2
+
+#### 1. 
+
+- Computing dep_time and sched_dep_time to a more convenient representation of number of minutes since midnight
+
+
+```{r, message = FALSE, warning = FALSE}
+
+
+# dep_time
+
+transmute(flights,
+          dep_time,
+  dep_time_hour = dep_time %/% 100,
+  dep_time_minute = dep_time %% 100,
+  
+)
+
+# sched_dep_time
+
+transmute(flights,
+          sched_dep_time,
+  sched_dep_time_hour = dep_time %/% 100,
+  sched_dep_time_minute = dep_time %% 100,
+  
+)
+
+```
+
+#### 2. 
+
+- Compare air_time with arr_time - dep_time. What do you expect to see? What do you see? What do you need to do to fix it?
+
+- We would expect the computed value to be the same as the air_time value however values within arr_time - dep_time are > than air_time
+
+- This is because the values within arr_time and dep_time are displays of times an not in a format to run the calculation of the difference in times. 
+
+- The first step that needs to be completed is to convert arr_time and dep_time to minutes
+
+- However completing this step and calculating the difference between arr_time and dep_time, still does not provide values that are equivalent to those in the air_time column. In fact, some values are negative
+
+- This is likely due to changes in time zone not being accounted for in our calculation. All arrival and departure times will first need to be converted to the same time zone, prior to completing the calculation for the values in both columns to be the same.
+
+
+```{r, message = FALSE, warning = FALSE}
+
+transmute(flights, 
+       air_time,
+       air_time_calculated = arr_time - dep_time,
+       )
+
+# convert arrival time and departure time to hours and minutes
+# this conversion converts midnight (2400) to 1440
+# %% 1440 will convert these values to 0
+
+transmute(flights, 
+       air_time,
+       arr_time_mins = (arr_time %/% 100 *60 + arr_time %% 100 *60) %% 1440,
+       dep_time_mins = (dep_time %/% 100 *60 + dep_time %% 100 *60) %% 1440,
+       arr_dep_diff =  arr_time_mins - dep_time_mins
+       )
+```
+
+#### 3. 
+
+- Compare dep_time, sched_dep_time, and dep_delay. How would you expect those three numbers to be related?
+
+- We would expect dep_delay = dep_time - sched_dep_time
+
+- However running the calculation below, we observe that this is note the case.
+
+- As described above, this is likely due to the values within dep_time and sched_dep_time not being listed in minutes. These conversions would first need to be completed in order to complete this calculation
+
+```{r, message = FALSE, warning = FALSE}
+
+
+transmute (flights, 
+        dep_time, 
+        sched_dep_time, 
+        dep_delay,
+        dep_diff = dep_time - sched_dep_time,
+        difference = dep_delay -dep_diff
+        )
+
+```
+
+#### 4
+
+- Find the 10 most delayed flights using a ranking function. How do you want to handle ties? Carefully read the documentation for min_rank().
+
+- The min_rank() function assigns the same rank, when the values are tied, which makes sense for the type of ranking that we are trying to complete for the purposes of this exercise
+
+- Further, there are no tied values in the top 10 flights that were delayed
+
+```{r, message = FALSE, warning = FALSE}
+
+# create a data frame with delay rank included
+
+ flights1 <- mutate(flights,
+          delay_rank = min_rank(dep_delay)
+          )
+
+flights1
+
+# arrange dataframe in descending order of delay rank
+# use head function to extract first 10 rows that represent the top 10 most delayed flights
+
+head (arrange(flights1, desc(delay_rank)), 10)
+
+
+```
+
+#### 5
+
+- What does 1:3 + 1:10 return? Why?
+- This code returns the following result:
+- 2  4  6  5  7  9  8 10 12 11
+- Which is essentially calculated as follows:
+- 1 + 1, 2 + 2, 3 + 3, 1 + 4, 2 + 5, 3 + 6, 1 + 7, 2 + 8, 3 + 9, 1 + 10
+- since the first vector is smaller than the second, for the, R starts again from the first value of the shorter vector
+
+```{r, message = FALSE, warning = FALSE}
+
+1:3 + 1:10
+
+
+```
+#### 6
+- What trigonometric functions does R provide?
+- All trigonometric functions provided by R can be found under the help documentation for Trig
+
+- R provides the following functions:
+
+  - sine, cosine, tangent coded as sin(x), cos(x), tan(x), respectively
+  - cospi(x) = cos(pi * x), sinpi(x) = sin(pi * x), tanpi(x) = tan(pi *x)
+  - arc-cosine, arc-sine and arc-tangent coded as acos(x), asin(x),atan(x), 
+
+- And finally, atan2(y, x), which provides the angle between the x-axis and the vector from (0,0) to (x, y). 
+
+```{r, message = FALSE, warning = FALSE}
+
+?Trig
+
+```
+
+## 5.6
+
+#### 1.
+
+- Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:
+
+- A flight is 15 minutes early 50% of the time, and 15 minutes late 50% of the time.
+
+- A flight is 15 minutes early 50% of the time, and 15 minutes late 50% of the time.
+
+- A flight is always 10 minutes late.
+
+- A flight is 30 minutes early 50% of the time, and 30 minutes late 50% of the time.
+
+- 99% of the time a flight is on time. 1% of the time it’s 2 hours late.
+
+- Which is more important: arrival delay or departure delay?
+
+
+
+- Ultimately what is most important to consider is what the organizational problem / decision that the data helps inform is.
+
+- Assessing the delay characteristics in the options mentioned above allows for trying to find answers to the root cause of these delays in multiple ways
+
+- If the analysis is used to help understand how to improve airport processes to minimize delays within the departure airport, then departure delay may be more important. 
+
+- Alternatively if the data is used to help understand  airport processes within the arrival airport could be improved, arrival delay would be more important. 
+
+- Further, if the data is used to understand overall costs associated with delays, then both variables may be eqully important to understand in depth.
+
+- Thus, the research question at hand / the organizational problem in question will help determine how best to group data to inform decisions and which variables to focus on
+
+#### 2.
+
+- Come up with another approach that will give you the same output as not_cancelled %>% count(dest) and not_cancelled %>% count(tailnum, wt = distance) (without using count()).
+
+
+```{r}
+
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>%
+  count(dest)
+
+# a total count of flights that were not cancelled by destination is provided
+
+# alternative method to generate this using group_by
+
+not_cancelled %>%
+  group_by(dest)%>%
+  summarise (
+    total_not_cancelled = n()
+                     )
+
+
+not_cancelled %>% count(tailnum, wt = distance)
+
+# alternative without using count
+
+not_cancelled %>%
+  group_by(tailnum)%>%
+  summarise (
+    total = sum(distance)
+  )
+
+
+
+```
+
+#### 3
+
+- Our definition of cancelled flights (is.na(dep_delay) | is.na(arr_delay) ) is slightly suboptimal. Why? Which is the most important column?
+
+- all arr_delay rows = NA however all dep_delay rows are not NA
+- That is, there are rows in which a value is logged for dep_delay yet may be missing for arr_del
+- This may be for flights that perhaps were delayed in taking off and then had to reroute and did not make it to the final destination
+- Thus the most important column is the arr_delay column
+
+
+```{r}
+
+flights %>% 
+  filter(is.na(dep_delay) | is.na(arr_delay)) %>%
+  select (dep_delay, arr_delay)%>%
+  filter (!is.na(arr_delay))
+
+# all arr_delay rows = NA however all dep_delay rows are not NA
+
+
+```
+
+#### 4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+There does not appear to be a recurring or cyclical pattern of cancellations within the month but, per the bar chart, certain days like the 8th day of the month showed substantially more cancellations than other days in 2013. Looking at the proportion of cancelled flights and average delays, there does appear to be a relationship. Specifically, as the average arrival delay increases, the proportion of daily cancellations increases. This relationship appears to be exponential. A simple bivariate correlation shows that this relationship is strong and positive (r = 0.59). 
+
+```{r}
+
+# create summary columns for cancellation counts per day and proportions 
+flights_cancelled <-
+
+  flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  mutate(not_cancelled = (!is.na(arr_delay) | !is.na(dep_delay))) %>%
+  group_by(year,month,day)%>%
+  summarise(
+    cancelled_num = sum(cancelled),
+    not_cancelled_num = sum(not_cancelled), 
+    prop_cancelled = (cancelled_num /(cancelled_num + not_cancelled_num)),
+    delay = mean (arr_delay, na.rm = TRUE)
+  )
+
+
+# show the total number of cancellations per day (totaled over all months)
+flights_cancelled %>% 
+   group_by(day) %>%
+  mutate(cancel_total_per_day = sum(cancelled_num)) %>%
+  select(day, cancel_total_per_day) %>%
+  distinct(day, .keep_all = TRUE)  %>%
+  ggplot(aes(day, cancel_total_per_day)) + geom_bar(stat = "identity") + ggtitle("Total Number of Cancellations per Day of Month") 
+
+# scatter plot shows relationship between avg delay and proportion cancelled 
+# relationship looks exponential 
+flights_cancelled %>% 
+  ggplot(aes(delay, prop_cancelled)) + geom_point() + geom_smooth() 
+
+# simple bivariate correlation shows strong association between avg delay and proportion cancelled 
+cor(flights_cancelled$delay, y = flights_cancelled$prop_cancelled) 
+
+
+```
+
+
+#### 5 
+
+Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about flights %>% group_by(carrier, dest) %>% summarise(n()))
+
+F9, EV, and YV had the highest average delays. US and HA had the lowest average delays in 2013. 
+
+```{r}
+
+flights %>%
+  filter(!is.na(dep_delay)) %>% 
+  group_by(carrier) %>%
+  summarise(carrier_delay = mean(dep_delay)) %>% 
+  arrange(desc(carrier_delay)) 
+
+
+flights %>%
+  group_by(carrier) %>% 
+  filter(!is.na(dep_delay)) %>% 
+  summarize(avg_delay = mean(dep_delay)) 
+
+
+
+```
+
+
+#### 6 
+What does the sort argument to count() do. When might you use it?
+
+The sort argument of the `count()` function allows the user to show the largest groups that were counted at the top of the data frame that is returned. This would be a good argument to use when wanting to print counts in descending order, similar to `arrange(desc(x))`. The code below uses the sort argument in `count()` to show which airlines logged the most flights in the data set. 
+
+```{r}
+
+flights %>%
+  count(carrier, sort = TRUE) 
+```
+
+## 5.7.1
+
+#### 1.
+
+- Refer back to the lists of useful mutate and filtering functions. Describe how each operation changes when you combine it with grouping.
+
+Using `group_by` prior to filtering or mutating means that filters or calculations made will be done to within each level of the grouping variable. As a result, in the example below, when we grouped by month, and then calcualted the average delay, it did so for each month. Mutate returned this number as a new column on the data set. The within month calculations can be seen by the repeating numbers for each row. The repeated numbers are expected since we wanted to take the mean within the month. 
+
+```{r}
+
+flights %>%
+  group_by(month) %>% 
+  filter(!is.na(dep_delay)) %>% 
+  mutate(dep_delay_mean = mean(dep_delay)) %>% 
+  select(month, dep_delay_mean) %>% head(10) 
+
+```
+
+
+
+#### 2.
+
+- Which plane (tailnum) has the worst on-time record?
+- Defining worst on-record time as flight with highest mean arrival delay time
+- N844MH is the plane with the worst on-time record
+
+```{r}
+
+flights %>%
+  filter(!is.na(tailnum), !is.na(arr_time)) %>%
+  group_by(tailnum) %>%
+  summarise(mean_delay = mean(arr_delay, n=n())) %>%
+  arrange (desc(mean_delay))
+  
+```
+
+
+#### 3.
+
+- What time of day should you fly if you want to avoid delays as much as possible?
+- Morning flights at 7 am tend to be the best time to avoid delays as much as possible
+
+```{r}
+
+flights %>%
+  group_by(hour) %>%
+  summarise(mean_delay = mean(arr_delay, n=n())) %>%
+  arrange((mean_delay))
+  
+```
+#### 4.
+
+- For each destination, compute the total minutes of delay. 
+
+```{r}
+
+flights %>%
+  filter(arr_delay >0) %>%
+  group_by(dest) %>%
+  summarise(total_delay = sum(arr_delay, n=n())) %>%
+  arrange((total_delay))
+  
+```
+
+- For each flight, compute the proportion of the total delay for its destination.
+
+```{r}
+
+flights %>%
+  filter(arr_delay >0) %>%
+  group_by(dest) %>%
+  mutate(
+    total_delay = sum(arr_delay),
+    prop_delay = arr_delay / total_delay)%>%
+  arrange((total_delay))
+  
+```
+
+#### 5.
+
+- Delays are typically temporally correlated: even once the problem that caused the initial delay has been resolved, later flights are delayed to allow earlier flights to leave. 
+- Using lag(), explore how the delay of a flight is related to the delay of the immediately preceding flight.
+
+``` {r}
+
+delay_lags <- flights %>%
+  group_by(origin) %>%
+  mutate(dep_delay_lag = lag(dep_delay)) %>%
+  filter(!is.na(dep_delay), !is.na(dep_delay_lag))
+
+
+ggplot(data = delay_lags, mapping = aes(x = dep_delay_lag, y = dep_delay)) +
+          geom_point () +
+  scale_x_continuous(breaks = seq(0, 1500, by = 100)) +
+  labs(y = "Flight Departure Delay", x = "Previous Flight Departure Delay")
+  
+
+
+
+```
+#### 6
+- Look at each destination. Can you find flights that are suspiciously fast? (i.e. flights that represent a potential data entry error). 
+
+Flight DL 1499 had a speed of 703 miles per hour. That is substantially faster than most of the other recorded speeds. It is possible that distance for this flight was entered as kilometers and not miles. 
+
+- Compute the air time of a flight relative to the shortest flight to that destination. Which flights were most delayed in the air?
+
+```{r}
+
+# fast flights
+flights %>%
+  mutate(hour = air_time/60, speed = distance/hour) %>% 
+  arrange(desc(speed)) %>% select(flight, speed) %>% head(10) 
+
+fast_flights <- flights %>%
+  filter(!is.na(air_time))%>%
+  group_by(dest) %>%
+  mutate(
+    shortest_air_time = min(air_time),
+    relative_air_time = air_time / shortest_air_time
+  )%>%
+    arrange (desc(relative_air_time))
+
+fast_flights
+
+
+
+```
+
+#### 7. Find all destinations that are flown by at least two carriers. Use that information to rank the carriers. 
+
+```{r}
+
+flights %>% 
+  group_by(dest, carrier) %>%
+  select(dest, carrier) %>%
+  ungroup() %>% 
+  distinct(dest, carrier) %>% # unique destination and carrier combo 
+  count(dest) %>% arrange(n) # show destinations with only one carrier 
+
+
+# same tidy chunk as above but now filtering out destination not = 1 carrier 
+  
+multiple_carriers <- flights %>% 
+  group_by(dest, carrier) %>%
+  select(dest, carrier) %>%
+  ungroup() %>% 
+  distinct(dest, carrier) %>% 
+  count(dest) %>% filter(!n == 1) 
+
+multiple_carriers %>% 
+  arrange(desc(n)) # shows destinations with greatest number of carriers 
+
+```
+
+
+#### 8. For each plane, count the number of flights before the first delay of greater than 1 hour.
+
+```{r}
+
+flights %>%
+  select(tailnum, year, month,day, dep_delay) %>%
+  filter(!is.na(dep_delay)) %>%
+  arrange(tailnum, year, month, day) %>%
+  group_by(tailnum) %>%
+  mutate(cumulative_min = cumsum(dep_delay)) %>% # using a cumulative function to sequentially add the dep_delay minutes 
+  filter(cumulative_min < 60) %>%
+  count(tailnum) %>% arrange(desc(n)) %>% head(15) # finally show flight number with total number of fligths 'n' prior to its first 60 min delay. Using a header of full data to limit output for report. 
+
+  
+```
+
 # Bulut & Dejardins (2019) Chapter 4 
 ### Wrangling big data with data.table
 
@@ -881,135 +1675,6 @@ melt(descriptive_stats)
 
 
 ```
-
-# Wickham & Grolemund Chapter 5 
-
-
-## 5.6 
-
-#### 4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
-
-There does not appear to be a recurring or cyclical pattern of cancellations within the month but certain days like the 8th day of the month showed substantially more cancellations than other days in 2013. Looking at the proportion of cancelled flights and average delays, there does appear to be a relationship. Specifically, as the average arrival delay increases, the proportion of daily cancellations increases. This relationship appears to be exponential. A simple bivariate correlation shows that this relationship is strong and positive (r = 0.59). 
-
-```{r}
-library(nycflights13) 
-
-nycflights13::flights
-
-# create summary columns for cancellation counts per day and proportions 
-flights_cancelled <-
-
-  flights %>%
-  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
-  mutate(not_cancelled = (!is.na(arr_delay) | !is.na(dep_delay))) %>%
-  group_by(year,month,day)%>%
-  summarise(
-    cancelled_num = sum(cancelled),
-    not_cancelled_num = sum(not_cancelled), 
-    prop_cancelled = (cancelled_num /(cancelled_num + not_cancelled_num)),
-    delay = mean (arr_delay, na.rm = TRUE)
-  )
-
-
-# show the total number of cancellations per day (totaled over all months)
-flights_cancelled %>% 
-   group_by(day) %>%
-  mutate(cancel_total_per_day = sum(cancelled_num)) %>%
-  select(day, cancel_total_per_day) %>%
-  distinct(day, .keep_all = TRUE)  %>%
-  ggplot(aes(day, cancel_total_per_day)) + geom_bar(stat = "identity") + ggtitle("Total Number of Cancellations per Day of Month") 
-
-# scatter plot shows relationship between avg delay and proportion cancelled 
-# relationship looks exponential 
-flights_cancelled %>% 
-  ggplot(aes(delay, prop_cancelled)) + geom_point() + geom_smooth() 
-
-# simple bivariate correlation shows strong association between avg delay and proportion cancelled 
-cor(flights_cancelled$delay, y = flights_cancelled$prop_cancelled) 
-
-
-```
-
-
-#### Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about flights %>% group_by(carrier, dest) %>% summarise(n()))
-
- F9, EV, and YV had the highest average delays. US and HA had the lowest average delays in 2013. 
-
-```{r}
-
-flights %>%
-  filter(!is.na(dep_delay)) %>% 
-  group_by(carrier) %>%
-  summarise(carrier_delay = mean(dep_delay)) %>% 
-  arrange(desc(carrier_delay)) 
-
-
-flights %>%
-  group_by(carrier) %>% 
-  filter(!is.na(dep_delay)) %>% 
-  summarize(avg_delay = mean(dep_delay)) 
-
-flights 
-
-
-```
-
-
-
-### What does the sort argument to count() do. When might you use it?
-
-The sort argument of the `count()` function allows the user to show the largest groups that were counted at the top of the data frame that is returned. This would be a good argument to use when wanting to print counts in descending order, similar to `arrange(desc(x))`. The code below uses the sort argument in `count()` to show which airlines logged the most flights in the data set. 
-
-```{r}
-
-flights %>%
-  count(carrier, sort = TRUE) 
-```
-
-5.7
-
-#### 7. Find all destinations that are flown by at least two carriers. Use that information to rank the carriers. 
-
-```{r}
-
-flights %>% 
-  group_by(dest, carrier) %>%
-  select(dest, carrier) %>%
-  ungroup() %>% 
-  distinct(dest, carrier) %>% # unique destination and carrier combo 
-  count(dest) %>% arrange(n) # show destinations with only one carrier 
-
-
-# same tidy chunk as above but now filtering out destination not = 1 carrier 
-  
-multiple_carriers <- flights %>% 
-  group_by(dest, carrier) %>%
-  select(dest, carrier) %>%
-  ungroup() %>% 
-  distinct(dest, carrier) %>% 
-  count(dest) %>% filter(!n == 1) 
-
-multiple_carriers %>% 
-  arrange(desc(n)) # shows destinations with greatest number of carriers 
-
-```
-
-
-#### 8. For each plane, count the number of flights before the first delay of greater than 1 hour.
-
-```{r}
-
-flights %>%
-  select(tailnum, year, month,day, dep_delay) %>%
-  filter(!is.na(dep_delay)) %>%
-  arrange(tailnum, year, month, day) %>%
-  group_by(tailnum)
-  
-```
-```{r}
-nycflights13::flights
-```
-
 
 
 
