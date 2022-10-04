@@ -508,6 +508,24 @@ library(tidyverse)
 
 
 
+
+
+# Wickham & Grolemund Ch. 6 
+### Workflow: scipts 
+
+## 6.3 Exercises
+#### 1. Go to the RStudio Tips twitter account, https://twitter.com/rstudiotips and find one tip that looks interesting. Practice using it!
+
+Tip from: 
+Dr. Rebecca Hirst @HirstR omg did you know you can access #R #cheatsheets straight from Rstudio?!
+
+I’m heading back under my rock now 🙈 #coding #rstats
+
+To follow Dr. Hirst's tip, in RStudio, go to: File > Help  > Cheat Sheets
+
+#### 2. What other common mistakes will RStudio diagnostics report? Read https://support.rstudio.com/hc/en-us/articles/205753617-Code-Diagnostics to find out.
+Warn if variable used has no definition in scope: Warn if a symbol is used with no definition in the current, or parent, scope. Warn if variable is defined but not used: helps to identify is a variable is created but never used. Provide R style diagnostics (e.g. whitespace): checks to see if your code conforms to Hadley Wickham’s style guide, and reports style warnings when encountered.
+
 # Bulut & Dejardins (2019) Chapter 4 
 ### Wrangling big data with data.table
 
@@ -947,5 +965,52 @@ The sort argument of the `count()` function allows the user to show the largest 
 flights %>%
   count(carrier, sort = TRUE) 
 ```
+
+5.7
+
+#### 7. Find all destinations that are flown by at least two carriers. Use that information to rank the carriers. 
+
+```{r}
+
+flights %>% 
+  group_by(dest, carrier) %>%
+  select(dest, carrier) %>%
+  ungroup() %>% 
+  distinct(dest, carrier) %>% # unique destination and carrier combo 
+  count(dest) %>% arrange(n) # show destinations with only one carrier 
+
+
+# same tidy chunk as above but now filtering out destination not = 1 carrier 
+  
+multiple_carriers <- flights %>% 
+  group_by(dest, carrier) %>%
+  select(dest, carrier) %>%
+  ungroup() %>% 
+  distinct(dest, carrier) %>% 
+  count(dest) %>% filter(!n == 1) 
+
+multiple_carriers %>% 
+  arrange(desc(n)) # shows destinations with greatest number of carriers 
+
+```
+
+
+#### 8. For each plane, count the number of flights before the first delay of greater than 1 hour.
+
+```{r}
+
+flights %>%
+  select(tailnum, year, month,day, dep_delay) %>%
+  filter(!is.na(dep_delay)) %>%
+  arrange(tailnum, year, month, day) %>%
+  group_by(tailnum)
+  
+```
+```{r}
+nycflights13::flights
+```
+
+
+
 
 
