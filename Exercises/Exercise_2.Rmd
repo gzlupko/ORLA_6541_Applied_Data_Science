@@ -18,6 +18,7 @@ library(tidyverse)
 # Tidy Tuesday Challenge 
 
 
+In the following Tidy Tuesday screen cast, David Robinson explores an open-source data set from the National Science Foundation (NSF) that contains the number of PhDs awarded each year by academic discipline. Within discipline, the data set contains broad field, major, and minor disciplines in order of specificity of the students' area of research, respectively. 
 
 A. The original data visualization that inspired that week of Tidy Tuesday.
 B. Information and a link to the dataset.
