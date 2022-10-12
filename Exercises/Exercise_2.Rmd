@@ -1,0 +1,100 @@
+---
+title: "ORLA 6541 Exercise 2"
+author: "Nilima Ajaikumar, Hagay Jalon, Gian Zlupko"
+date: 2022-10-11
+output: html_document
+
+---
+
+Load packages used across exercises 
+
+```{r, message = FALSE}
+library(tidyverse) 
+```
+
+
+
+
+# Tidy Tuesday Challenge 
+
+
+
+A. The original data visualization that inspired that week of Tidy Tuesday.
+B. Information and a link to the dataset.
+C. A paragraph on your plan to improve the data visualization.
+D. The code and your improved data visualization.
+E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
+F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
+
+#### Read in data from GitHub repo 
+
+```{r, message = FALSE}
+library(readr) 
+
+urlfile="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-19/phd_by_field.csv"
+
+phd_raw <- read_csv(url(urlfile)) # store a raw version in case needed later after data cleaning 
+
+# explore data set 
+head(phd_raw) 
+
+# explore structure of data after loading into R 
+str(phd_raw) 
+class(phd_raw)
+
+# store as data frame
+phd_df <- as.data.frame(phd_raw) 
+
+```
+
+### Data Cleaning 
+
+```{r}
+
+# rename field to 'minor field' 
+
+phd_clean <- phd_df %>% 
+  rename(minor_field = field) 
+
+```
+
+
+
+Exploratory data analysis 
+
+
+
+Per the code below, we have gleaned the following facts about the data set: 
+    + There are 10 years captured in the data set ranging from 2008 to 2017
+    + There are 7 broad fields: 
+    + Over the 10 years, life sciences graduated the most PhDs (n = 1,320) and mathematics & computer science the fewest (n = 160)
+    + 
+
+```{r}
+
+# how many years in data set overall? 
+
+phd_clean %>%
+  select(year) %>% 
+  group_by(year) %>% arrange(desc(year)) %>% distinct() 
+
+# how many broad fields?
+
+phd_clean %>%
+  group_by(major_field) %>% 
+  count(major_field) %>% arrange(desc(n)) 
+
+
+# how many major fields in general? 
+
+phd_clean %>% 
+  group_by(major_field) %>%
+  count(major_field) %>% arrange(desc(n)) 
+
+# how many fields per major field on average? 
+
+
+```
+
+
+
