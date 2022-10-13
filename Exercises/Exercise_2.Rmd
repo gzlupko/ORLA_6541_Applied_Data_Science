@@ -7,8 +7,8 @@ output: html_document
 ---
 
 
-# Healy Ch. 4 
-### Show The Right Numbers 
+# Healy Chapter 4
+### "Show The Right Numbers"
 
 
 Libaries used in Ch. 4 exercises 
@@ -143,36 +143,29 @@ p + geom_freqpoly(alpha = 0.5, bins = 20) + labs(color = "State",
 ### A histogram bins observations for one variable and shows a bar with the count in each bin.  We can do this for two variables at once, too. The geom_bin2d() function takes two mappings, x and y. It divides your plot into a grid and colors the bins by the count of observations in them. Try using it on the gapminder data to plot life expectancy versus per capita GDP. Like a histogram, you can vary the number or width of the bins for both x or y. Instead of saying bins = 30 or binwidth = 1, provide a number for both x and y with, for example, bins = c(20, 50). If you specify binwidth instead, you will need to pick values that are on the same scale as the variable you are mapping.
 
 ```{r}
+
+# store object 
 life_expectancy_versus_per_capita_GDP <-  ggplot(data = gapminder, mapping = aes(x = lifeExp, y = gdpPercap))
+
+# plot 
+life_expectancy_versus_per_capita_GDP + geom_bin2d(bins=c(40,60)) 
 ```
 
 
-```{r}
-life_expectancy_versus_per_capita_GDP+
-geom_bin2d(bins=c(40,60))
-```
 
 ### Density estimates can also be drawn in two dimensions. The geom_density_2d() function draws contour lines estimating the joint distribution of two variables. Try it with the midwest data, for example, plotting percent below the poverty line (percbelowpoverty) against percent college-educated (percollege). Try it with and without a geom_point() layer.
 
 ```{r}
 percbelowpoverty_percollege <-  ggplot(data = midwest, mapping = aes(x = percbelowpoverty, y=percollege))
-percbelowpoverty_percollege + geom_density_2d()
-```
+percbelowpoverty_percollege + geom_density_2d() + geom_point() + 
+  labs(x = "% Below Poverty Line", y = "% Attended College", caption = 
+         "Note: Demographic information of midwest counties\n from 2000 US census")  
 
-```{r}
-percbelowpoverty_percollege <-  ggplot(data = midwest, mapping = aes(x = percbelowpoverty, y=percollege))
-percbelowpoverty_percollege + geom_density_2d()+
-  geom_point()
 ```
 
 
-
-
-
-
-
-
-
+# Healy Chapter 5 
+## 
 
 
 
