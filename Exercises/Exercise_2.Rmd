@@ -367,7 +367,7 @@ caption = p_caption)
 elections_historic %>%
   group_by(winner) %>% 
   ggplot(aes(x = popular_pct, y = reorder(winner, popular_pct))) + geom_point() + 
-  labs(title = "Winners of U.S. Presidenial Elections by Percent of Popular Vote", y = "U.S. Presidents", x = "% of Popular Vote")
+  labs(title = "Winners of U.S. Presidenial Elections by Percent of Popular Vote", y = "U.S. Presidents", x = "% of Popular Vote") 
   
 
 ```
