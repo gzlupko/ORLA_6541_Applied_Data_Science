@@ -6,6 +6,179 @@ output: html_document
 
 ---
 
+
+# Healy Ch. 4 
+### Show The Right Numbers 
+
+
+Libaries used in Ch. 4 exercises 
+```{r, message = FALSE}
+library(gapminder)
+library(tidyverse)
+library(socviz)
+```
+
+
+Explore gapminder data set 
+
+```{r}
+head(gapminder) 
+
+gapminder %>% 
+  arrange(desc(gdpPercap)) 
+```
+
+
+### 4.8 Where to Go Next
+
+#### Revisit the gapminder plots at the beginning of the chapter and experiment with different ways to facet the data. Try plotting population and per capita GDP while faceting on year, or even on country. In the latter case you will get a lot of panels, and plotting them straight to the screen may take a long time. Instead, assign the plot to an object and save it as a PDF file to your figures/ folder. Experiment with the height and width of the figure.
+
+
+```{r}
+
+p <- ggplot(data = gapminder, mapping = aes(x = gdpPercap, y = pop))
+p + geom_line(aes(group = country)) + facet_wrap(~year)
+p + facet_wrap(~year)
+
+```
+
+
+```{r}
+Healy_Ch.4_4.8.1 <- p + geom_line(aes(group = country)) + facet_wrap(~country)
+```
+
+```{r}
+ggsave("Healy_4.8.1.pdf", plot=Healy_Ch.4_4.8.1, height=8, width=12)
+```
+
+
+```{r}
+ggsave("Healy_4.8.1.pdf", plot=Healy_Ch.4_4.8.1, height=20, width=40)
+```
+
+
+```{r}
+# in addition, we also generated a separate plot below by filtering down to select European countries while analyzing the same variables for a more manageable viz 
+
+euro_gpd_pop <- gapminder %>% 
+  filter(continent == "Europe", country %in% c("France", "Italy", "Germany", "Turkey")) %>%
+  ggplot(aes(x = gdpPercap, y = pop)) + geom_line() + facet_wrap(~country, ncol = 4)
+
+euro_gpd_pop + geom_smooth(size = 1.1, method = "loess", se = FALSE) + labs(x = "GDP per Captia",
+         y = "Population",
+         title = "GDP per capita on Five Continents")
+```
+
+
+
+
+### Investigate the difference between a formula written as facet_ grid(sex ~ race) and one written as facet_grid(~ sex + race).
+
+```{r}
+Age_Childs <-ggplot(gss_sm,mapping = aes(x = age, y = childs))
+```
+
+
+```{r, warning = FALSE, message = FALSE}
+Age_Childs + 
+  geom_point()+
+  geom_smooth() +
+  facet_grid(sex ~ race)
+```
+
+
+```{r, warning = FALSE, message = FALSE}
+Age_Childs +  
+  geom_point()+ 
+  geom_smooth() + 
+  facet_grid(~sex + race)
+```
+
+facet_ grid(sex ~ race) creates facets breaking out the data by sex (in the rows) and race (in the columns). facet_grid(~ sex + race) creats facets breaking out the data by sex and race using columns only, combining each uniqu race+sex value into a column. 
+
+### Experiment to see what happens when you use facet_wrap() With more complex formulas like facet_wrap(~ sex + race) instead of facet_grid. Like facet_grid(), the facet_ wrap() function can facet on two or more variables at once.  But it will do it by laying the results out in a wrapped one dimensional table instead of a fully cross-classified grid.
+
+```{r, warning = FALSE, message = FALSE}
+Age_Childs +  
+  geom_point() +
+  geom_smooth() + 
+  facet_wrap(~sex + race)
+```
+
+
+### Frequency polygons are closely related to histograms. Instead of displaying the count of observations using bars, they display it with a series of connected lines. You can try the various geom_histogram() calls in this chapter using geom_freqpoly() instead.
+
+```{r, warning = FALSE, message = FALSE}
+p <-  ggplot(data = midwest, mapping = aes(x = area))
+p + geom_freqpoly() + ggtitle("Area of Counties in Midwest") + ylab("Count") + xlab("Area (units unknown)") 
+
+```
+
+
+
+
+```{r}
+# also using frequency polygons to compare differences in distribution of county areas between IL and IN
+
+midwest %>% 
+  filter(state %in% c("IL", "IN")) %>% 
+  ggplot(aes(x = area, fill = state, color = state)) + 
+  geom_freqpoly(bins = 10) + labs(title = "Distribution of County Areas",
+                                  subtitle = "Illinois and Indiana", 
+                                  x = "Area", y = "Count", color = "State")    
+
+```
+
+
+```{r}
+oh_wi <-  c("OH", "WI")
+p <-  ggplot(data = subset(midwest, subset = state %in% oh_wi),
+mapping = aes(x = percollege, fill = state, color = state))
+p + geom_freqpoly(alpha = 0.5, bins = 20) + labs(color = "State", 
+                                                 y = "Count", 
+                                                 x = "Area") 
+```
+
+
+### A histogram bins observations for one variable and shows a bar with the count in each bin.  We can do this for two variables at once, too. The geom_bin2d() function takes two mappings, x and y. It divides your plot into a grid and colors the bins by the count of observations in them. Try using it on the gapminder data to plot life expectancy versus per capita GDP. Like a histogram, you can vary the number or width of the bins for both x or y. Instead of saying bins = 30 or binwidth = 1, provide a number for both x and y with, for example, bins = c(20, 50). If you specify binwidth instead, you will need to pick values that are on the same scale as the variable you are mapping.
+
+```{r}
+life_expectancy_versus_per_capita_GDP <-  ggplot(data = gapminder, mapping = aes(x = lifeExp, y = gdpPercap))
+```
+
+
+```{r}
+life_expectancy_versus_per_capita_GDP+
+geom_bin2d(bins=c(40,60))
+```
+
+### Density estimates can also be drawn in two dimensions. The geom_density_2d() function draws contour lines estimating the joint distribution of two variables. Try it with the midwest data, for example, plotting percent below the poverty line (percbelowpoverty) against percent college-educated (percollege). Try it with and without a geom_point() layer.
+
+```{r}
+percbelowpoverty_percollege <-  ggplot(data = midwest, mapping = aes(x = percbelowpoverty, y=percollege))
+percbelowpoverty_percollege + geom_density_2d()
+```
+
+```{r}
+percbelowpoverty_percollege <-  ggplot(data = midwest, mapping = aes(x = percbelowpoverty, y=percollege))
+percbelowpoverty_percollege + geom_density_2d()+
+  geom_point()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Load packages used across exercises 
 
 ```{r, message = FALSE}
