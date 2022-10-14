@@ -366,10 +366,9 @@ caption = p_caption)
 # Cleveland dot plot for winners of US presidential elections ordered by their share of popular vote received 
 
 elections_historic %>%
-  group_by(winner) %>% 
   ggplot(aes(x = popular_pct, y = reorder(winner, popular_pct))) + geom_point() + 
   labs(title = "Winners of U.S. Presidenial Elections by Percent of Popular Vote", y = "U.S. Presidents", x = "% of Popular Vote") 
-  
+
 
 ```
 
@@ -424,8 +423,6 @@ gapminder %>%
 
 
 
-
-
 ### Get comfortable with grouping, mutating, and summarizing data in pipelines. This will become a routine task as you work with your data. There are many ways that tables can be aggregated and transformed. Remember, group_by() groups your data from left to right, with the rightmost or innermost group being the level calculations will be done at; mutate() adds a column at the current level of grouping; and summarize() aggregates to the next level up. Try creating some grouped objects from the GSS data, calculating frequencies as you learned in this chapter, and then check to see if the totals are what you expect. For example, start by grouping degree by race, like this:
 
 ```{r}
@@ -473,7 +470,6 @@ gss_sm %>% group_by(degree) %>%
 ### Experiment with the gapminder data to practice some of the new geoms we have learned. Try examining population or life expectancy over time using a series of boxplots. (Hint: you may need to use the group aesthetic in the aes() call.) Can you facet this boxplot by continent? Is anything different if you create a tibble from gapminder that explicitly groups the data by year and continent first, and then create your plots with that?
 
 
-
 ```{r}
 # boxplot with life expectancy over time (years)
 ggplot(gapminder, aes(x=year, y=lifeExp, group=continent)) + 
@@ -514,8 +510,8 @@ gapminder %>%
 
 ```{r}
 # violin plot 
-ggplot(gapminder, aes(x=year, y=lifeExp, group=continent, fill=continent)) + 
-  geom_violin() 
+ggplot(gapminder, aes(x=year, y=lifeExp, group= continent, fill=continent)) + 
+  geom_violin() + facet_wrap(~continent) 
 ```
 
 
@@ -548,8 +544,6 @@ gapminder %>%
 
 
 ```
-
-
 
 
 
@@ -622,7 +616,6 @@ phds_by_year <- phd_clean %>%
 
 
 Exploratory data analysis 
-
 
 
 Per the code below, we have gleaned the following facts about the data set: 
