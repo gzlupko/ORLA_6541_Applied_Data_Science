@@ -16,6 +16,7 @@ Libaries used in Ch. 4 exercises
 library(gapminder)
 library(tidyverse)
 library(socviz)
+library(ggrepel)
 ```
 
 
@@ -397,21 +398,45 @@ caption = p_caption)+
 ### The main action verbs in the dplyr library are group_by(), filter(), select(), summarize(), and mutate(). Practice with them by revisiting the gapminder data to see if you can reproduce a pair of graphs from chapter 1, shown here again in figure 5.28. You will need to filter some rows, group the data by continent, and calculate the mean life expectancy by continent before beginning the plotting process.
 
 ```{r}
-Life_exp_2007 <- gapminder %>% filter(year==2007) %>% group_by(continent) %>% select(year, continent, lifeExp) %>% summarise(con_mean=mean(lifeExp))
-```
-```{r}
-Life_exp_2007
+library(ggthemes) # used below for the minimal theme 
+
+# first, using mutate to calculate avg. life expectancy 
+gapminder %>% 
+  filter(year == 2007) %>% 
+  select(continent, lifeExp) %>% 
+  group_by(continent) %>% 
+  mutate(continent_mean = mean(lifeExp)) %>% 
+  ggplot(aes(x = continent_mean, y = reorder(continent, continent_mean))) + geom_point() + 
+  labs(title = "Mean Life Expectancy in 2007 by Continent", x = "Life Expectancy (Years)", 
+       y = "Continent") + theme_minimal() 
+
+# same plot as above but using summarize instead of mutate to calculate means 
+gapminder %>% 
+  filter(year == 2007) %>% 
+  select(continent, lifeExp) %>% group_by(continent) %>% 
+  summarize(exp_mean = mean(lifeExp)) %>%
+  ggplot(aes(x = exp_mean, y = reorder(continent, exp_mean))) + geom_point() + 
+  labs(title = "Mean Life Expectancy in 2007 by Continent", x = "Life Expectancy (Years)", 
+       y = "Continent") + theme_minimal() 
+
+
 ```
 
 
-**Don't know**
+
+
 
 ### Get comfortable with grouping, mutating, and summarizing data in pipelines. This will become a routine task as you work with your data. There are many ways that tables can be aggregated and transformed. Remember, group_by() groups your data from left to right, with the rightmost or innermost group being the level calculations will be done at; mutate() adds a column at the current level of grouping; and summarize() aggregates to the next level up. Try creating some grouped objects from the GSS data, calculating frequencies as you learned in this chapter, and then check to see if the totals are what you expect. For example, start by grouping degree by race, like this:
 
 ```{r}
-gss_sm %>% group_by(race, degree) %>% summarize(N = n()) %>%
-mutate(pct = round(N/sum(N) * 100, 0))
+# Healy example: 
+gss_sm %>% group_by(race, degree) %>%
+    summarize(N = n()) %>%
+    mutate(pct = round(N / sum(N)*100, 0)) 
 ```
+
+
+
 ```{r}
 gss_sm %>% group_by(race, degree) %>% summarize(N = n()) %>%
 mutate(pct = round(N/sum(N) * 100, 0)) %>% summarize(total = sum(pct))
@@ -427,6 +452,7 @@ gss_sm %>% group_by(region, degree) %>% summarize(N = n()) %>%
 mutate(pct = round(N/sum(N) * 100, 0)) 
 ```
 
+
 ```{r}
 gss_sm %>% group_by(region, degree) %>% summarize(N = n()) %>%
 mutate(pct = round(N/sum(N) * 100, 0))%>% summarize(total = sum(pct))
@@ -437,108 +463,91 @@ As expected, this sums to 100 within each region, with a bit of rounding error.
 
 
 ```{r}
-gss_sm %>% group_by(degree) %>% summarize(childsmean=mean(childs, na.rm=TRUE), childsmedian=median(childs, na.rm=TRUE))
+gss_sm %>% group_by(degree) %>% 
+  summarize(childsmean=mean(childs, na.rm=TRUE), 
+            childsmedian=median(childs, na.rm=TRUE))
 ```
 
 ### dplyr has a large number of helper functions that let you summarize data in many different ways. The vignette on window functions included with the dplyr documentation is a good place to begin learning about these. You should also look at chapter 3 of Wickham & Grolemund (2016) for more information on transforming data with dplyr.
 
 ### Experiment with the gapminder data to practice some of the new geoms we have learned. Try examining population or life expectancy over time using a series of boxplots. (Hint: you may need to use the group aesthetic in the aes() call.) Can you facet this boxplot by continent? Is anything different if you create a tibble from gapminder that explicitly groups the data by year and continent first, and then create your plots with that?
 
-**UNSURE**
-
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=lifeExp, group=continent))
-p+geom_boxplot()
-```
 
 
 ```{r}
-p <- ggplot(gapminder, aes(x=year, y=lifeExp))
-p+geom_boxplot(aes(group=continent))+
-  facet_wrap(~continent)
+# boxplot with life expectancy over time (years)
+ggplot(gapminder, aes(x=year, y=lifeExp, group=continent)) + 
+  geom_boxplot() 
+
+# same as above but first grouping by year and continent first and grouping by year to show life expectancy distributions within continent across years 
+
+gapminder %>% 
+  group_by(continent, year) %>% 
+  ggplot(aes(x = year, y = lifeExp, group = year)) + geom_boxplot() + facet_wrap(~continent) 
+
 ```
 
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=pop, group=continent))
-p+geom_boxplot()
-```
+
 ### Read the help page for geom_boxplot() and take a look at the notch and varwidth options. Try them out to see how they change the look of the plot.
 
-**unsure**
+```{r, message = FALSE}
 
-```{r}
-?geom_boxplot
+#?geom_boxplot() # view geom_boxplot() documentation 
+
+# notched boxplot 
+gapminder %>% 
+  filter(continent == "Europe") %>% 
+  ggplot(aes(x  = year, y = lifeExp, group = year)) + geom_boxplot(notch = TRUE)
+
+# adjust varwidth options 
+gapminder %>% 
+  filter(continent == "Europe") %>% 
+  ggplot(aes(x  = year, y = lifeExp, group = year)) + geom_boxplot(varwidth = TRUE)
+
+
 ```
-
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=lifeExp, group=continent))
-p+geom_boxplot(varwidth=TRUE)
-```
-
-
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=lifeExp, group=continent))
-p+geom_boxplot(notch=TRUE)
-```
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=pop, group=continent))
-p+geom_boxplot(varwidth=TRUE)
-```
-
-
-```{r}
-p <- ggplot(gapminder, aes(x=year, y=pop, group=continent))
-p+geom_boxplot(notch=TRUE)
-```
-```{r}
-p <- gapminder %>% group_by(year, continent)
-```
-
-
 
 
 
 ### As an alternative to geom_boxplot(), try geom_violin() for a similar plot but with a mirrored density distribution instead of a box and whiskers.
 
-**same issue, unsure**
 
 ```{r}
-p <- ggplot(gapminder, aes(x=year, y=lifeExp, group=continent, fill=continent))
-p+geom_violin()
+# violin plot 
+ggplot(gapminder, aes(x=year, y=lifeExp, group=continent, fill=continent)) + 
+  geom_violin() 
 ```
-
 
 
 ### geom_pointrange() is one of a family of related geoms that produce different kinds of error bars and ranges, depending on your specific needs. They include geom_linerange(), geom_crossbar(), and geom_errorbar(). Try them out using gapminder or organdata to see how they differ.
 
-**unsure**
 
 ```{r}
-p <- ggplot(data = organdata, mapping = aes(x = roads, y = donors,
-color = world))
-p + geom_pointrange(ymin=0, ymax=35) 
+
+# geom error bar 
+lower = 0
+upper = 90
+
+gapminder %>%
+  ggplot(aes(x = continent, y = lifeExp)) + geom_col(position = "dodge") +
+ geom_errorbar(aes(ymin = lower, ymax = upper), position = "dodge", width = 0.25)
+
+
+# point range 
+gapminder %>% 
+   filter(continent == "Africa") %>%  
+  ggplot(aes(x = year, y = lifeExp, group = year, 
+                     ymin= 20, ymax= 80)) + geom_pointrange() 
+
+# geom_crossbar 
+gapminder %>% 
+  filter(continent %in% c("Africa", "Europe"), year %in% c(1952, 1962, 1997))  %>% 
+  group_by(continent) %>% 
+  mutate(year = as.factor(year), pop_mean = mean(pop)) %>%
+  ggplot(aes(x = year, y = pop_mean, group = continent,color = continent, ymin = 4500000, ymax = 20000000)) + geom_crossbar() 
+
+
 ```
-
-```{r}
-p <- ggplot(data = organdata, mapping = aes(x = roads, y = donors,
-color = world))
-p + geom_linerange(ymin=0, ymax=35) 
-```
-
-```{r}
-p <- ggplot(data = organdata, mapping = aes(x = roads, y = donors,
-color = world))
-p + geom_crossbar(ymin=0, ymax=35) 
-```
-
-
-
-```{r}
-p <- ggplot(data = organdata, mapping = aes(x = roads, y = donors, color=world))
-p + geom_errorbar(ymin=0, ymax=35) 
-```
-
-
 
 
 
