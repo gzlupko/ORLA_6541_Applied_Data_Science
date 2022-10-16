@@ -959,10 +959,10 @@ knitr::include_graphics("robinson_phds_by_year.png", error = FALSE)
 
 #### B. Information and a link to the data set.
 
-The data set that was originally presented in the Tidy Tuesday screencast can be found here at the following link: 
+The data set that was originally presented in the Tidy Tuesday screen cast can be found here at the following link: 
 https://github.com/rfordatascience/tidytuesday/blob/master/data/2019/2019-02-19/phd_by_field.csv
 
-For each academic discipline, the data set contains multiple levels of distinctions between academic area of study. Specifically, the data set has categories for broad field, major, and minor disciplines. Broad fields are umbrella disciplines with multiple sub-disciplines nested within each broad field. For example, in the following code chunk we see the various disciplines that are nested within the Health Sciences field, which are in turn rolled-up under the Life Sciences broad field. 
+For each academic discipline, the data set contains multiple levels of distinctions between academic area of study. Specifically, the data set has categories for broad field, major, and minor disciplines. Broad fields are umbrella disciplines with multiple sub-disciplines nested within. For example, in the following code chunk we see the various disciplines that are nested within the Health Sciences field, which are in turn rolled-up under the Life Sciences broad field. 
 
 ```{r}
 library(tidyverse) 
@@ -985,7 +985,7 @@ phd_df %>%
 
 #### C. A paragraph on your plan to improve the data visualization.
 
-We propose ___ steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply ____ principles, each of which are discussed in greater detail below in our section on the application of Gestalt theory. Second, drawing on recommendations from Reyes, we plan to add a title that connects to the key narrative that we wish to convey in our updated plot. Similar to the Gestalt principles that we apply, by providing a more targeted title, we intend to reduce the cognitive load required of our audience when viewing the plot. Finally, to satisfy our own curiosity, we have decided to hone in on a more limited range of the overall data set to explore trends in the current decade. 
+We propose ____ main steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply five principles, each of which are discussed in greater detail below in our section on the application of Gestalt theory. Second, to satisfy our own curiosity, we have decided to hone in on a more limited range of the overall data set to explore trends in the current decade. 
 
 
 #### D. The code and your improved data visualization.
@@ -1015,27 +1015,7 @@ phds_by_year <- phd_clean %>%
 
 II. Improved visualization 
 ```{r}
-
-library(ggtext) 
-
-phds_by_year %>%
-  mutate(highlight = ifelse(field=="Education", "Education", "Other Fields")) %>%
-  ggplot(aes(x=year, y=num_degrees, group= field, color=highlight, size=highlight)) +
-    geom_line() +
-    scale_color_manual(values = c("#69b3a2", "grey50")) +
-    scale_size_manual(values=c(1.5,0.2)) +
-    theme(legend.position="none") +
-  labs(
-    title = "The number of PhDs in education are decreasing each year", y = "Number of PhDs Awarded", x = "Year")  +
-    geom_label( x= 2, y= 3,label="Education PhDs on Decline", size=4, color="#69b3a2") +
-      theme(
-      legend.position="none",
-      plot.title = element_text(size=14))
-
-
-title = "<strong><span style='color:#ff8c00'>#python</span></strong></b> and <strong><span style='color:#346299'>#rstats</strong></b>: Comparing 1,000 random tweets"
-
-
+library(ggtext) # used to successfully render HTML code for color words in title 
 
 phds_by_year %>%
   mutate(highlight = ifelse(field=="Education", "Education", "Other Fields")) %>%
@@ -1059,83 +1039,24 @@ phds_by_year %>%
 
 
 
-```{r}
-library(viridis) 
-
-phds_by_year %>%
-  ggplot(aes(x = year, y= num_degrees, group = field)) +
-    geom_line(aes(group=field), color="grey", size=0.5, alpha=0.5) +
-    geom_line(aes(color=field), color="#69b3a2", size=1.2 )+
-    scale_color_viridis(discrete = TRUE) +
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=14),
-      panel.grid = element_blank()
-    ) +
-    ggtitle("PhDs awarded by Field: 2008 to 2016") +
-    facet_wrap(~field)
-```
-
-
-
-
 
 #### E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
+
+As mentioned in our plan above, we applied five principles for enhancing data visualizations vis-a-vis Schwabish (2021) that draw on insights from Gestalt theory and visual perception research. The following paragraphs state the principle that we used and discuss our process of applying the principle to enhance the original visualization. 
+
+The first two principles that we leveraged from Schwabish (2021)'s writing on Gestalt and visual perception research were to 'show the data' and 'start with gray'. By showing the data, Schwabish recommends that analysts should, when possible, limit the use or salience of data that is not relevant to the analysis in focus. For our Tidy Tuesday revision, while we enjoyed seeing Robinson's trend lines for all academic disciplines, we felt that the chart was bordering on what would be considered a 'spaghetti chart'. In particular, we felt that Robinson's visualization of 7 simultaneous trend lines placed too much cognitive demand on the audience. Thus, in applying the 'show the data' principle, we chose to highlight just one trend line, PhDs awarded in education. To do so, we isolated the education trends line through the application of the second principle of 'starting with gray'. For this principle, Schwabish suggests that by making all chart elements gray at the outset of a project, the analyst becomes more strategic in their application of color to the chart. This was true for our Tidy Tuesday revision. By starting with gray, we forced ourselves to restrict our use of color in order to make the education trend line stand out. 
+
+The next principle from Schwabish (2021) that we applied was to integrate chart graphics and text. Specifically, by focusing on our selective use of color, we formatted the word 'education' in our chart title to match the color of the education trend line. This principle of integrating chart and text elements connects to Gestalt theorist' work on similarity and pre-attentive processing. Gestalt theories in similarity draw on the phenomenon that humans tend to perceive elements that share similar characteristics as being related to one another. Building off of similarity, pre-attentive processing describes unconscious cognitive processes that occur in relation to patterns in the visual field. Analysts can leverage the Gestalt notion of similarity, say, to prime an audience to pre-attentively perceive connections between otherwise disparate elements in a visual field. For our project, our selective use of color for the chart title and trend line was a deliberate attempt to prime our audience to unconsciously perceive the connection between these features of our visualization. 
+
+Having integrated chart and text elements, we were then ready to reduce clutter, a fourth principle of Schwabish's. Scwabish (2021) suggests that the unnecessary use of visualization elements can be distracting to readers. We identified that while the original visualization's use of a legend in the line plot was necessary for identifying the academic disciplines in his plot, we no longer had a need for a legend following the application of the aforementioned principles. Finally, after the above processes, our last enhancement to the original Tidy Tuesday visualization was to apply a title that was written like a headline. Schwabish recommends that, as often as possible, titles for data visualizations should be written in a way that underscores what a reader should learn from a visualization. By doing so, titles that are focused on conveying a particular message to the reader minimizes processing requirements placed on a reader during encoding phase of visual processing. Moreover, and perhaps as a result, Schwabish cites research that suggests that so-called 'active titles' are associated with greater recall in participant recollection of information conveyed through data visualization. Thus, for our project, we crafted a title that spoke directly to the narrative that we wished to higlight, which was that the number of education PhDs awarded in the U.S. has declined over the past decade. 
+
+
 
 #### F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
 
 
-
-
-
-### Data Cleaning 
-
-
-
-
-
-Exploratory data analysis 
-
-
-Per the code below, we have gleaned the following facts about the data set: 
-    + There are 10 years captured in the data set ranging from 2008 to 2017
-    + There are 7 broad fields: 
-    + Over the 10 years, life sciences graduated the most PhDs (n = 1,320) and mathematics & computer science the fewest (n = 160)
-    + 
-
-```{r}
-
-# how many years in data set overall? 
-
-phd_clean %>%
-  select(year) %>% 
-  group_by(year) %>% arrange(desc(year)) %>% distinct() 
-
-# how many broad fields?
-
-phd_clean %>%
-  group_by(major_field) %>% 
-  count(major_field) %>% arrange(desc(n)) 
-
-
-# how many major fields in general? 
-
-phd_clean %>% 
-  group_by(major_field) %>%
-  count(major_field) %>% arrange(desc(n)) 
-
-# how many fields per major field on average? 
-
-
-```
-
-
-[insert David Robinson's line graph]
-
-
-
-
-
+- HTML formatting was difficult at first; adopted a trial and error approach with the HTML code since it was new to us. Finally, we got the word 'education' in the chart title correctly colored. 
+- the chart annotation positioning was not straight forward to us as well. In particular, we could not immediately figure out how to place the annotation on the correct spot in our chart space. The annotation wasn't showing up when we were attempting to set the x-values for the chart position to years. We realized however that since we had re-formatted our year variable to a factor data type, ggplot wanted us to refer to the level of year (e.g. 1 through 10) for the x-value as opposed to the actual year. Once we made this connection to the data type for our year variable, we were able to place the annotation in our desired spot on the chart. 
 
 
 
