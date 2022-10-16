@@ -856,8 +856,7 @@ The alluvial plot indicates that parental support for student achievement does v
 
 - Replicate the science-by-region histogram below as a density plot and use plotly to make it interactive.
 
-
-- Sciencce-by-Region Histogram
+- Science-by-Region Histogram
 
 ```{r}
 
@@ -868,7 +867,6 @@ ggplot(data = dat,
        title = "Science Scores by Gender and Region") +
   facet_grid(. ~ sex) +
   theme_bw()
-
 ```
 - Science-by-Region Density Plot made interactive using plotly
 - alpha = 0.5
@@ -892,10 +890,6 @@ ggplotly(p5)
 
 # Review with Gian
 
-- Which version is better for examining the science score distribution?
-  - The alpha = 0.5 version is better for reviewing the science score distribution as transparency allows for a better view 
-  - of the full distribution of the plot of the different regions  
-  - The opacity of the alpha = 0.8 plot conceals much of the plot of the regions plotted behind
 
 ```{r}
 
@@ -910,6 +904,12 @@ p6 <- ggplot(data = dat,
 ggplotly(p6)
 
 ```
+
+
+#### Which version is better for examining the science score distribution?
+
+* The alpha = 0.5 version is better for reviewing the science score distribution as transparency allows for a better view of the full distribution of the plot of the different regions. 
+* In contrast, the opacity of the alpha = 0.8 plot conceals much of the plot of the regions plotted behind. While the interactive elements in the plotly viz are captivating, it is more difficult to draw comparisons between the regional distrbutions in this chart than the first chart. 
 
 ## Exercise 5.9 
 
