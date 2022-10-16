@@ -747,12 +747,12 @@ Visualizing multiple variables
 
 Interpretation:
 
-*What can we say about the regions based on the plots below?
+* What can we say about the regions based on the plots below?
   *  First, in the ggppairs visualization, we see that across all regions, there is a strong positive correlation between students' science, reading and math scores. 
-  *   In addition, while difficult to distinguish between regions in the dot plot in the ggpairs chart above, we see the same strong positive correlations visually indicated. 
+  *   In addition, while difficult to distinguish between regions in the scatter plots in the ggpairs chart above, we see the same strong positive correlations visually indicated.  
 
 * Do you see any major gender differences for reading, science, or math?
-  * Visual inspection of the boxplots in the ggpairs visualization revealed that the median math scores for male students were greater in almost all of the world regions in this data set. For reading, female student reading scores were greater than male student scores in Europe, Australia, and Asia. 
+  * Visual inspection of the boxplots in the ggpairs visualization revealed that the median math scores for male students were greater in almost all of the world regions in this data set. For reading, female student reading scores were greater than male student scores in Europe, Australia, and Asia. That being said, these differences appear small via visual inspection and further statistical analysis would be necessary to support these conclusions. 
 
 * What is the relationship among reading, science, or math?
   * As discussed above the relationship between reading, science, and math are all strong and positive (r = 0.89 to r = 0.92). 
@@ -760,7 +760,7 @@ Interpretation:
 
 
 
-# Review interpretation below with Gian
+
 
 ## Exercise 5.3.1
 
@@ -786,7 +786,8 @@ ggplot(data = dat_small,
 
 * Overall, across all regions and both genders, socio-economic status holds a positive relationship with Math scores. Specifically, higher math scores are associated with higher levels of SES across regions and genders. 
 * That being said, the relationship does appear to be different across region. For example, the relationship between math scores and SES is stronger in Asia than it is in N. America. Thus, it is likely that region moderates the relationship between math and SES, so yes we believe it changes across region.
-* For gender, it is less clear if the relationship between math and SES changes by gender. Visual inspection does not reveal any pattern of differences between male and female students on the relationship between math and SES. 
+* Additionally, we see that mean math scores are greater for some regions than for others. For example, in Asia the greater mean math score appears to be larger than that of North America. 
+* For gender, it is less clear if the relationship between math and SES changes by gender. Visual inspection does not reveal noticeable patterns of differences between male and female students on the relationship between math and SES. 
 
 
 
@@ -811,7 +812,7 @@ head(dat_alluvial2)
 
 dat_alluvial2 %>% arrange(desc(Freq)) 
 
-#perform pairwise t-tests with Bonferroni's correction
+# cleaned colum names 
 dat_alluvial2 <- dat_alluvial2 %>% 
   rename(parent_support = ST123Q02NA) %>%
   mutate(sex = as.factor(sex), 
@@ -825,11 +826,10 @@ dat_alluvial2
 ```
 
 
-# Review with Gian
-#stat_statum error message (defunct argument, turned warning message off)
-# Interpretation
 
-- Use this dataset to draw the alluvial plot plot. 
+
+
+- Use this data set to draw the alluvial plot plot. 
 
 ```{r, warning = FALSE}
 
@@ -848,7 +848,7 @@ ggplot(data = dat_alluvial2,
 
 #### How should we interpret the plot (e.g., for each region)?
 
-The alluvial plot indicates that parental support for student achievement does vary by region but within regions, there does not seem to be a difference between gender and level of parental achievement. Stated another way, there appears to be a main effect of region on parental level of support for achievement but no interaction between region and gender on parental support. Examples from the alluvial plot illustate these observations. For example, regarding the variation in parental achievement due to region, the alluvial plot shows that some regions have low parent support and others have high levels. In particular, notice the region at the bottom of the alluvial plot. This region has low overall parental support in contrast to the region at the top of the plot which shows data flow into the greater parental support category. Regarding variation due to gender, we see no significant differences between gender both within region and overall. For example, the aforementioned region at the bottom of the plot shows no difference in level of parental achievement reported for males and females. The same is true within all other regions shown in the plot.
+There are multiple trends that are apparent from the alluvial plot. First, we see that there is variation within all regions for parental support. That is, we see that each region has different levels of parent support for their students. Second, in comparing regions, we see that some regions have, on average, a higher level of parental support for their students. For example, in the bottom region on the plot, we see that by and large, the region has a lower level of parent support than, say, the region at the top of the plot. Finally, while within each region there is variation on parental support, the proportion of each level of parental support remains consistent between genders in each region. 
 
 
 
@@ -888,9 +888,6 @@ ggplotly(p5)
 - alpha = 0.8
 
 
-# Review with Gian
-
-
 ```{r}
 
 p6 <- ggplot(data = dat,
@@ -909,7 +906,7 @@ ggplotly(p6)
 #### Which version is better for examining the science score distribution?
 
 * The alpha = 0.5 version is better for reviewing the science score distribution as transparency allows for a better view of the full distribution of the plot of the different regions. 
-* In contrast, the opacity of the alpha = 0.8 plot conceals much of the plot of the regions plotted behind. While the interactive elements in the plotly viz are captivating, it is more difficult to draw comparisons between the regional distrbutions in this chart than the first chart. 
+* In contrast, the opacity of the alpha = 0.8 plot conceals much of the plot of the regions plotted behind. While the interactive elements in the plotly viz are captivating, it is more difficult to draw comparisons between the regional distributions in this chart than the first chart. 
 
 ## Exercise 5.9 
 
@@ -972,7 +969,6 @@ library(tidyverse)
 library(readr) 
 
 urlfile="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-19/phd_by_field.csv"
-
 phd_raw <- read_csv(url(urlfile)) # store a raw version in case needed later after data cleaning 
 
 # store as data frame
@@ -989,49 +985,16 @@ phd_df %>%
 
 #### C. A paragraph on your plan to improve the data visualization.
 
-We propose ___ steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply ____ principles, each of which are discussed in our below section on the application of Gestalt theory. Second, drawing on recommendations from ____, we plan to add a title that connects to the key narrative that we wish to convey in our updated plot. Similar to the Gestalt principles that we apply, by providng a more targeted title, we intend to reduce the cognitive load required of our audience when viewing the plot. 
+We propose ___ steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply ____ principles, each of which are discussed in greater detail below in our section on the application of Gestalt theory. Second, drawing on recommendations from Reyes, we plan to add a title that connects to the key narrative that we wish to convey in our updated plot. Similar to the Gestalt principles that we apply, by providing a more targeted title, we intend to reduce the cognitive load required of our audience when viewing the plot. Finally, to satisfy our own curiosity, we have decided to hone in on a more limited range of the overall data set to explore trends in the current decade. 
 
 
 #### D. The code and your improved data visualization.
 
-#### E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
 
-#### F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
-
-
-Load packages used across exercises and import raw data 
-
-```{r, message = FALSE}
-library(tidyverse) 
-library(readr) 
-```
-
-
-#### Read in data from GitHub repo 
-
-```{r, message = FALSE}
-library(readr) 
-
-urlfile="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-19/phd_by_field.csv"
-
-phd_raw <- read_csv(url(urlfile)) # store a raw version in case needed later after data cleaning 
-
-# store as data frame
-phd_df <- as.data.frame(phd_raw) 
-
-# example of 20 rows showing the various levels of field stored in the data set
-head(phd_df %>%
-  group_by(broad_field, major_field, field) %>% 
-  distinct(major_field), 20)  
-
-```
-
-### Data Cleaning 
-
+I. Data Cleaning 
 ```{r}
 
 # rename field to 'minor field' 
-
 phd_clean <- phd_df %>% 
   rename(minor_field = field) 
 
@@ -1041,13 +1004,93 @@ phd_clean <- phd_clean %>%
   mutate(field = as.factor(broad_field), 
          year = as.factor(year))  
 
+# for our line plot, we will visualize the average degrees awarded each year by field 
 phds_by_year <- phd_clean %>% 
   filter(!is.na(n_phds)) %>%
   group_by(year, field) %>% 
   summarize(num_degrees = mean(n_phds)) 
 
+```
+
+
+II. Improved visualization 
+```{r}
+
+library(ggtext) 
+
+phds_by_year %>%
+  mutate(highlight = ifelse(field=="Education", "Education", "Other Fields")) %>%
+  ggplot(aes(x=year, y=num_degrees, group= field, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#69b3a2", "grey50")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+  labs(
+    title = "The number of PhDs in education are decreasing each year", y = "Number of PhDs Awarded", x = "Year")  +
+    geom_label( x= 2, y= 3,label="Education PhDs on Decline", size=4, color="#69b3a2") +
+      theme(
+      legend.position="none",
+      plot.title = element_text(size=14))
+
+
+title = "<strong><span style='color:#ff8c00'>#python</span></strong></b> and <strong><span style='color:#346299'>#rstats</strong></b>: Comparing 1,000 random tweets"
+
+
+
+phds_by_year %>%
+  mutate(highlight = ifelse(field=="Education", "Education", "Other Fields")) %>%
+  ggplot(aes(x=year, y=num_degrees, group= field, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#69b3a2", "grey50")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+  labs(
+    title = "<strong><span style='color:#000000'>The number of PhDs in <strong><span style='color:#69b3a2'>education </strong></b>have decreased in recent years")  +
+    geom_label(x= 4, y = 180,label="Education PhDs in decline", size=4, color="#69b3a2") +
+      theme(
+      legend.position="none",
+      plot.title = element_text(size=14)) + theme(plot.title = element_markdown())
 
 ```
+
+
+
+
+
+
+
+```{r}
+library(viridis) 
+
+phds_by_year %>%
+  ggplot(aes(x = year, y= num_degrees, group = field)) +
+    geom_line(aes(group=field), color="grey", size=0.5, alpha=0.5) +
+    geom_line(aes(color=field), color="#69b3a2", size=1.2 )+
+    scale_color_viridis(discrete = TRUE) +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank()
+    ) +
+    ggtitle("PhDs awarded by Field: 2008 to 2016") +
+    facet_wrap(~field)
+```
+
+
+
+
+
+#### E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
+
+#### F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
+
+
+
+
+
+### Data Cleaning 
+
+
 
 
 
@@ -1090,54 +1133,8 @@ phd_clean %>%
 [insert David Robinson's line graph]
 
 
-```{r}
-
-phd_clean
-library(ggtext) 
-
-# line plot with selective attuning for education PhD degrees 
-phds_by_year
-phds_by_year %>%
-  ggplot(aes(x = year, y = num_degrees, group = field, color = field)) + geom_line() 
 
 
-phds_by_year %>%
-  mutate(highlight = ifelse(field=="Education", "Education", "Other Fields")) %>%
-  ggplot(aes(x=year, y=num_degrees, group= field, color=highlight, size=highlight)) +
-    geom_line() +
-    scale_color_manual(values = c("#69b3a2", "grey50")) +
-    scale_size_manual(values=c(1.5,0.2)) +
-    theme(legend.position="none") +
-  labs(
-    title = "The number of PhDs in education are decreasing each year", y = "Number of PhDs Awarded", x = "Year")  +
-    geom_label( x= 2, y= 3,label="Education PhDs on Decline", size=4, color="#69b3a2") +
-      theme(
-      legend.position="none",
-      plot.title = element_text(size=14))
-
-
-```
-
-
-
-
-
-```{r}
-library(viridis) 
-
-phds_by_year %>%
-  ggplot(aes(x = year, y= num_degrees, group = field)) +
-    geom_line(aes(group=field), color="grey", size=0.5, alpha=0.5) +
-    geom_line(aes(color=field), color="#69b3a2", size=1.2 )+
-    scale_color_viridis(discrete = TRUE) +
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=14),
-      panel.grid = element_blank()
-    ) +
-    ggtitle("PhDs awarded by Field: 2008 to 2016") +
-    facet_wrap(~field)
-```
 
 
 
