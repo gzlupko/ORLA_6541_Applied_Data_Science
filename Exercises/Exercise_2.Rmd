@@ -985,7 +985,7 @@ phd_df %>%
 
 #### C. A paragraph on your plan to improve the data visualization.
 
-We propose ____ main steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply five principles, each of which are discussed in greater detail below in our section on the application of Gestalt theory. Second, to satisfy our own curiosity, we have decided to hone in on a more limited range of the overall data set to explore trends in the current decade. 
+We propose two main steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply five principles, each of which are discussed in greater detail below in our section on the application of Gestalt theory. Second, to enhance the visualization's ability to convey a meaningful story, we have decided to limit the overall dates presented in the overall data and to focus on one academic discipline as opposed to all 7 broad fields. Our processes for accomplishing each of these goals is detailed in section E below. 
 
 
 #### D. The code and your improved data visualization.
@@ -1025,15 +1025,13 @@ phds_by_year %>%
     scale_size_manual(values=c(1.5,0.2)) +
     theme(legend.position="none") +
   labs(
-    title = "<strong><span style='color:#000000'>The number of PhDs in <strong><span style='color:#69b3a2'>education </strong></b>have decreased in recent years")  +
+    title = "<strong><span style='color:#000000'>The number of PhDs in <strong><span style='color:#69b3a2'>education </strong></b>have decreased in recent years", x = "Year", y = "Degrees Awarded")  +
     geom_label(x= 4, y = 180,label="Education PhDs in decline", size=4, color="#69b3a2") +
       theme(
       legend.position="none",
       plot.title = element_text(size=14)) + theme(plot.title = element_markdown())
 
 ```
-
-
 
 
 
@@ -1054,9 +1052,9 @@ Having integrated chart and text elements, we were then ready to reduce clutter,
 
 #### F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
 
+We experienced two issues during our revision of the visualization that we selected. Both issues occurred when we were applying Schwabish's (2021) recommendation to integrate graph and text elements. First, we experienced difficulty coloring the single word 'education' in our title to the color of the trend line. We quickly learned that in order to change specific title colors, we needed the library `ggtext` installed. Our biggest hang-up was learning how to format the HTML code that is applied within a ggplot2 code chunk in order to tell R which word needs to be formatted. After trial and error, we were able to correctly color the word 'education' to match the trend line. 
 
-- HTML formatting was difficult at first; adopted a trial and error approach with the HTML code since it was new to us. Finally, we got the word 'education' in the chart title correctly colored. 
-- the chart annotation positioning was not straight forward to us as well. In particular, we could not immediately figure out how to place the annotation on the correct spot in our chart space. The annotation wasn't showing up when we were attempting to set the x-values for the chart position to years. We realized however that since we had re-formatted our year variable to a factor data type, ggplot wanted us to refer to the level of year (e.g. 1 through 10) for the x-value as opposed to the actual year. Once we made this connection to the data type for our year variable, we were able to place the annotation in our desired spot on the chart. 
+The second challenge that we ran into was positioning the chart annotation in the correct coordinates in the graph. Through early iteration and attempts, it was not immediately clear to us why we could not place the annotation on the correct spot in our chart space. The annotation wasn't showing up when we were attempting to set the x-values for the chart position to years. We realized however that since we had previously re-formatted our year variable to a factor data type. This meant that we were not able to specify the exact year to provide an index for our x-axis placement of the annotation. Instead, with a factor data type, ggplot wanted us to refer to the level of year (e.g. 1 through 10) for the x-value. Once we made this connection to the data type for our year variable, we were able to place the annotation in our desired spot on the chart. 
 
 
 
