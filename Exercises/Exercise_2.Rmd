@@ -766,15 +766,9 @@ Interpretation:
 
 - Create a scatterplot of socio-economic status (ESCS) and math scores (math) across regions (region) and gender (sex). 
 
-- Do you think that the relationship between ESCS and math changes across gender and regions?
 
-  - Overall, across all regions and both genders, socio-economic status holds a positive relationship with Math scores,
-  - ie higher math scores indicate, higher socio-economic status
-  - The relationship between seems to be comparable between genders within each region
 
-  
-
-``` {r}
+``` {r, message = FALSE, warning = FALSE}
 
 ggplot(data = dat_small,
        mapping = aes(x = ESCS, y = math)) +
@@ -787,9 +781,18 @@ ggplot(data = dat_small,
 
 ```
 
+
+#### Do you think that the relationship between ESCS and math changes across gender and regions?
+
+* Overall, across all regions and both genders, socio-economic status holds a positive relationship with Math scores. Specifically, higher math scores are associated with higher levels of SES across regions and genders. 
+* That being said, the relationship does appear to be different across region. For example, the relationship between math scores and SES is stronger in Asia than it is in N. America. Thus, it is likely that region moderates the relationship between math and SES, so yes we believe it changes across region.
+* For gender, it is less clear if the relationship between math and SES changes by gender. Visual inspection does not reveal any pattern of differences between male and female students on the relationship between math and SES. 
+
+
+
 ## Exercise 5.6.1
 
-- Create an alluvial plot for the survey item (ST119Q01NA) of whether students want top grades in most or all courses by region (Region) and gender (sex).
+- Create an alluvial plot for the survey item (ST123Q02NA) of parent support for educational achievement by region (Region) and gender (sex).
 
 - Below we create the summary dataset (dat_alluvial2) for this plot. 
 
@@ -797,32 +800,43 @@ ggplot(data = dat_small,
 
 dat_alluvial2 <- dat[,
                      .(Freq = .N),
-                     by = c("Region", "sex", "ST119Q01NA")
+                     by = c("Region", "sex", "ST123Q02NA")
                      ][,
-                       ST119Q01NA := as.factor(ifelse(ST119Q01NA == "", "Missing", ST119Q01NA))]
+                       ST119Q01NA := as.factor(ifelse(ST123Q02NA == "", "Missing", ST123Q02NA))]
 
-levels(dat_alluvial2$ST119Q01NA) <- c("Strongly disagree", "Disagree", "Agree",
+levels(dat_alluvial2$ST123Q02NA) <- c("Strongly disagree", "Disagree", "Agree",
                                       "Strongly agree", "Missing")
 
 head(dat_alluvial2)
+
+dat_alluvial2 %>% arrange(desc(Freq)) 
+
+#perform pairwise t-tests with Bonferroni's correction
+dat_alluvial2 <- dat_alluvial2 %>% 
+  rename(parent_support = ST123Q02NA) %>%
+  mutate(sex = as.factor(sex), 
+         Region = as.factor(Region), 
+         parent_support = as.factor(parent_support)) %>% 
+  filter(!is.na(parent_support)) 
+
+dat_alluvial2
+
 
 ```
 
 
 # Review with Gian
-#stat_statum error message
+#stat_statum error message (defunct argument, turned warning message off)
 # Interpretation
 
 - Use this dataset to draw the alluvial plot plot. 
 
-- How should we interpret the plot (e.g., for each region)?
-
-```{r}
+```{r, warning = FALSE}
 
 # StatStratum <- StatStratum
 
 ggplot(data = dat_alluvial2,
-       aes(axis1 = Region, axis2 = ST119Q01NA, y = Freq)) +
+       aes(axis1 = Region, axis2 = parent_support, y = Freq, label = after_stat(stratum))) +
   scale_x_discrete(limits = c("Region", "Parents supporting\nachievement"),
                    expand = c(.1, .05)) +
   geom_alluvium(aes(fill = sex)) +
@@ -830,8 +844,12 @@ ggplot(data = dat_alluvial2,
   geom_text(stat = "stratum", label.strata = TRUE) +
   labs(x = "Demographics", y = "Frequency", fill = "Gender") +
   theme_bw()
-
 ```
+
+#### How should we interpret the plot (e.g., for each region)?
+
+The alluvial plot indicates that parental support for student achievement does vary by region but within regions, there does not seem to be a difference between gender and level of parental achievement. Stated another way, there appears to be a main effect of region on parental level of support for achievement but no interaction between region and gender on parental support. Examples from the alluvial plot illustate these observations. For example, regarding the variation in parental achievement due to region, the alluvial plot shows that some regions have low parent support and others have high levels. In particular, notice the region at the bottom of the alluvial plot. This region has low overall parental support in contrast to the region at the top of the plot which shows data flow into the greater parental support category. Regarding variation due to gender, we see no significant differences between gender both within region and overall. For example, the aforementioned region at the bottom of the plot shows no difference in level of parental achievement reported for males and females. The same is true within all other regions shown in the plot.
+
 
 
 ## Exercise 5.7.1
