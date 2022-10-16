@@ -949,17 +949,57 @@ ggplotly(p8)
 # Tidy Tuesday Challenge 
 
 
-In the following Tidy Tuesday screen cast, David Robinson explores an open-source data set from the National Science Foundation (NSF) that contains the number of PhDs awarded each year by academic discipline. Within discipline, the data set contains broad field, major, and minor disciplines in order of specificity of the students' area of research, respectively. 
+In a Tidy Tuesday screen cast originally presented in February 2021, David Robinson explored an open-source data set from the National Science Foundation (NSF) that contains the number of PhDs awarded each year by academic discipline. For this assignment, we have revised the below visualizations that David Robinson created to show the number of PhDs awarded by field over time. 
 
-A. The original data visualization that inspired that week of Tidy Tuesday.
-B. Information and a link to the dataset.
-C. A paragraph on your plan to improve the data visualization.
-D. The code and your improved data visualization.
-E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
-F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
+#### A. The original data visualization that inspired that week of Tidy Tuesday.
+```{r echo = FALSE, out.width = "100%"} 
+knitr::include_graphics("robinson_phds_by_year.png", error = FALSE)
+``` 
 
 
-Load packages used across exercises 
+
+
+
+#### B. Information and a link to the data set.
+
+The data set that was originally presented in the Tidy Tuesday screencast can be found here at the following link: 
+https://github.com/rfordatascience/tidytuesday/blob/master/data/2019/2019-02-19/phd_by_field.csv
+
+For each academic discipline, the data set contains multiple levels of distinctions between academic area of study. Specifically, the data set has categories for broad field, major, and minor disciplines. Broad fields are umbrella disciplines with multiple sub-disciplines nested within each broad field. For example, in the following code chunk we see the various disciplines that are nested within the Health Sciences field, which are in turn rolled-up under the Life Sciences broad field. 
+
+```{r}
+library(tidyverse) 
+library(readr) 
+
+urlfile="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-19/phd_by_field.csv"
+
+phd_raw <- read_csv(url(urlfile)) # store a raw version in case needed later after data cleaning 
+
+# store as data frame
+phd_df <- as.data.frame(phd_raw) 
+
+# example of 10 rows showing the various levels of field stored in the data set
+phd_df %>%
+  group_by(broad_field, major_field, field) %>% 
+    filter(major_field == "Health sciences") %>% head(10) 
+
+```
+
+
+
+#### C. A paragraph on your plan to improve the data visualization.
+
+We propose ___ steps to improve David Robinson's line graph of PhDs awarded by field over time. First, to enhance the line graph's ability to convey differences in degrees awarded by field over time, we will apply principles of Gestalt psychology to the visualization. In particular, we plan to apply ____ principles, each of which are discussed in our below section on the application of Gestalt theory. Second, drawing on recommendations from ____, we plan to add a title that connects to the key narrative that we wish to convey in our updated plot. Similar to the Gestalt principles that we apply, by providng a more targeted title, we intend to reduce the cognitive load required of our audience when viewing the plot. 
+
+
+#### D. The code and your improved data visualization.
+
+#### E. A few paragraphs on how the data visualization addresses the issues with Gestalt theory and the visual perception research.
+
+#### F. A brief discussion of any major issues, snags, or hurdles you ran into and overcame during the process.
+
+
+Load packages used across exercises and import raw data 
 
 ```{r, message = FALSE}
 library(tidyverse) 
@@ -976,15 +1016,13 @@ urlfile="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/da
 
 phd_raw <- read_csv(url(urlfile)) # store a raw version in case needed later after data cleaning 
 
-# explore data set 
-head(phd_raw) 
-
-# explore structure of data after loading into R 
-str(phd_raw) 
-class(phd_raw)
-
 # store as data frame
 phd_df <- as.data.frame(phd_raw) 
+
+# example of 20 rows showing the various levels of field stored in the data set
+head(phd_df %>%
+  group_by(broad_field, major_field, field) %>% 
+  distinct(major_field), 20)  
 
 ```
 
