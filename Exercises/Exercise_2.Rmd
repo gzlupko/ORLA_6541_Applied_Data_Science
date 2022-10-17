@@ -1,16 +1,16 @@
 ---
 title: "ORLA 6541 Exercise 2"
 author: "Nilima Ajaikumar, Hagay Jalon, Gian Zlupko"
-date: 2022-10-11
+date: 2022-10-17
 output: html_document
 
 ---
 
 
+Note: To organize our responses, questions in the book chapters appear in bold text. We've done the same for each section of the Tidy Tuesday assignment prompt. 
+
 # Healy Chapter 4
 ### "Show The Right Numbers"
-
-Note: To organize our responses, questions in the book chapters appear in bold text along with section prompts for the Tidy Tuesday assignment. 
 
 
 Libaries used in Ch. 4 exercises 
@@ -568,7 +568,7 @@ pisa <- fread("random6.csv", na.strings = "")
 #pisa <- fread("region6.csv",na.strings = "")
 
 # check data
-head(pisa)
+#head(pisa)  # not print for the HTML file as it returns a large output 
 
 ```
 
