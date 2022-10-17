@@ -10,6 +10,8 @@ output: html_document
 # Healy Chapter 4
 ### "Show The Right Numbers"
 
+Note: To organize our responses, questions in the book chapters appear in bold text along with section prompts for the Tidy Tuesday assignment. 
+
 
 Libaries used in Ch. 4 exercises 
 ```{r, message = FALSE}
@@ -23,10 +25,8 @@ library(ggrepel)
 Explore gapminder data set 
 
 ```{r}
-head(gapminder) 
-
-gapminder %>% 
-  arrange(desc(gdpPercap)) 
+head(gapminder %>% 
+       arrange(desc(gdpPercap))) 
 ```
 
 
@@ -35,12 +35,10 @@ gapminder %>%
 #### Revisit the gapminder plots at the beginning of the chapter and experiment with different ways to facet the data. Try plotting population and per capita GDP while faceting on year, or even on country. In the latter case you will get a lot of panels, and plotting them straight to the screen may take a long time. Instead, assign the plot to an object and save it as a PDF file to your figures/ folder. Experiment with the height and width of the figure.
 
 
-```{r}
-
+```{r, message = FALSE, warning = FALSE}
 p <- ggplot(data = gapminder, mapping = aes(x = gdpPercap, y = pop))
 p + geom_line(aes(group = country)) + facet_wrap(~year)
 p + facet_wrap(~year)
-
 ```
 
 
@@ -58,7 +56,7 @@ ggsave("Healy_4.8.1.pdf", plot=Healy_Ch.4_4.8.1, height=20, width=40)
 ```
 
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 # in addition, we also generated a separate plot below by filtering down to select European countries while analyzing the same variables for a more manageable viz 
 
 euro_gpd_pop <- gapminder %>% 
@@ -73,7 +71,7 @@ euro_gpd_pop + geom_smooth(size = 1.1, method = "loess", se = FALSE) + labs(x = 
 
 
 
-### Investigate the difference between a formula written as facet_ grid(sex ~ race) and one written as facet_grid(~ sex + race).
+#### Investigate the difference between a formula written as facet_ grid(sex ~ race) and one written as facet_grid(~ sex + race).
 
 ```{r}
 Age_Childs <-ggplot(gss_sm,mapping = aes(x = age, y = childs))
@@ -97,7 +95,7 @@ Age_Childs +
 
 facet_ grid(sex ~ race) creates facets breaking out the data by sex (in the rows) and race (in the columns). facet_grid(~ sex + race) creats facets breaking out the data by sex and race using columns only, combining each uniqu race+sex value into a column. 
 
-### Experiment to see what happens when you use facet_wrap() With more complex formulas like facet_wrap(~ sex + race) instead of facet_grid. Like facet_grid(), the facet_ wrap() function can facet on two or more variables at once.  But it will do it by laying the results out in a wrapped one dimensional table instead of a fully cross-classified grid.
+#### Experiment to see what happens when you use facet_wrap() With more complex formulas like facet_wrap(~ sex + race) instead of facet_grid. Like facet_grid(), the facet_ wrap() function can facet on two or more variables at once.  But it will do it by laying the results out in a wrapped one dimensional table instead of a fully cross-classified grid.
 
 ```{r, warning = FALSE, message = FALSE}
 Age_Childs +  
@@ -107,7 +105,7 @@ Age_Childs +
 ```
 
 
-### Frequency polygons are closely related to histograms. Instead of displaying the count of observations using bars, they display it with a series of connected lines. You can try the various geom_histogram() calls in this chapter using geom_freqpoly() instead.
+#### Frequency polygons are closely related to histograms. Instead of displaying the count of observations using bars, they display it with a series of connected lines. You can try the various geom_histogram() calls in this chapter using geom_freqpoly() instead.
 
 ```{r, warning = FALSE, message = FALSE}
 p <-  ggplot(data = midwest, mapping = aes(x = area))
@@ -120,14 +118,12 @@ p + geom_freqpoly() + ggtitle("Area of Counties in Midwest") + ylab("Count") + x
 
 ```{r}
 # also using frequency polygons to compare differences in distribution of county areas between IL and IN
-
 midwest %>% 
   filter(state %in% c("IL", "IN")) %>% 
   ggplot(aes(x = area, fill = state, color = state)) + 
   geom_freqpoly(bins = 10) + labs(title = "Distribution of County Areas",
                                   subtitle = "Illinois and Indiana", 
                                   x = "Area", y = "Count", color = "State")    
-
 ```
 
 
@@ -141,10 +137,9 @@ p + geom_freqpoly(alpha = 0.5, bins = 20) + labs(color = "State",
 ```
 
 
-### A histogram bins observations for one variable and shows a bar with the count in each bin.  We can do this for two variables at once, too. The geom_bin2d() function takes two mappings, x and y. It divides your plot into a grid and colors the bins by the count of observations in them. Try using it on the gapminder data to plot life expectancy versus per capita GDP. Like a histogram, you can vary the number or width of the bins for both x or y. Instead of saying bins = 30 or binwidth = 1, provide a number for both x and y with, for example, bins = c(20, 50). If you specify binwidth instead, you will need to pick values that are on the same scale as the variable you are mapping.
+#### A histogram bins observations for one variable and shows a bar with the count in each bin.  We can do this for two variables at once, too. The geom_bin2d() function takes two mappings, x and y. It divides your plot into a grid and colors the bins by the count of observations in them. Try using it on the gapminder data to plot life expectancy versus per capita GDP. Like a histogram, you can vary the number or width of the bins for both x or y. Instead of saying bins = 30 or binwidth = 1, provide a number for both x and y with, for example, bins = c(20, 50). If you specify binwidth instead, you will need to pick values that are on the same scale as the variable you are mapping.
 
 ```{r}
-
 # store object 
 life_expectancy_versus_per_capita_GDP <-  ggplot(data = gapminder, mapping = aes(x = lifeExp, y = gdpPercap))
 
@@ -153,8 +148,7 @@ life_expectancy_versus_per_capita_GDP + geom_bin2d(bins=c(40,60))
 ```
 
 
-
-### Density estimates can also be drawn in two dimensions. The geom_density_2d() function draws contour lines estimating the joint distribution of two variables. Try it with the midwest data, for example, plotting percent below the poverty line (percbelowpoverty) against percent college-educated (percollege). Try it with and without a geom_point() layer.
+#### Density estimates can also be drawn in two dimensions. The geom_density_2d() function draws contour lines estimating the joint distribution of two variables. Try it with the midwest data, for example, plotting percent below the poverty line (percbelowpoverty) against percent college-educated (percollege). Try it with and without a geom_point() layer.
 
 ```{r}
 percbelowpoverty_percollege <-  ggplot(data = midwest, mapping = aes(x = percbelowpoverty, y=percollege))
@@ -178,7 +172,7 @@ library(socviz)
 
 The following code chunks were developed as practice before answering the 'Where to Next' questions in the chapter. 
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 rel_by_region <-  gss_sm %>%
 group_by(bigregion, religion) %>%
 summarize(N = n()) %>%
@@ -280,7 +274,7 @@ caption = p_caption)
 
 ### We covered several new functions and data aggregation techniques in this chapter. You should practice working with them.
 
-### The subset() function is very useful when used in conjunction with a series of layered geoms. Go back to your code for the presidential elections plot (fig. 5.18) and redo it so that it shows all the data points but only labels elections since 1992. You might need to look again at the elections_historic data to see what variables are available to you. You can also experiment with subsetting by political party, or changing the colors of the points to reflect the winning party.
+#### The subset() function is very useful when used in conjunction with a series of layered geoms. Go back to your code for the presidential elections plot (fig. 5.18) and redo it so that it shows all the data points but only labels elections since 1992. You might need to look again at the elections_historic data to see what variables are available to you. You can also experiment with subsetting by political party, or changing the colors of the points to reflect the winning party.
 
 
 ```{r}
@@ -357,23 +351,18 @@ labs(x = x_label, y = y_label, title = p_title, subtitle = p_subtitle,
 caption = p_caption)
 ```
 
-### Use geom_point() and reorder() to make a Cleveland dotplot of all presidential elections, ordered by share of the popular vote.
-
+#### Use geom_point() and reorder() to make a Cleveland dotplot of all presidential elections, ordered by share of the popular vote.
 
 
 ```{r}
-
 # Cleveland dot plot for winners of US presidential elections ordered by their share of popular vote received 
-
 elections_historic %>%
   ggplot(aes(x = popular_pct, y = reorder(winner, popular_pct))) + geom_point() + 
   labs(title = "Winners of U.S. Presidenial Elections by Percent of Popular Vote", y = "U.S. Presidents", x = "% of Popular Vote") 
 
-
 ```
 
-### Try using annotate() to add a rectangle that lightly colors the entire upper left quadrant of figure 5.18.
-
+#### Try using annotate() to add a rectangle that lightly colors the entire upper left quadrant of figure 5.18.
 
 ```{r}
 p_title <-  "Presidential Elections: Popular & Electoral College Margins"
@@ -394,9 +383,9 @@ caption = p_caption)+
   annotate("rect", xmin = 0.3, xmax=0.5, ymin =0.5, ymax=1, fill="red", alpha=0.1)
 ```
 
-### The main action verbs in the dplyr library are group_by(), filter(), select(), summarize(), and mutate(). Practice with them by revisiting the gapminder data to see if you can reproduce a pair of graphs from chapter 1, shown here again in figure 5.28. You will need to filter some rows, group the data by continent, and calculate the mean life expectancy by continent before beginning the plotting process.
+#### The main action verbs in the dplyr library are group_by(), filter(), select(), summarize(), and mutate(). Practice with them by revisiting the gapminder data to see if you can reproduce a pair of graphs from chapter 1, shown here again in figure 5.28. You will need to filter some rows, group the data by continent, and calculate the mean life expectancy by continent before beginning the plotting process.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 library(ggthemes) # used below for the minimal theme 
 
 # first, using mutate to calculate avg. life expectancy 
@@ -423,9 +412,9 @@ gapminder %>%
 
 
 
-### Get comfortable with grouping, mutating, and summarizing data in pipelines. This will become a routine task as you work with your data. There are many ways that tables can be aggregated and transformed. Remember, group_by() groups your data from left to right, with the rightmost or innermost group being the level calculations will be done at; mutate() adds a column at the current level of grouping; and summarize() aggregates to the next level up. Try creating some grouped objects from the GSS data, calculating frequencies as you learned in this chapter, and then check to see if the totals are what you expect. For example, start by grouping degree by race, like this:
+#### Get comfortable with grouping, mutating, and summarizing data in pipelines. This will become a routine task as you work with your data. There are many ways that tables can be aggregated and transformed. Remember, group_by() groups your data from left to right, with the rightmost or innermost group being the level calculations will be done at; mutate() adds a column at the current level of grouping; and summarize() aggregates to the next level up. Try creating some grouped objects from the GSS data, calculating frequencies as you learned in this chapter, and then check to see if the totals are what you expect. For example, start by grouping degree by race, like this:
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 # Healy example: 
 gss_sm %>% group_by(race, degree) %>%
     summarize(N = n()) %>%
@@ -441,7 +430,7 @@ mutate(pct = round(N/sum(N) * 100, 0)) %>% summarize(total = sum(pct))
 
 As expected, this sums to 100 within each race, with a bit of rounding error.
 
-### This code is similar to what you saw earlier but more compact. (We calculate the pct values directly.) Check that the results are as you expect by grouping by race and summing the percentages. Try doing the same exercise grouping by sex or region.
+#### This code is similar to what you saw earlier but more compact. (We calculate the pct values directly.) Check that the results are as you expect by grouping by race and summing the percentages. Try doing the same exercise grouping by sex or region.
 
 
 ```{r}
@@ -456,7 +445,7 @@ mutate(pct = round(N/sum(N) * 100, 0))%>% summarize(total = sum(pct))
 ```
 As expected, this sums to 100 within each region, with a bit of rounding error.
 
-### Try summary calculations with functions other than sum. Can you calculate the mean and median number of children by degree? (Hint: the childs variable in gss_sm has children as a numeric value.)
+#### Try summary calculations with functions other than sum. Can you calculate the mean and median number of children by degree? (Hint: the childs variable in gss_sm has children as a numeric value.)
 
 
 ```{r}
@@ -465,7 +454,7 @@ gss_sm %>% group_by(degree) %>%
             childsmedian=median(childs, na.rm=TRUE))
 ```
 
-### dplyr has a large number of helper functions that let you summarize data in many different ways. The vignette on window functions included with the dplyr documentation is a good place to begin learning about these. You should also look at chapter 3 of Wickham & Grolemund (2016) for more information on transforming data with dplyr.
+#### dplyr has a large number of helper functions that let you summarize data in many different ways. The vignette on window functions included with the dplyr documentation is a good place to begin learning about these. You should also look at chapter 3 of Wickham & Grolemund (2016) for more information on transforming data with dplyr.
 
 ### Experiment with the gapminder data to practice some of the new geoms we have learned. Try examining population or life expectancy over time using a series of boxplots. (Hint: you may need to use the group aesthetic in the aes() call.) Can you facet this boxplot by continent? Is anything different if you create a tibble from gapminder that explicitly groups the data by year and continent first, and then create your plots with that?
 
@@ -476,7 +465,6 @@ ggplot(gapminder, aes(x=year, y=lifeExp, group=continent)) +
   geom_boxplot() 
 
 # same as above but first grouping by year and continent first and grouping by year to show life expectancy distributions within continent across years 
-
 gapminder %>% 
   group_by(continent, year) %>% 
   ggplot(aes(x = year, y = lifeExp, group = year)) + geom_boxplot() + facet_wrap(~continent) 
@@ -484,7 +472,7 @@ gapminder %>%
 ```
 
 
-### Read the help page for geom_boxplot() and take a look at the notch and varwidth options. Try them out to see how they change the look of the plot.
+#### Read the help page for geom_boxplot() and take a look at the notch and varwidth options. Try them out to see how they change the look of the plot.
 
 ```{r, message = FALSE}
 
@@ -505,17 +493,25 @@ gapminder %>%
 
 
 
-### As an alternative to geom_boxplot(), try geom_violin() for a similar plot but with a mirrored density distribution instead of a box and whiskers.
-
+#### As an alternative to geom_boxplot(), try geom_violin() for a similar plot but with a mirrored density distribution instead of a box and whiskers.
 
 ```{r}
-# violin plot 
-ggplot(gapminder, aes(x=year, y=lifeExp, group= continent, fill=continent)) + 
+# violin plot 1 
+ggplot(gapminder, aes(x=year, y=lifeExp, group= year, fill=continent)) + 
   geom_violin() + facet_wrap(~continent) 
+
+# violin plot 2
+
+gapminder %>%
+  filter(year %in% c("1957", "2007"), !continent == "Oceania") %>% 
+  ggplot(aes(x = year, y = lifeExp, group = year, fill = year)) + geom_violin() + facet_wrap(~continent) + 
+  theme(legend.position = "none") + labs(title = "Life Expectancy in 1952 and 2007 by Continent", 
+                                         x = "Year", y = "Life Expectancy") 
+
 ```
 
 
-### geom_pointrange() is one of a family of related geoms that produce different kinds of error bars and ranges, depending on your specific needs. They include geom_linerange(), geom_crossbar(), and geom_errorbar(). Try them out using gapminder or organdata to see how they differ.
+#### geom_pointrange() is one of a family of related geoms that produce different kinds of error bars and ranges, depending on your specific needs. They include geom_linerange(), geom_crossbar(), and geom_errorbar(). Try them out using gapminder or organdata to see how they differ.
 
 
 ```{r}
@@ -550,7 +546,7 @@ gapminder %>%
 # Bulut & Desjadins - Chapter 5
 ### Visulizing Big Data 
 
-# Load relevant packages
+Load relevant packages
 
 ```{r package-setup, message = FALSE, warning = FALSE}
 
@@ -563,10 +559,8 @@ library("cowplot")
 library("data.table")
 ```
 
-# Chapter 5 - Bulut & Dejardines (2019) Excercises
 
-
-## Retrieve region6 which is a subset of the pisa dataset
+First, we retrieve region6 which is a subset of the pisa data set. Additionally, before answering the questions in the chapter, we perform code cleaning tasks that were applied to the data set in Ch.4 to ready the data for visualization. 
 
 ```{r }
 
@@ -576,10 +570,10 @@ pisa <- fread("random6.csv", na.strings = "")
 # check data
 head(pisa)
 
-
 ```
 
-## Recode variables
+
+Recode variables
 
 ```{r}
 
@@ -589,11 +583,8 @@ bin.to.num <- function(x) {
   else if (x == "No") 0L
   
 }
-```
 
-## Recode variables
 
-```{r}
 #Create and recode variables
 pisa[, `:=` 
      (female = ifelse(ST004D01T == "Female", 1, 0),
@@ -617,11 +608,10 @@ pisa[, `:=`
 pisa[, `:=`
      (math = rowMeans(pisa[, c(paste0("PV", 1:10, "MATH"))], na.rm = TRUE),reading = rowMeans(pisa[, c(paste0("PV", 1:10, "READ"))], na.rm = TRUE), science = rowMeans(pisa[, c(paste0("PV", 1:10, "SCIE"))], na.rm = TRUE))]
 
-
 ```
 
 
-## Filter big data based on a list of countries (called "country")
+Filter big data based on a list of countries (called "country")
 
 ```{r}
 
@@ -641,7 +631,7 @@ dat <- pisa[CNT %in% country,
             ]
 ```
 
-## Create additional variables for data visualization
+Create additional variables for data visualization
 
 ```{r}
 
@@ -681,9 +671,7 @@ head(dat)
 
 ## Exercise 5.2.1
 
-- Create a plot of math scores over countries with different colors based on region. 
-- The first plot below was generated using the geom_point(aes(color = Region)) argument
-- The second plot below was generated using the geom_violin(aes(color = Region)) argument
+#### A. Create a plot of math scores over countries with different colors based on region. How long did it take to create both plots? Which one is a better way to visualize this type of data?
 
 - Both plots were easy to generate and did not take long
 - The second plot is a better way to visualize this type of data 
@@ -760,13 +748,9 @@ Interpretation:
 
 
 
+### Exercise 5.3.1
 
-
-## Exercise 5.3.1
-
-- Create a scatterplot of socio-economic status (ESCS) and math scores (math) across regions (region) and gender (sex). 
-
-
+#### Create a scatte rplot of socioeconomic status (ESCS) and math scores (math) across regions (region) and gender (sex). 
 
 ``` {r, message = FALSE, warning = FALSE}
 
@@ -791,11 +775,11 @@ ggplot(data = dat_small,
 
 
 
-## Exercise 5.6.1
+### Exercise 5.6.1
 
-- Create an alluvial plot for the survey item (ST123Q02NA) of parent support for educational achievement by region (Region) and gender (sex).
+#### Create an alluvial plot for the survey item (ST123Q02NA) of parent support for educational achievement by region (Region) and gender (sex).
 
-- Below we create the summary dataset (dat_alluvial2) for this plot. 
+Below we create the summary data set (dat_alluvial2) for this plot. 
 
 ```{r}
 
@@ -826,10 +810,7 @@ dat_alluvial2
 ```
 
 
-
-
-
-- Use this data set to draw the alluvial plot plot. 
+Next, we use this data set to draw the alluvial plot plot. 
 
 ```{r, warning = FALSE}
 
@@ -852,11 +833,11 @@ There are multiple trends that are apparent from the alluvial plot. First, we se
 
 
 
-## Exercise 5.7.1
+### Exercise 5.7.1
 
-- Replicate the science-by-region histogram below as a density plot and use plotly to make it interactive.
+#### Replicate the science-by-region histogram below as a density plot and use plotly to make it interactive.
 
-- Science-by-Region Histogram
+Science-by-Region Histogram: 
 
 ```{r}
 
@@ -868,8 +849,8 @@ ggplot(data = dat,
   facet_grid(. ~ sex) +
   theme_bw()
 ```
-- Science-by-Region Density Plot made interactive using plotly
-- alpha = 0.5
+
+Next, we present a science-by-Region Density Plot made interactive using plotly with alpha = 0.5: 
 
 ```{r}
 
@@ -884,8 +865,9 @@ p5 <- ggplot(data = dat,
 ggplotly(p5)
 
 ```
-- Science-by-Region Density Plot made interactive using plotly
-- alpha = 0.8
+
+
+Science-by-Region Density Plot made interactive using plotly with alpha = 0.8: 
 
 
 ```{r}
@@ -908,7 +890,7 @@ ggplotly(p6)
 * The alpha = 0.5 version is better for reviewing the science score distribution as transparency allows for a better view of the full distribution of the plot of the different regions. 
 * In contrast, the opacity of the alpha = 0.8 plot conceals much of the plot of the regions plotted behind. While the interactive elements in the plotly viz are captivating, it is more difficult to draw comparisons between the regional distributions in this chart than the first chart. 
 
-## Exercise 5.9 
+### Exercise 5.9 
 
 
 - Plot 1: Reading Scores by Gender and Region
@@ -946,7 +928,7 @@ ggplotly(p8)
 # Tidy Tuesday Challenge 
 
 
-In a Tidy Tuesday screen cast originally presented in February 2021, David Robinson explored an open-source data set from the National Science Foundation (NSF) that contains the number of PhDs awarded each year by academic discipline. For this assignment, we have revised the below visualizations that David Robinson created to show the number of PhDs awarded by field over time. 
+In a Tidy Tuesday screen cast originally presented in February 2021, David Robinson explored an open-source data set from the National Science Foundation (NSF) that contains the number of PhDs awarded each year by academic discipline. For this assignment, we have revised the below visualizations that David Robinson created during the screen cast to show the number of PhDs awarded by field over time. 
 
 #### A. The original data visualization that inspired that week of Tidy Tuesday.
 ```{r echo = FALSE, out.width = "100%"} 
