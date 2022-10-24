@@ -23,7 +23,6 @@ mtcars data set
 mtcars 
 data_mat <- as.matrix(mtcars) 
 
-
 ```
 
 Installation for ComplexHeatmap package 
@@ -31,6 +30,15 @@ Installation for ComplexHeatmap package
 #library(devtools)
 #install_github("jokergoo/ComplexHeatmap")
 library(ComplexHeatmap) 
+install.packages("hopach") 
+library(hopach) 
+
+#if(!require(“BiocManager”, quietly = TRUE)) 
+#install.packages("BiocManager") 
+library(BiocManager) 
+library(hopach) 
+
+BiocManager::install("hopach") 
 ```
 
 Basic heatmap
@@ -57,9 +65,19 @@ Heatmap(data_mat, name = "mtcars heatmap")
 
 Uncentered correlation as an agglormeration method 
 ```{r}
+
+# function for clustering the data based on uncentered correlations 
 uncenter.dist <- function(m) {
-  as.dist(as.matrix(distancematrix(m, d="cosangle")))
+  as.dist(as.matrix(distancematrix(m, d = "cosangle")))
 }
+
+# apply the function to the data matrix 
+
+row.clus<-hclust(uncenter.dist(data_mat), method = "ave")
+col.clus<-hclust(uncenter.dist(t(data_mat)), method = "ave")
+
+Heatmap(data_mat, name = "mtcars heatmap", 
+        cluster_rows=row.clus, cluster_columns=col.clus)
  
 ```
 
