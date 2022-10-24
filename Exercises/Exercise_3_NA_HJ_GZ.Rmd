@@ -1,0 +1,73 @@
+---
+title: "Exercise 3 - HCA & Heatmaps"
+author: "Nilima Ajaikumar, Hagay Jalon, and Gian Zlupko"
+date: '2022-10-24'
+output: html_document
+---
+
+
+# Exercise 3
+## Hierarchical Cluster Analysis and Heatmaps
+
+
+
+## Part II: Clustering Techniques from ComplexHeatmaps
+
+The second part of this assignment applies three separate clusteirng techniques that are demonstrated in the ComplexHeatmaps reading. In particular, through the following code chunks and documentation, we apply and interpret output for ______, _________, and _______, each of which are clustering and visualization methods. Moreover, the techniques are applied to the `mtcars` data set. For each method, we discuss the basic principles of the technique selected, why the technique was interesting, and challenges that we ran into when implementing the technique. 
+
+
+mtcars data set 
+
+
+```{r}
+mtcars 
+data_mat <- as.matrix(mtcars) 
+
+
+```
+
+Installation for ComplexHeatmap package 
+```{r, message = FALSE}
+#library(devtools)
+#install_github("jokergoo/ComplexHeatmap")
+library(ComplexHeatmap) 
+```
+
+Basic heatmap
+
+```{r}
+
+# first step is to re-scale the data 
+
+data_mat <- scale(data_mat) 
+
+# generate an initial heatmap with no clustering
+Heatmap(data_mat, cluster_rows = FALSE, cluster_columns = FALSE)   
+```
+
+Now we can apply a clustering technique to the heatmap above. 
+
+```{r}
+
+# default clustering = euclidean and default agglomeration = complex 
+Heatmap(data_mat, name = "mtcars heatmap") 
+
+```
+
+
+Uncentered correlation as an agglormeration method 
+```{r}
+uncenter.dist <- function(m) {
+  as.dist(as.matrix(distancematrix(m, d="cosangle")))
+}
+ 
+```
+
+
+
+
+
+
+
+
+
