@@ -9,6 +9,9 @@ output: html_document
 # Exercise 3
 ## Hierarchical Cluster Analysis and Heatmaps
 
+## Part I: mtcars following Bowers' HTML
+
+
 
 
 ## Part II: Clustering Techniques from ComplexHeatmaps
