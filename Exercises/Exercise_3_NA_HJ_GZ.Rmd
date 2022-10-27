@@ -9,7 +9,102 @@ output: html_document
 # Exercise 3
 ## Hierarchical Cluster Analysis and Heatmaps
 
-## Part I: mtcars following Bowers' HTML
+```{r, warning = FALSE, message = FALSE }
+library(ggplot2)
+library(tidyverse) 
+library(broom)
+library(data.table) 
+library(ComplexHeatmap)
+library(circlize)
+library(hopach)
+```
+
+Exercise 3 – Cluster analysis heatmaps. 
+Please provide answers in written text, code, and visualizations in a .html R markdown for the following:
+
+## Part I: 
+
+#### Please replicate the code and markdown provided in the readings for the mtcars dataset to visualize it using hierarchical cluster analysis heatmaps following the recommendations from the readings, including using uncentered correlation.
+To use the hopach library, if it is not available to install directly from CRAN, the latest version can be found here and installed with this code:
+
+
+```{r}
+# use first seven variables in mtcars data set 
+data<-mtcars[, c(1:7)]
+
+# scale the data set 
+data.scale<-scale(data)
+
+# inspect the data set 
+head(data.scale)
+```
+
+```{r}
+Heatmap(data.scale, name = "mtcars heatmap", 
+        cluster_rows=FALSE , cluster_columns = FALSE)
+
+# now cluster by rows but not columns 
+Heatmap(data.scale, name = "mtcars heatmap", 
+        cluster_columns = FALSE)
+```
+
+```{r}
+# cluster by rows and columns 
+Heatmap(data.scale, name = "mtcars heatmap")
+```
+
+Generate custom function to calculate uncentered correlation
+```{r}
+uncenter.dist<-function(m) {
+  as.dist(as.matrix(distancematrix(m, d="cosangle")))
+}
+```
+
+
+```{r}
+row.clus<-hclust(uncenter.dist(data.scale), method = "ave")
+col.clus<-hclust(uncenter.dist(t(data.scale)), method = "ave")
+
+# apply uncentered correlation as clustering technique and average linkage as agglomeration method 
+Heatmap(data.scale, name = "mtcars heatmap", 
+        cluster_rows=row.clus, cluster_columns=col.clus)
+```
+
+
+Heatmaps with dicotomous variables 
+```{r}
+
+ht_inline<-Heatmap(mtcars[, c(8)], name = "Cylinder Config",
+                   col = colorRamp2(c(0,1),c("white", "black")),
+                   heatmap_legend_param = list(at = c(0,1),
+                         labels = c("V-shaped", "Inline")),
+                   width = unit(0.5,"cm"))
+
+ht_manual<-Heatmap(mtcars[, c(9)], name = "Transmission",
+                   col = colorRamp2(c(0,1),c("white", "black")),
+                   heatmap_legend_param = list(at = c(0,1),
+                         labels = c("Automatic", "Manual")),
+                   width = unit(0.5,"cm"))
+```
+
+
+```{r}
+ht_main = Heatmap(data.scale, name = "cluster rows",
+                  cluster_rows=row.clus, cluster_columns = col.clus)
+
+# draw() command used to put together the heatmap and the annotation 
+draw(ht_main+ht_manual+ht_inline, auto_adjust = FALSE) 
+```
+
+Same HCA heatmap as above but without row labels: 
+```{r}
+draw(ht_main+ht_manual+ht_inline) 
+```
+
+
+## Part II: 
+
+#### Select at least three different options/alternatives from ComplexHeatmap's first three chapters, and apply them to the mtcars dataset. For example, such as using different clustering algorithms (k-means, etc.), separation of heatmaps, stacking, different ways to annotate (columns and rows and different graphing options beyond black/white blocks), etc. Please provide some text in your markdown discussing what options/alternatives you selected, why this was interesting, and any challenges you experienced with running the visualizations. Provide a few sentences to interpret each new heatmap visualization.
 
 
 
@@ -33,7 +128,6 @@ Installation for ComplexHeatmap package
 #library(devtools)
 #install_github("jokergoo/ComplexHeatmap")
 library(ComplexHeatmap) 
-install.packages("hopach") 
 library(hopach) 
 
 #if(!require(“BiocManager”, quietly = TRUE)) 
@@ -41,7 +135,6 @@ library(hopach)
 library(BiocManager) 
 library(hopach) 
 
-BiocManager::install("hopach") 
 ```
 
 Basic heatmap
