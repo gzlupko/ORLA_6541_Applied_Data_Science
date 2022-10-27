@@ -118,10 +118,6 @@ draw(ht_main+ht_manual+ht_inline)
 
 
 
-## Part II: Clustering Techniques from ComplexHeatmaps
-
-The second part of this assignment applies three separate clusteirng techniques that are demonstrated in the ComplexHeatmaps reading. In particular, through the following code chunks and documentation, we apply and interpret output for ______, _________, and _______, each of which are clustering and visualization methods. Moreover, the techniques are applied to the `mtcars` data set. For each method, we discuss the basic principles of the technique selected, why the technique was interesting, and challenges that we ran into when implementing the technique. 
-
 
 mtcars data set 
 
@@ -129,11 +125,35 @@ mtcars data set
 ```{r}
 mtcars 
 data_mat <- as.matrix(mtcars) 
-
 ```
 
+Custom HCA heatmap 1 [pick up here]
 
 
+```{r}
+ha = HeatmapAnnotation(foo = 1:10) 
+column_ha = HeatmapAnnotation(foo1 = runif(10), bar1 = anno_barplot(runif(10)))
+
+Heatmap(data_mat, row_km = 2, top_annotation = column_ha) 
+
+mtcars
+
+# set cyl as annotation on heatmap 
+
+ht_cyl <-Heatmap(mtcars[, c(2)], name = "Cylinder Count",
+                   col = colorRamp2(c(4,6,8),c("white", "blue", "black")),
+                   heatmap_legend_param = list(at = c(0,1),
+                         labels = c("4", "6", "8")),
+                   width = unit(0.5,"cm"))
+
+ht_main <- Heatmap(data_mat, name = "cluster rows", 
+                   cluster_rows = row.clus, cluster_columns = col.clus)
+
+
+draw(ht_main + ht_cyl, auto_adjust = FALSE) 
+
+
+```
 
 
 
