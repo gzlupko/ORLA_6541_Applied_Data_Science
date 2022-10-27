@@ -9,6 +9,11 @@ output: html_document
 # Exercise 3
 ## Hierarchical Cluster Analysis and Heatmaps
 
+## Part I: 
+#### Please replicate the code and markdown provided in the readings (Bowers) for the mtcars dataset to visualize it using hierarchical cluster analysis heatmaps following the recommendations from the readings, including using uncentered correlation.
+
+
+Libraries used throughout exercise 
 ```{r, warning = FALSE, message = FALSE }
 library(ggplot2)
 library(tidyverse) 
@@ -19,15 +24,7 @@ library(circlize)
 library(hopach)
 ```
 
-Exercise 3 – Cluster analysis heatmaps. 
-Please provide answers in written text, code, and visualizations in a .html R markdown for the following:
-
-## Part I: 
-
-#### Please replicate the code and markdown provided in the readings for the mtcars dataset to visualize it using hierarchical cluster analysis heatmaps following the recommendations from the readings, including using uncentered correlation.
-To use the hopach library, if it is not available to install directly from CRAN, the latest version can be found here and installed with this code:
-
-
+Load data 
 ```{r}
 # use first seven variables in mtcars data set 
 data<-mtcars[, c(1:7)]
@@ -39,7 +36,9 @@ data.scale<-scale(data)
 head(data.scale)
 ```
 
+Generate initial heatmaps 
 ```{r}
+# heatmap with no clustering
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_rows=FALSE , cluster_columns = FALSE)
 
@@ -48,30 +47,40 @@ Heatmap(data.scale, name = "mtcars heatmap",
         cluster_columns = FALSE)
 ```
 
+
 ```{r}
 # cluster by rows and columns 
 Heatmap(data.scale, name = "mtcars heatmap")
 ```
 
 Generate custom function to calculate uncentered correlation
+
+The function creates a distance matrix, which is accessed in the `hopach` library. Per the package documentation, distance matrices contain pair wise distances between all rows of the matrix.
+
 ```{r}
 uncenter.dist<-function(m) {
   as.dist(as.matrix(distancematrix(m, d="cosangle")))
 }
+
+?distancematrix
 ```
 
 
+
 ```{r}
+# apply function to create distance matrix on the data set
 row.clus<-hclust(uncenter.dist(data.scale), method = "ave")
 col.clus<-hclust(uncenter.dist(t(data.scale)), method = "ave")
 
 # apply uncentered correlation as clustering technique and average linkage as agglomeration method 
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_rows=row.clus, cluster_columns=col.clus)
+
+
 ```
 
 
-Heatmaps with dicotomous variables 
+Heatmaps with dichotomous variables 
 ```{r}
 
 ht_inline<-Heatmap(mtcars[, c(8)], name = "Cylinder Config",
@@ -123,59 +132,6 @@ data_mat <- as.matrix(mtcars)
 
 ```
 
-Installation for ComplexHeatmap package 
-```{r, message = FALSE}
-#library(devtools)
-#install_github("jokergoo/ComplexHeatmap")
-library(ComplexHeatmap) 
-library(hopach) 
-
-#if(!require(“BiocManager”, quietly = TRUE)) 
-#install.packages("BiocManager") 
-library(BiocManager) 
-library(hopach) 
-
-```
-
-Basic heatmap
-
-```{r}
-
-# first step is to re-scale the data 
-
-data_mat <- scale(data_mat) 
-
-# generate an initial heatmap with no clustering
-Heatmap(data_mat, cluster_rows = FALSE, cluster_columns = FALSE)   
-```
-
-Now we can apply a clustering technique to the heatmap above. 
-
-```{r}
-
-# default clustering = euclidean and default agglomeration = complex 
-Heatmap(data_mat, name = "mtcars heatmap") 
-
-```
-
-
-Uncentered correlation as an agglormeration method 
-```{r}
-
-# function for clustering the data based on uncentered correlations 
-uncenter.dist <- function(m) {
-  as.dist(as.matrix(distancematrix(m, d = "cosangle")))
-}
-
-# apply the function to the data matrix 
-
-row.clus<-hclust(uncenter.dist(data_mat), method = "ave")
-col.clus<-hclust(uncenter.dist(t(data_mat)), method = "ave")
-
-Heatmap(data_mat, name = "mtcars heatmap", 
-        cluster_rows=row.clus, cluster_columns=col.clus)
- 
-```
 
 
 
