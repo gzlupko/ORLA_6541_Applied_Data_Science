@@ -62,7 +62,6 @@ uncenter.dist<-function(m) {
   as.dist(as.matrix(distancematrix(m, d="cosangle")))
 }
 
-?distancematrix
 ```
 
 
@@ -75,7 +74,6 @@ col.clus<-hclust(uncenter.dist(t(data.scale)), method = "ave")
 # apply uncentered correlation as clustering technique and average linkage as agglomeration method 
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_rows=row.clus, cluster_columns=col.clus)
-
 
 ```
 
@@ -118,43 +116,46 @@ draw(ht_main+ht_manual+ht_inline)
 
 
 
-
 mtcars data set 
 
 
 ```{r}
-mtcars 
+# create new data set 
 data_mat <- as.matrix(mtcars) 
+
+# scale data 
+data_mat <- scale(data_mat) 
 ```
 
-Custom HCA heatmap 1 [pick up here]
+Custom HCA heatmap 1 - 
+
+Visualize a heatmap using a categorical 
 
 
 ```{r}
-ha = HeatmapAnnotation(foo = 1:10) 
-column_ha = HeatmapAnnotation(foo1 = runif(10), bar1 = anno_barplot(runif(10)))
 
-Heatmap(data_mat, row_km = 2, top_annotation = column_ha) 
+# update row and col clustering with new data set input into the custom functions created 
 
-mtcars
+row.clus<-hclust(uncenter.dist(data_mat), method = "ave")
+col.clus<-hclust(uncenter.dist(t(data_mat)), method = "ave")
 
 # set cyl as annotation on heatmap 
 
 ht_cyl <-Heatmap(mtcars[, c(2)], name = "Cylinder Count",
-                   col = colorRamp2(c(4,6,8),c("white", "blue", "black")),
-                   heatmap_legend_param = list(at = c(0,1),
+                   col = colorRamp2(c(4,6,8),c("grey", "blue", "black")),
+                   heatmap_legend_param = list(at = c(0,1,2),
                          labels = c("4", "6", "8")),
                    width = unit(0.5,"cm"))
 
 ht_main <- Heatmap(data_mat, name = "cluster rows", 
                    cluster_rows = row.clus, cluster_columns = col.clus)
 
-
+# put together annotated heatmap using draw() function 
 draw(ht_main + ht_cyl, auto_adjust = FALSE) 
 
-
 ```
-
+ 
+ For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges updating the given code to annotate heatmaps. Specifically, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
 
 
 
