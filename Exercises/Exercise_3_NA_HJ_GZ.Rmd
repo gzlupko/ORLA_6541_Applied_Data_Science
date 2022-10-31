@@ -124,9 +124,9 @@ data_mat <- as.matrix(mtcars)
 data_mat <- scale(data_mat) 
 ```
 
-Custom HCA heatmap 1: 
+### Custom HCA heatmap 1: 
 
-Visualize a heatmap using a categorical variable for annotation with more than two levels. 
+Below we visualize a heatmap using a categorical variable for annotation with more than two levels. 
 
 ```{r}
 # update row and col clustering with new data set input into the custom functions created 
@@ -160,56 +160,39 @@ Heatmap interpretation: The cylinder count for car engines can tell us a lot abo
 Challenges: For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges creating an categorical annotation with more than two levels as was shown in the given code in course readings. Specifically, during our early attempts, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
 
 
-Custom HCA heatmap 2: 
+### Custom HCA heatmap 2: 
 
-k-means clustering on rows and columns Manhattan distance 
-
-and use of post_fun 
+Split by k-means clustering 
+Create a 2x2 with row and column partitions applied to a heatmap clustered by k-means. 
 
 
 ```{r}
 
-# first heatmap using k-means clustering 
-ht1_kmeans <- Heatmap(matrix = data_mat, 
-        row_km = TRUE, column_km = TRUE, 
-        row_title = "k-means clustering")
-
-
-
-# second heatmap using uncenetered correlation as clustering technique 
-
-ht2_uncencor <-  Heatmap(matrix = data_mat, 
-                        cluster_rows = row.clus, cluster_columns = col.clus, 
-                        row_title = "uncentered correlation clustering") 
-
-
-# create a single vector matrix to store the car titles n  
-
-# combine heat maps into heatmap list object and render output with space between 
-ht_list1 <- ht1_kmeans + ht2_uncencor
-draw(ht_list1, ht_gap = unit(.5, "cm"))
-
+Heatmap(data_mat, 
+        row_km = 2, 
+        column_km = 2, 
+        row_gap = unit(2, "mm"), 
+        column_gap = unit(1, 'mm'), border = TRUE,
+        column_title = "2x2 Mtcars Grid with K-means Clustering",
+        column_title_gp = gpar(fontsize = 15, fontface = "bold"), row_title = "Car Groups")
 
 ```
 
 
-Heatmap description: 
+Heatmap description: The heatmap above uses k-means clustering to produce a 2x2 grid of the cars in the mtcars data set. By arbitrarily specifying k = 2 for the k-means technique, our goal was to generate a grid by which we could visualize simple high and low comparisons of cars across multiple variables. The best way to interpret this heatmap is to read the heatmap horizontally, observing the values of the the variables along the bottom of the heatmap for each car. In general, 2x2 grids are interesting in that they generate simple comparisons across high and low levels of a set of variables. Moreover, they allow for four general classes to draw comparisons from. In the grid above, we can imagine adding names to each quadrant that describe general qualities of the cars. For example, the upper left quadrant could be named 'Big Engines, the upper right quadrant could be named 'Gas Guzzlers', the lower right named 'Fuel Efficient' and the lower left named 'Small Engines'. Also, while 2x2 grids can be overly simplistic, we wanted to leverage k-means for this task was k-means requires a priori specification.
 
 
-Heatmap Interpretation: 
+Heatmap Interpretation: We found multiple patterns in the data from this heatmap. First, regarding miles per gallon (MPG), the bottom two quadrants of our heatmap were more fuel efficient than cars in the upper quadrants. Moreover, cars in the bottom quadrants were lighter in weight, had smaller engines, and were slower (note: 'qsec', or 1/4 mile time). By contrast, cars in the upper quadrants had larger engines, more horsepower, were faster, and as a result, were less fuel efficient. 
 
 
-Challenges: 
-
-
-
+Challenges: One challenge that we experienced while visualizing the heatmap above was determining the appropriate distances to separate the data into quadrants. For example, in the current arrangement, it is possible that readers will not immediately perceive the continuity between the quadrants that are horizontally placed next to one another. That is, it is possible to misinterpret the fact that, while there is separate between each set of horizontal quadrants, the data therein represent underlying information for the same car across the rows. To improve the legibility of this heatmap while retaining our desire to produce a 2x2 grid, we altered the column and row splits such that the column split was half as large was the row split. In doing so, our hope was to retain the gestalt of a 2x2 grid while minimizing the distance between columns such that the patterns across column may be interpreted as pertaining to the same car. 
 
 
 
 
-Custom HCA heatmap 3: 
-Comparison of U.S. and International car manufacturers. New variable created from the car model names to determine whether the car was made by U.S. manufacturers or by international car makers. Weight seemed to be a key difference. Three U.S. cars were appeared to be substantially more heavy than international counterparts. 
- 
+### Custom HCA heatmap 3: 
+Comparison of U.S. and International car manufacturers. We created a new variable from the car model names to determine whether the car was made by U.S. manufacturers or by international car makers. 
+
 ```{r}
 library(xlsx) 
 #write.xlsx(mtcars,"mtcars.xlsx") 
@@ -221,7 +204,7 @@ mt_full <- mt_full %>%
   rename(model = NA.) %>% 
   mutate(model = as.character(model)) %>% 
   mutate(international = ifelse(model == "Cadillac Fleetwood" | model == "Lincoln Continental" | model == "Chrysler Imperial" | model == "Dodge Challenger" | 
-                                 model == "Camarro Z28" | model == "Pontiac Firebird" | model == "Ford Pantera L", 0, 1)) 
+                                 model == "Camarro Z28" | model == "Pontiac Firebird" | model == "Ford Pantera L" | model == "AMC Javelin" | model == "Hornet Sportabout" | model == "Hornet 4 Drive" | model == "Duster 360" | model == "Valiant", 0, 1)) 
 
 # remove the international label for now; will use the international categorical variable to annotate the heatmap
 mt_model <- mt_full %>% 
@@ -233,6 +216,7 @@ mt_model <- scale(mt_model)
 
 # add histogram boxplot for weight of cars 
 wt_mat <- mt_model[,6] # create matrix subset for wt variable 
+
 histo_anno = rowAnnotation(Weight = anno_barplot(mt_wt, gp = gpar(fill = 3))) 
 
 # format the international variable for
@@ -242,15 +226,26 @@ ht_intl <-Heatmap(mt_full[, 13], name = "Int'l Model", right_annotation = histo_
                          labels = c("No", "Yes")),
                    width = unit(0.5,"cm"), column_title = "U.S. and International Cars")
 
-ht_models <- Heatmap(mt_model, name = "cluster rows", 
+# now remove wt fromt the data for the heatmap 
+mt_model_clean <- mt_model[, -6]
+
+# uncentered correlation on the mt_model data
+ht_models <- Heatmap(mt_model_clean, name = "cluster rows", 
                    cluster_rows = row.clus, cluster_columns = col.clus)
 
 # combine the heatmap with the annotation 
 ht_list3 <- ht_models + ht_intl
 draw(ht_list3, ht_gap = unit(.5, "cm"))
 
+
 ```
  
+ Heatmap description: The HCA heatmap above used uncentered correlation as the clustering technique and average linkage as the agglomeration method. To create a U.S. vs. International car comparison, we custom generated a categorical variable by manually specifying American and non-American car makers using the car model names. Initial inspection of previous iterations of the heatmap above revealed that car weighted appeared to be a key difference between America and non-American cars. Therefore, we created a second annotation for weight to accompany the manufacturer location annotation. Specifically, we created a bar plot annotation for the weight variable.
+ 
+ 
+Heatmap interpretation:  American cars appeared to be heavier than non-American cars. These heavier car weights could be due to a number of factors that also appear in the data, such a larger engines (displacement and cylinders). Car weights may also differ as a function of factors not captured in the data but that nonetheless are interesting to infer given the clusters generated. Specifically, American cars of this period (late '70s) were known for being produced with heavy steel. In contrast, European and Asia car manufacturers may have used different supplies at this time. It would be worth consulting a car expert n reasons for different weights but nonetheless, the use of an HCA heatmap allows for such an inquiry where other methods may not provide such an efficient gestalt. 
+
+ Challenge: We experienced two challenges while generating this heatmap. First, it took multiple iterations to achieve our desired bar plot annoation for the weight variable. In fact, we origially started with a histogram annotation but the result was messy. The histogram ranges were too wide, resulting in less of an annotation and more of a second full-size plot alongside the heatmap. In contrast, the bar plot provided a more succinct annotation. 
 
 
 
