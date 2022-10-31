@@ -126,33 +126,38 @@ data_mat <- scale(data_mat)
 
 Custom HCA heatmap 1: 
 
-Visualize a heatmap using a categorical 
-
+Visualize a heatmap using a categorical variable for annotation with more than two levels. 
 
 ```{r}
-
 # update row and col clustering with new data set input into the custom functions created 
+row.clus<-hclust(uncenter.dist(ht_1_dat), method = "ave")
+col.clus<-hclust(uncenter.dist(t(ht_1_dat)), method = "ave")
 
-row.clus<-hclust(uncenter.dist(data_mat), method = "ave")
-col.clus<-hclust(uncenter.dist(t(data_mat)), method = "ave")
+# remove the cylinder variable from the data matrix; will use cylinders as annotation 
+ht_1_dat <- data_mat[, -2]
 
 # set cyl as annotation on heatmap 
-
-ht_cyl <-Heatmap(mtcars[, c(2)], name = "Cylinder Count",
-                   col = colorRamp2(c(4,6,8),c("grey", "blue", "black")),
+ht_cyl <-Heatmap(mtcars[, c(2)], name = "Cyl Count",
+                   col = colorRamp2(c(4,6,8),c("light grey", "grey", "black")),
                    heatmap_legend_param = list(at = c(0,1,2),
                          labels = c("4", "6", "8")),
-                   width = unit(0.5,"cm"))
+                   width = unit(0.5,"cm")) 
 
-ht_main <- Heatmap(data_mat, name = "cluster rows", 
+ht_main <- Heatmap(ht_1_dat, name = "cluster rows", 
                    cluster_rows = row.clus, cluster_columns = col.clus)
 
 # put together annotated heatmap using draw() function 
 draw(ht_main + ht_cyl, auto_adjust = FALSE) 
 
 ```
- 
-For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges updating the given code to annotate heatmaps. Specifically, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
+
+Heatmap description: For the HCA heatmap above, we used uncentered correlation as our clustering technique and average linkage as our agglomeration method. Our primary focus was to produce a heatmap that would allow us to compare cars with 4, 6, and 8 cylinder engines. To do so, we visualized the cylinder variable from the mtcars data set as an annotation for the heatmap. 
+
+
+Heatmap interpretation: The cylinder count for car engines can tell us a lot about what to expect from a car. More cylinders often means more horsepower and less MPG. The heatmap confirms these assumptions while giving more patterns to interpret. First, we see that 8 cylinder engines also tend to be heavier than cars with fewer cylinders. In addition, we also see that most of the 8 cylinder cars have automatic transmissions whereas the cars with fewer cylinders have a greater balance of manual and automatic transmissions. Thus, the use of an HCA heatmap was interesting for our interest in cylinder count. It allowed us to confirm some of our assumptions about the general relationships between cylinder count, horsepower, and MPG while also providing a much richer and nuanced assessment of key differences between cars with different cylinder counts. 
+
+
+Challenges: For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges creating an categorical annotation with more than two levels as was shown in the given code in course readings. Specifically, during our early attempts, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
 
 
 Custom HCA heatmap 2: 
@@ -188,40 +193,54 @@ draw(ht_list1, ht_gap = unit(.5, "cm"))
 ```
 
 
+Heatmap description: 
+
+
+Heatmap Interpretation: 
+
+
+Challenges: 
+
+
+
+
+
+
+
 Custom HCA heatmap 3: 
-Comparison of U.S. and International car manufacterers. Pattern detection on ___ variable(s) to look for difference between U.S. and non-U.S. cars. 
+Comparison of U.S. and International car manufacturers. New variable created from the car model names to determine whether the car was made by U.S. manufacturers or by international car makers. Weight seemed to be a key difference. Three U.S. cars were appeared to be substantially more heavy than international counterparts. 
  
 ```{r}
-
 library(xlsx) 
 #write.xlsx(mtcars,"mtcars.xlsx") 
-# read back into R with the first column as true to get a character vector 
-
+# read back into R with first column as true to get a character vector; this export-import step allowed us to grab the column for the car names, which we could not index originally. 
 mt_full <- read.xlsx("mtcars.xlsx", sheetIndex = 1) 
 
 # rename the car model name column and store as character 
 mt_full <- mt_full %>% 
   rename(model = NA.) %>% 
-  mutate(model = as.character(model)) 
-
-
-# use ifelse statement to label car models as international ('Yes') or American ('No')
-mt_full <- mt_full %>% 
+  mutate(model = as.character(model)) %>% 
   mutate(international = ifelse(model == "Cadillac Fleetwood" | model == "Lincoln Continental" | model == "Chrysler Imperial" | model == "Dodge Challenger" | 
-                                 model == "Camarro Z28" | model == "Pontiac Firebird" | model == "Ford Pantera L", "No", "Yes")) 
+                                 model == "Camarro Z28" | model == "Pontiac Firebird" | model == "Ford Pantera L", 0, 1)) 
 
 # remove the international label for now; will use the international categorical variable to annotate the heatmap
 mt_model <- mt_full %>% 
   select(-c(international, model)) 
 
+# convert data frame to matrix and scale the matrix 
 mt_model <- as.matrix(mt_model) 
- 
+mt_model <- scale(mt_model) 
+
+# add histogram boxplot for weight of cars 
+wt_mat <- mt_model[,6] # create matrix subset for wt variable 
+histo_anno = rowAnnotation(Weight = anno_barplot(mt_wt, gp = gpar(fill = 3))) 
+
 # format the international variable for
-ht_intl <-Heatmap(mt_full[, 13], name = "International Model",
-                   col = colorRamp2(c(4,6),c("grey", "black")),
+ht_intl <-Heatmap(mt_full[, 13], name = "Int'l Model", right_annotation = histo_anno,
+                   col = colorRamp2(c(0,1),c("grey", "black")),
                    heatmap_legend_param = list(at = c(0,1),
                          labels = c("No", "Yes")),
-                   width = unit(0.5,"cm"))
+                   width = unit(0.5,"cm"), column_title = "U.S. and International Cars")
 
 ht_models <- Heatmap(mt_model, name = "cluster rows", 
                    cluster_rows = row.clus, cluster_columns = col.clus)
@@ -230,10 +249,8 @@ ht_models <- Heatmap(mt_model, name = "cluster rows",
 ht_list3 <- ht_models + ht_intl
 draw(ht_list3, ht_gap = unit(.5, "cm"))
 
-mt_model 
 ```
  
-
 
 
 
