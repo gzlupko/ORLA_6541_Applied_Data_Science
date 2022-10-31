@@ -9,10 +9,6 @@ output: html_document
 # Exercise 3
 ## Hierarchical Cluster Analysis and Heatmaps
 
-## Part I: 
-#### Please replicate the code and markdown provided in the readings (Bowers) for the mtcars dataset to visualize it using hierarchical cluster analysis heatmaps following the recommendations from the readings, including using uncentered correlation.
-
-
 Libraries used throughout exercise 
 ```{r, warning = FALSE, message = FALSE }
 library(ggplot2)
@@ -24,62 +20,110 @@ library(circlize)
 library(hopach)
 ```
 
-Load data 
+
+## Part I: 
+#### Please replicate the code and markdown provided in the readings (Bowers) for the mtcars dataset to visualize it using hierarchical cluster analysis heatmaps following the recommendations from the readings, including using uncentered correlation.
+
+
+#### For this project, we will first use the first seven continuous variables in the dataset, and reserve variable 8 and 9 for dichotomous (0/1) annotations in a future step.
 ```{r}
-# use first seven variables in mtcars data set 
-data <- mtcars[, c(1:7)]
+data<-mtcars[, c(1:7)]
+```
 
-# scale the data set 
+#### Rescale the dataset
+```{r}
+# In cluster analysis, we want to z-score the data, so that all continuous variables are on the same scales, otherwise a variable with bigger numbers will pull the entire data matrix towards it.
+
 data.scale<-scale(data)
-
-# inspect the data set 
 head(data.scale)
 ```
 
-Generate initial heatmaps 
+#### Create first Heatmap with ComplexHeatmap
+
 ```{r}
-# heatmap with no clustering
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_rows=FALSE , cluster_columns = FALSE)
 
-# now cluster by rows but not columns 
+# This is an unclustured heatmap. 
+# In this heatmap low values are indicated in blue and high values are indicated in red  
+
+```
+
+#### Default Clustering on the rows
+
+```{r}
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_columns = FALSE)
+
+# In this heatmap we want to know what the patterns are for the rows only
+# So we cluster only on the rows
+
+# Our question is to cluster the cars by these seven variables to understand which cars are most similar to each other based on this data.
+
+# The dendrogram (“cluster tree”) on the left shows the similarity of the rows. Longer lines indicate more dissimilarity.
+
+#  We observe two big clusters. At the “top” (Chrysler Imperial to Duster 360) these are the gas guzzlers with low mpg (blue) and the most cylinders (red), many are big (the Imperial and Continental weigh the most), with a lot of horse power, high weight, etc. 
+
+# We also observe quite a bit of variance in qsec and draft as well as across the variables.
+
+# The bottom part are our more fuel efficient cars, but again still quite a bit of variance.
+
+# The defaults provide some useful patterns that are interesting, but we can do better.
+
 ```
 
+#### Default cluster on the rows and the columns
+``` {r}
 
-```{r}
-# cluster by rows and columns 
 Heatmap(data.scale, name = "mtcars heatmap")
+
+# Here we cluster both rows and columns at the same time so that not only are the most similar rows next to each other, but the most similar columns are also next to each other, and we get an indication of similarity with the dendrograms.
+
+# We begin to see the classic “checkerboard” pattern in this heatmap as both the rows and columns are clustered and similar patterns are next to each other in each dimension. The row order from the previous heatmap is retained.
+
+# The top cluster indicates that they all have low qsec (they’re slow), low mpg (gass guzzlers), with low draft (blues). They weigh a lot, and have a lot of horse power, etc (reds). 
+
 ```
 
-Generate custom function to calculate uncentered correlation
-
-The function creates a distance matrix, which is accessed in the `hopach` library. Per the package documentation, distance matrices contain pair wise distances between all rows of the matrix.
-
+#### Clustering using uncentered correlation and average linkage.
 ```{r}
+# Declare a function for uncentered distance using cosangle
 uncenter.dist<-function(m) {
   as.dist(as.matrix(distancematrix(m, d="cosangle")))
 }
 
-```
+# Now we can call uncenter.dist() to cluster our rows and columns using average linkage “ave”.
 
+# Note that for the columns, we need to transpose the matrix, so we  include the t() function.
 
-
-```{r}
-# apply function to create distance matrix on the data set
 row.clus<-hclust(uncenter.dist(data.scale), method = "ave")
 col.clus<-hclust(uncenter.dist(t(data.scale)), method = "ave")
 
-# apply uncentered correlation as clustering technique and average linkage as agglomeration method 
 Heatmap(data.scale, name = "mtcars heatmap", 
         cluster_rows=row.clus, cluster_columns=col.clus)
 
+# In this fully clustered HCA heatmap, the distance metric is Euclidean, and the agglomeration clustering algorithm is uncentered correlation with average linkage.
+
+# Comparing this heatmap with  our previous defaults HCA heatmap. Here, the more robust clustering algorithm gives us a clearer hierarchical structure of the data, with a much clearer pattern.
+
+# Note first that the Ferrari Dino is correctly patterned as the most extreme outlier as it has the longest horizontial line in the row dendrogram, as it is the only car with high horsepower, but low weight etc, and is fast.
+
+# The “fuel efficient” block at the top of the heatmap is now much more obvious as it is blue on the left and mostly red on the right. The gas guzzler muscle cars are now more obvious as well in the lower block as they are red on the left and blue on the right, with high horsepower but high weight, but they are slow to accelerate and have terrible fuel efficiency (low mpg).
+
 ```
 
+#### HCA Heatmap Annotations of 0/1 Dichtomous Variables
 
-Heatmaps with dichotomous variables 
-```{r}
+``` {r}
+
+# We can make this visualization more useful by adding information about 0/1 dichotomous variables.
+
+
+# Following Bowers(2010) for format, here we will use two 0/1 dichotomous variables, if the car is a manual=1 or automatic=0, and if the engine block layout for the cylinders is inline=1 or in a V pattern=0.
+
+# The mtcars dataset has this information in column 8 and 9. So we extract that information first. 
+
+#Then we will color code the annotations as white=0, black=1. This format aids the eye in seeing the differences. Then we tell ComplexHeatmap how to label the annotations and how wide we want the annotation column (0.5 cm)
 
 ht_inline<-Heatmap(mtcars[, c(8)], name = "Cylinder Config",
                    col = colorRamp2(c(0,1),c("white", "black")),
@@ -92,21 +136,32 @@ ht_manual<-Heatmap(mtcars[, c(9)], name = "Transmission",
                    heatmap_legend_param = list(at = c(0,1),
                          labels = c("Automatic", "Manual")),
                    width = unit(0.5,"cm"))
-```
 
+# Then, we use Heatmap() as above, but this time assign it to ht_main, then then use the draw() command to put it all together.
 
-```{r}
+#With the annotations, we have not changed the order of the rows or columns, as the annotation data is not part of the clustering analysis. 
+
+#But with this added information, we can now come to more informed conclusions about why the clusters are patterning in the way they are here. 
+
 ht_main = Heatmap(data.scale, name = "cluster rows",
                   cluster_rows=row.clus, cluster_columns = col.clus)
 
-# draw() command used to put together the heatmap and the annotation 
 draw(ht_main+ht_manual+ht_inline, auto_adjust = FALSE) 
+
+# We observe  that almost all of the “top” cluster cars, which include our most fuel efficient cars in the 1970s were manual trasmission (stick shift) with inline straight cylinder engines. 
+
+#The gas guzzlers and muscle cars were much more often automatics and V-shaped cylinder engine designs.
+
 ```
 
-Same HCA heatmap as above but without row labels: 
+#### Final HCA heatmap 
 ```{r}
+# The same final HCA heatmap without the row labels. 
 draw(ht_main+ht_manual+ht_inline) 
+
 ```
+
+
 
 
 ## Part II: 
