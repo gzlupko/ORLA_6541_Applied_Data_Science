@@ -27,7 +27,7 @@ library(hopach)
 Load data 
 ```{r}
 # use first seven variables in mtcars data set 
-data<-mtcars[, c(1:7)]
+data <- mtcars[, c(1:7)]
 
 # scale the data set 
 data.scale<-scale(data)
@@ -114,10 +114,7 @@ draw(ht_main+ht_manual+ht_inline)
 #### Select at least three different options/alternatives from ComplexHeatmap's first three chapters, and apply them to the mtcars dataset. For example, such as using different clustering algorithms (k-means, etc.), separation of heatmaps, stacking, different ways to annotate (columns and rows and different graphing options beyond black/white blocks), etc. Please provide some text in your markdown discussing what options/alternatives you selected, why this was interesting, and any challenges you experienced with running the visualizations. Provide a few sentences to interpret each new heatmap visualization.
 
 
-
-
 mtcars data set 
-
 
 ```{r}
 # create new data set 
@@ -127,7 +124,7 @@ data_mat <- as.matrix(mtcars)
 data_mat <- scale(data_mat) 
 ```
 
-Custom HCA heatmap 1 - 
+Custom HCA heatmap 1: 
 
 Visualize a heatmap using a categorical 
 
@@ -155,7 +152,88 @@ draw(ht_main + ht_cyl, auto_adjust = FALSE)
 
 ```
  
- For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges updating the given code to annotate heatmaps. Specifically, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
+For the HCA heatmap above, we visualized engine cylinder count as a categorical variable for annotation. We ran into challenges updating the given code to annotate heatmaps. Specifically, we received the error: "The length of 'at' should be the same as the length of 'labels'. Initially, this error message appeared somewhat cryptic to us. However, upon looking at the code chunk used to edit the data corresponding to heatmap annotation, we realized that we needed to pass a third value through the 'at' command in the that the length of our variable needed to match the `heatmap_legend_param` argument. After adding a third value, corresponding with the three levels of our categorical variable, we were then able to successfully render the visualization.
+
+
+Custom HCA heatmap 2: 
+
+k-means clustering on rows and columns Manhattan distance 
+
+and use of post_fun 
+
+
+```{r}
+
+# first heatmap using k-means clustering 
+ht1_kmeans <- Heatmap(matrix = data_mat, 
+        row_km = TRUE, column_km = TRUE, 
+        row_title = "k-means clustering")
+
+
+
+# second heatmap using uncenetered correlation as clustering technique 
+
+ht2_uncencor <-  Heatmap(matrix = data_mat, 
+                        cluster_rows = row.clus, cluster_columns = col.clus, 
+                        row_title = "uncentered correlation clustering") 
+
+
+# create a single vector matrix to store the car titles n  
+
+# combine heat maps into heatmap list object and render output with space between 
+ht_list1 <- ht1_kmeans + ht2_uncencor
+draw(ht_list1, ht_gap = unit(.5, "cm"))
+
+
+```
+
+
+Custom HCA heatmap 3: 
+Comparison of U.S. and International car manufacterers. Pattern detection on ___ variable(s) to look for difference between U.S. and non-U.S. cars. 
+ 
+```{r}
+
+library(xlsx) 
+#write.xlsx(mtcars,"mtcars.xlsx") 
+# read back into R with the first column as true to get a character vector 
+
+mt_full <- read.xlsx("mtcars.xlsx", sheetIndex = 1) 
+
+# rename the car model name column and store as character 
+mt_full <- mt_full %>% 
+  rename(model = NA.) %>% 
+  mutate(model = as.character(model)) 
+
+
+# use ifelse statement to label car models as international ('Yes') or American ('No')
+mt_full <- mt_full %>% 
+  mutate(international = ifelse(model == "Cadillac Fleetwood" | model == "Lincoln Continental" | model == "Chrysler Imperial" | model == "Dodge Challenger" | 
+                                 model == "Camarro Z28" | model == "Pontiac Firebird" | model == "Ford Pantera L", "No", "Yes")) 
+
+# remove the international label for now; will use the international categorical variable to annotate the heatmap
+mt_model <- mt_full %>% 
+  select(-c(international, model)) 
+
+mt_model <- as.matrix(mt_model) 
+ 
+# format the international variable for
+ht_intl <-Heatmap(mt_full[, 13], name = "International Model",
+                   col = colorRamp2(c(4,6),c("grey", "black")),
+                   heatmap_legend_param = list(at = c(0,1),
+                         labels = c("No", "Yes")),
+                   width = unit(0.5,"cm"))
+
+ht_models <- Heatmap(mt_model, name = "cluster rows", 
+                   cluster_rows = row.clus, cluster_columns = col.clus)
+
+# combine the heatmap with the annotation 
+ht_list3 <- ht_models + ht_intl
+draw(ht_list3, ht_gap = unit(.5, "cm"))
+
+mt_model 
+```
+ 
+
 
 
 
