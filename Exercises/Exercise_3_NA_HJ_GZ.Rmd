@@ -199,7 +199,7 @@ library(xlsx)
 # read back into R with first column as true to get a character vector; this export-import step allowed us to grab the column for the car names, which we could not index originally. 
 mt_full <- read.xlsx("mtcars.xlsx", sheetIndex = 1) 
 
-# rename the car model name column and store as character 
+# rename the car model name column and store as character. Then use an ifelse() statement in a mutate statement to create a new column that provides a label for international cars (1) and american cars (0)
 mt_full <- mt_full %>% 
   rename(model = NA.) %>% 
   mutate(model = as.character(model)) %>% 
@@ -237,18 +237,158 @@ ht_models <- Heatmap(mt_model_clean, name = "cluster rows",
 ht_list3 <- ht_models + ht_intl
 draw(ht_list3, ht_gap = unit(.5, "cm"))
 
-
 ```
  
  Heatmap description: The HCA heatmap above used uncentered correlation as the clustering technique and average linkage as the agglomeration method. To create a U.S. vs. International car comparison, we custom generated a categorical variable by manually specifying American and non-American car makers using the car model names. Initial inspection of previous iterations of the heatmap above revealed that car weighted appeared to be a key difference between America and non-American cars. Therefore, we created a second annotation for weight to accompany the manufacturer location annotation. Specifically, we created a bar plot annotation for the weight variable.
  
  
-Heatmap interpretation:  American cars appeared to be heavier than non-American cars. These heavier car weights could be due to a number of factors that also appear in the data, such a larger engines (displacement and cylinders). Car weights may also differ as a function of factors not captured in the data but that nonetheless are interesting to infer given the clusters generated. Specifically, American cars of this period (late '70s) were known for being produced with heavy steel. In contrast, European and Asia car manufacturers may have used different supplies at this time. It would be worth consulting a car expert n reasons for different weights but nonetheless, the use of an HCA heatmap allows for such an inquiry where other methods may not provide such an efficient gestalt. 
+Heatmap interpretation:  American cars appeared to be heavier than non-American cars. These heavier car weights could be due to a number of factors that also appear in the data, such a larger engines (displacement and cylinders). Car weights may also differ as a function of factors not captured in the data but that nonetheless are interesting to infer given the clusters generated. Specifically, American cars of this period (late '70s) were known for being produced with heavy steel. In contrast, European and Asia car manufacturers may have used different supplies at this time. It would be worth consulting a car expert on such history but nonetheless, the use of an HCA heatmap allows for such an inquiry where other methods may not provide such an efficient gestalt to build  questions from. 
 
- Challenge: We experienced two challenges while generating this heatmap. First, it took multiple iterations to achieve our desired bar plot annoation for the weight variable. In fact, we origially started with a histogram annotation but the result was messy. The histogram ranges were too wide, resulting in less of an annotation and more of a second full-size plot alongside the heatmap. In contrast, the bar plot provided a more succinct annotation. 
+Challenge: The annotation for the weight variable gave us a challenge. It took multiple iterations to achieve our desired bar plot annotation for the weight variable. In fact, we originally started with a histogram annotation but the result was messy. The histogram ranges were too wide, resulting in less of an annotation and more of a second full-size plot alongside the heatmap. In contrast, the bar plot provided a more succinct annotation. 
 
 
 
+
+
+## Part III: Brief Sample Research Proposal 
+
+
+### A.	What is the purpose of your study?
+The purpose of this study is to apply a hierarchical cluster analysis (HCA) heatmap as a descriptive method to better understand the associations between various psychological factors relating to employee, family, and organizational well-being, to employees' intention to quit. These variables include emotional burnout, family supportive supervisor behavior, family-to-work conflict, job satisfaction, psychological job demands, organizational citizenship behavior, low-value work, decision authority, and control over work hours. 
+Subsequently, this study aims to further examine the effects of an organizational intervention designed to increase supervisor social support and control over work schedule on the affiliated associations and intention to quit levels. Lastly, this study hopes to dissect the effects of the intervention based on one's role as an employee or a manager. 
+
+### B.	Is there any research literature and theory that supports this argument? How so? 
+
+The relationship between intention to quit to the following variables and related literature is described below:
+*Control over work schedule.* In a recent study, Kennedy and Mohr found that schedule control was independently related to greater odds of reporting an intent to quit (2022). Additionally, control over work schedule was found to moderate the relationships between other psychological variables and intention to quit. For example, in 2018, Lee and Eissenstat found that greater control over work hours was directly associated with reduced work-family conflict, which had a significant relationship with burnout. Given the strong positive correlation between burnout and ITQ, it is reasonable to expect that control over work hours may have a strong negative relationship with ITQ. Furthermore, employees with higher control over their work schedule, combined with high decision authority and high job demands, were found to be less inclined to quit (Berridge et al., 2018; Lee et al., 2020)
+
+#### Job Strain – Decision Authority and Psychological Job Demands 
+The interaction between job demands and decision authority was found to predict levels of intention to quit. When job demands are high and decision authority is low, employees' well-being decreases. Contrariwise, when both decision authority and psychological job demands are high, employees' motivation and performance increase (Karasek et al., 1998). These findings suggest that higher decision authority buffers the potential negative impact of high psychological job demands. 
+
+#### Low-Value Work
+This study measured low-value work as employees' mean response to two questions on a 1 to 5 Likert Scale: "You work on unnecessary things" and "You spend time in unproductive meetings". While there is a lack of literature regarding the relationship between low-value work, meaningful work was found to increase employees' psychological well-being (Chalofsky, 2003;Hackman and Oldham, 1980). As such, this study expects to find an association between low-value work and intention to quit. 
+#### Family-Supportive Supervisor Behaviors.
+
+Family-Supportive Supervisor Behaviors (FSSB) Assesses employee perceptions of supervisors' behavioral support for integrating work and family (Hammer et al., 2009). Virdo and Daly found FSSB to have a positive effect on reducing intent to quit (2019). 
+
+#### Work-Family Conflict
+
+Previous research suggests that Work-Family Conflict is positively correlated with burnout (Pleck et al. 1980), depression (Frone et al. 1992), absenteeism (Goff et al. 2006), and turnover intention (Burke 1988).
+
+#### Organizational Citizenship Behaviors
+
+A cross-cultural study by Coyne and Ong found a significant relationship between OCB turnover intention (2007). Similarly, Ulndag et al. found positive relationships between OCB to job satisfaction, and a negative association between OCB and turnover intentions.
+
+#### Burnout
+
+Perhaps the most familiar predictor of intention to quit. A 2021 random-effects meta-analysis of 3,842 teachersd found a significant positive relationship between burnout and intention to quit, with burnout explaining 63% of the variance in teachers' ITQ (Madigan & Kim, 2021), all else equal.
+
+#### Job Satisfaction 
+
+Rahman et al. (2008) found that job satisfaction negatively affected IT professionals' turnover intentions. Similarly, Lambart et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions. 
+C.	Why is cluster analysis heatmaps a means to address this purpose?
+A cluster analysis heatmap is suitable as it visualizes the magnitude of the relationships between intention to quit to the various variables discussed. Heatmaps create a juxtaposition of associations, which allows for easy visual comparison between these relationships. 
+
+### D.	What would be the research question(s)? 
+
+1.	*What are the most significant predictors of intention to quit?*
+2.	*Was the intervention successful in increasing control over work schedule and supervisor social support? If yes, were these increase associated with reduced intentions to quit?*
+3.	*Was the intervention's success dependent on individuals' roles as employees or managers?* 
+
+### E.	What type of dataset would you need? Is there a dataset you know of that would work?
+I would need a data set consisting of mostly numerical variables. I will use the Work, Family and Health Network data set, a four-wave survey of two companies conducted between 2009 and 2012, to assess workplace practices' effects on employee, family, and organizational well-being.
+
+### F.	What types of data would you be looking for?
+As most items were collected using a Likert-Scale, I will be looking mostly at ordinal data. For cluster analysis purposes, ordinal Likert scale data will be treated as continuous, relaxing assumptions, as is commonly done with common analytic techniques like regression in the social sciences. Moreover, to support the decision to treat Likert data as continuous, scale distributions can be inspected for univariate normality. 
+
+
+### G.	Provide the generalized equation for the clustering and a brief narrative in which you specify the type of clustering, following the examples from the readings.
+Bowers' recommended clustering algorithm for education data, suggests that the distance measure used is uncentered correlation (2010). This would allow us to show both the absolute change in the pattern and the magnitude of the difference. Furthermore, Bowers recommends using average linkage as the agglomeration method because it is robust to missing data. According to Xu's and Wunsch's recommendations, the hierarchical clustering used would cluster individuals based on similarities to form larger clusters (2005). The generalized equation for uncentered correlation is as follows: 
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("uncentered_corr.png")
+```
+
+
+
+
+### H.	What do you think you would find?
+I believe I would find positive relationships between ITQ and emotional burnout, family-to-work conflict, psychological job demands, and low-value work. While I anticipate ITQ to have a negative relationship with family-supportive supervisor behavior, job satisfaction, organizational citizenship behavior, decision authority, and control over work hours. In addition, I believe that the intervention would successfully reduce ITQ by increasing decision authority and family supportive supervisor behavior, and control over work hours. I anticipate these findings to be more robust among employees compared to managers. 
+
+### I.	Why would this be important? What would be the implications for this research domain?
+
+Employee turnover can have detrimental effects on businesses. Although the factors influencing turnover had been well-studied for decades, their application into workplaces had rarely succeeded, leading to the current "Great Resignation." This study hopes to examine employees' intentions by investigating a large number of predictive factors and revealing clusters of employees who display patterns associated with higher ITQ, shedding light on which employees are predicted to quit. 
+
+
+
+## Part IV: Optional Stretch Goal 
+
+Use the TidyTuesday data from September of 2021 on the Billboard Top 100 songs chart from Spotify 
+
+```{r}
+# Get the Data
+library(tidytuesdayR) 
+# This loads the readme and all the datasets for the week of interest
+
+# Either ISO-8601 date or year/week works below 
+
+tuesdata <- tidytuesdayR::tt_load('2021-09-14')
+#tuesdata <- tidytuesdayR::tt_load(2021, week = 38)
+
+billboard <- tuesdata$audio_features
+
+# Or read in the data manually
+
+```
+
+Focusing on describing the data by song, select songs based on:
+spotify_track_popularity > 90.
+Then replicate as many of the aspects of the below cluster analysis heatmap as you can, which may include among other aspects:
+•	Row order
+•	Column order
+•	Annotations
+•	Font size
+•	Labels
+Provide a few sentences within your markdown on the successes and challenges in working to replicate as many aspects of the visualization as you can.
+
+```{r}
+head(billboard)
+```
+```{r}
+# filter by popular 
+billboard_over_90 <- billboard %>% 
+  filter(spotify_track_popularity > 90)
+
+data.scale<-scale(billboard_over_90)
+head(data.scale)
+
+
+# generate initial heatmap 
+Heatmap(data.scale, name = "billboard heatmap", 
+        cluster_rows=FALSE , cluster_columns = FALSE)
+```
+
+
+
+```{r}
+uncenter.dist<-function(m) {
+  as.dist(as.matrix(distancematrix(m, d="cosangle")))
+}
+```
+
+```{r}
+row.clus<-hclust(uncenter.dist(data.scale), method = "ave")
+col.clus<-hclust(uncenter.dist(t(data.scale)), method = "ave")
+
+Heatmap(data.scale, name = "billboard heatmap", 
+        cluster_rows=row.clus, cluster_columns=col.clus)
+```
+
+```{r}
+Heatmap(data.scale, name = "billboard heatmap", 
+    column_km = 3, column_title_gp = gpar(fill = c("red", "blue", "green"), font = 1:3),
+    column_names_gp = gpar(col = c("green", "orange", "purple"), fontsize = c(10, 14, 8)))
+```
 
 
 
