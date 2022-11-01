@@ -184,12 +184,12 @@ data_mat <- scale(data_mat)
 Below we visualize a heatmap using a categorical variable for annotation with more than two levels. 
 
 ```{r}
+# remove the cylinder variable from the data matrix; will use cylinders as annotation 
+ht_1_dat <- data_mat[, -2]
+
 # update row and col clustering with new data set input into the custom functions created 
 row.clus<-hclust(uncenter.dist(ht_1_dat), method = "ave")
 col.clus<-hclust(uncenter.dist(t(ht_1_dat)), method = "ave")
-
-# remove the cylinder variable from the data matrix; will use cylinders as annotation 
-ht_1_dat <- data_mat[, -2]
 
 # set cyl as annotation on heatmap 
 ht_cyl <-Heatmap(mtcars[, c(2)], name = "Cyl Count",
@@ -270,7 +270,7 @@ mt_model <- as.matrix(mt_model)
 mt_model <- scale(mt_model) 
 
 # add histogram boxplot for weight of cars 
-wt_mat <- mt_model[,6] # create matrix subset for wt variable 
+mt_wt <- mtcars[,6] # create matrix subset for wt variable; use original unscaled data for viz purposes
 
 histo_anno = rowAnnotation(Weight = anno_barplot(mt_wt, gp = gpar(fill = 3))) 
 
@@ -281,8 +281,13 @@ ht_intl <-Heatmap(mt_full[, 13], name = "Int'l Model", right_annotation = histo_
                          labels = c("No", "Yes")),
                    width = unit(0.5,"cm"), column_title = "U.S. and International Cars")
 
-# now remove wt fromt the data for the heatmap 
+# now remove wt from the data for the heatmap 
 mt_model_clean <- mt_model[, -6]
+
+
+# update row and col clustering with new data set input into the custom functions created 
+row.clus<-hclust(uncenter.dist(mt_model_clean), method = "ave")
+col.clus<-hclust(uncenter.dist(t(mt_model_clean)), method = "ave")
 
 # uncentered correlation on the mt_model data
 ht_models <- Heatmap(mt_model_clean, name = "cluster rows", 
@@ -380,7 +385,7 @@ Employee turnover can have detrimental effects on businesses. Although the facto
 
 Use the TidyTuesday data from September of 2021 on the Billboard Top 100 songs chart from Spotify 
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 # Get the Data
 library(tidytuesdayR) 
 # This loads the readme and all the datasets for the week of interest
@@ -392,7 +397,6 @@ tuesdata <- tidytuesdayR::tt_load('2021-09-14')
 
 billboard <- tuesdata$audio_features
 
-# Or read in the data manually
 
 ```
 
@@ -407,8 +411,15 @@ Then replicate as many of the aspects of the below cluster analysis heatmap as y
 Provide a few sentences within your markdown on the successes and challenges in working to replicate as many aspects of the visualization as you can.
 
 ```{r}
-head(billboard)
+billboard <- billboard[, 10:22]
+billboard <- sapply(billboard, as.numeric) 
+billboard <- as.data.frame(billboard) 
+head(billboard) 
 ```
+
+
+
+
 ```{r}
 # filter by popular 
 billboard_over_90 <- billboard %>% 
