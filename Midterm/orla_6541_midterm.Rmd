@@ -6,3 +6,21 @@ output: html_document
 ---
 
 
+# ORLA 6541 Midterm 
+
+The current Rmarkdown file contains code and supporting documentation for the following study titled, *Individual Traits and Behaviors Related to Responsibility-Taking Behaviors (RTB): An Application of Hierarchical Cluster Analysis and Heatmapping*. This research explores the relationship between individual differences, motivation, and key employee behaviors and RTB. The paper write up provides an in-depth review of the RTB construct and its validation to date. Building on previous validation research, the current study seeks to better understand individual traits and behaviors that relate to RTB. 
+
+
+#### Libraries and Set Up 
+
+```{r}
+library(tidyverse) 
+library(ComplexHeatmap)
+
+# load data 
+
+
+# inspect data 
+
+```
+
