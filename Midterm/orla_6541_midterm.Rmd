@@ -16,11 +16,62 @@ The current Rmarkdown file contains code and supporting documentation for the fo
 ```{r}
 library(tidyverse) 
 library(ComplexHeatmap)
+library(xlsx) 
+library(psych) 
+
+# working directory 
+setwd("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/Midterm")
 
 # load data 
 
+study_data <- read.xlsx("rtb_study1_composites.xlsx", sheetIndex = 1)
 
-# inspect data 
+# inspect data
+str(study_data) 
 
 ```
+
+
+#### Descriptive Statistics 
+
+```{r}
+# calculate descriptive statistics 
+descriptives <- describe(study_data) 
+
+# inspect descriptives 
+descriptives
+
+# clean descriptives data
+desc_short <- descriptives %>% 
+  select(mean, median, sd, min, max, skew, kurtosis)
+
+# inspect descriptives 
+desc_short 
+
+# export descriptives to local for formatting 
+#write.xlsx(desc_short, "descriptive_stats_midterm.xlsx") 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
