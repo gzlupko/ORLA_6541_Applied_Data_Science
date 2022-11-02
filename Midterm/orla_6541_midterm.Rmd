@@ -13,7 +13,7 @@ The current Rmarkdown file contains code and supporting documentation for the fo
 
 #### Libraries and Set Up 
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(tidyverse) 
 library(ComplexHeatmap)
 library(xlsx) 
@@ -28,6 +28,13 @@ study_data <- read.xlsx("rtb_study1_composites.xlsx", sheetIndex = 1)
 
 # inspect data
 str(study_data) 
+
+# data cleaning - renaming and drop second conscientiousness measure 
+
+study_data <- study_data %>%
+  rename(accountability = accn_composite, furtherance = furth_composite, ownership = own_composite, encouragement = enc_composite, RTB_score = RTB_total., 
+         conscientiousness = conscientiousness_1, OCB = org_citizenship_behavior) %>% 
+  select(-conscientiousness_2) 
 
 ```
 
@@ -52,6 +59,73 @@ desc_short
 #write.xlsx(desc_short, "descriptive_stats_midterm.xlsx") 
 
 ```
+
+
+
+## Exploratory Data Visualization  
+
+#### Viz I: Relationship between RTB, Conscientiousness, and Employee Engagement 
+
+H1a: The relationship between RTB and conscientiousness will be moderated by employee engagement. Specifically, when conscientiousness is high and EE is high, RTB will be high. In contrast, when conscientiousness is high but EE is low, RTB will be lower. 
+
+To build this visualization, I first collapsed EE to an ordinal variable to denote low, meidum, and high levels of EE. I store this as a factor data type, which will come in handy in the following split line plot, where 3 separte regression lines are visualized corresponding with the level of EE. 
+```{r}
+
+# create new var for new levels of EE 
+ee_data <- study_data %>% 
+  mutate(ee_levels = as.factor(ifelse(0 <=employee_engagement & employee_engagement < 1.666667, "low", ifelse(1.66667 <= employee_engagement & employee_engagement < 3.3333, "medium", "high"))))    
+
+# show count - findings indicate that there is too little variation
+ee_data %>% 
+  count(ee_levels) 
+
+# instead, I will sum to only two levels for EE - neutral and high 
+# the median is 4.08 and the SD is .65 so as it is the data is left skewed with not a lot of variation. Moreover, there are very few low values of EE so the categories of 'neutral' and 'high' for EE is an accurate representation of the data
+
+study_data %>% 
+  ggplot(aes(x =employee_engagement)) + 
+  geom_density(fill = "#69b3a2", alpha = 0.8)   # this density plot shows the left skew 
+
+# create new levels of EE for a factor variable that will then be used to group the employees and show their separate regression lines. Write over previous object. 
+ee_data <- study_data %>% 
+  mutate(ee_levels = 
+           as.factor(ifelse(0 <=employee_engagement & employee_engagement < 4, "Neutral", "High")))
+
+# review the levels. Note, I did not split the original EE continuous variable down the middle as the data was strongly left skewed. Thus, to strive to ensure more equal subgroup sample sizes, my cut point for 'neutrally engaged' employees was 4. In reality this is typically viewed as positive engagement/motivation/absorption in one's work, but using this outpoint will make for a more effective data viz to explore the potential moderating effect of EE on the RTB and conscientiousness. The underlying regression itself will nonetheless be true to the data, effect size, significance, etc. 
+ee_data %>% count(ee_levels) 
+```
+
+Build the visualization for the moderation analysis 
+
+```{r, message = FALSE}
+library(ggtext) 
+
+ee_data %>%
+  ggplot(aes(x = conscientiousness, y = RTB_score, color = ee_levels)) + 
+  geom_point() + geom_smooth(method = lm, se = FALSE) +  scale_color_manual(
+    values = c(High = "#FFDB6D", Neutral = "#0d88e6"), 
+    guide = "none") + labs(x = "Conscientiousness", 
+                           y = "Responsibility-taking Behavior", 
+                           title = "When conscientious employees are more<strong><span style = 'color:#4421af'><b> engaged </strong>they demonstrated higher RTB") + theme(plot.title = element_markdown())
+
+# confirm the interaction that we see with regression analysis
+# results indicate that the interaction b/w EE and conscientiousness is significant (p < .05) 
+lm(RTB_score ~ conscientiousness + employee_engagement + conscientiousness*employee_engagement, 
+   data = study_data) %>% summary() 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
