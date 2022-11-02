@@ -102,11 +102,13 @@ library(ggtext)
 
 ee_data %>%
   ggplot(aes(x = conscientiousness, y = RTB_score, color = ee_levels)) + 
-  geom_point() + geom_smooth(method = lm, se = FALSE) +  scale_color_manual(
-    values = c(High = "#FFDB6D", Neutral = "#0d88e6"), 
+  geom_point(position = "jitter", alpha = 0.5) + geom_smooth(method = lm, se = FALSE) +  scale_color_manual(
+    values = c(High = "#F8766D", Neutral = "#619CFF"), 
     guide = "none") + labs(x = "Conscientiousness", 
-                           y = "Responsibility-taking Behavior", 
-                           title = "When conscientious employees are more<strong><span style = 'color:#4421af'><b> engaged </strong>they demonstrated higher RTB") + theme(plot.title = element_markdown())
+                           y = "Responsibility-Taking Behavior", 
+                           title ="<span style = 'font-size:16pt; font-family:Helvetica;'> Conscientious employees that were more<strong><span style = 'color:#F8766D'><b> engaged  </strong>possessed higher RTB") + 
+  theme(plot.title = element_markdown(), axis.text.x=element_text(size=12), 
+        axis.text.y=element_text(size = 12)) + theme(axis.title = element_text(size = 14)) 
 
 # confirm the interaction that we see with regression analysis
 # results indicate that the interaction b/w EE and conscientiousness is significant (p < .05) 
