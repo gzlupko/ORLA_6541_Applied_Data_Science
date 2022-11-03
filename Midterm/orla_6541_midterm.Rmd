@@ -103,7 +103,7 @@ ee_data %>% count(ee_levels)
 
 Build the visualization for the moderation analysis 
 
-[add in graphic annotations for the neutral and high lines for engagement]
+note: originally saved as .svg file but the file was not retaining the desired formatting in Word. There is also considerable lag rendering the image, which I think may be due to the HTML processing. Not sure if the formatting issues and lag are related. Exporting as a .png helped. 
 ```{r, message = FALSE}
 library(ggtext) 
 
