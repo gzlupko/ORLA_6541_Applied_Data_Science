@@ -18,6 +18,7 @@ library(tidyverse)
 library(ComplexHeatmap)
 library(xlsx) 
 library(psych) 
+library(ggtext) # used for HTML formatting in ggplot2 objects 
 
 # working directory 
 setwd("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/Midterm")
@@ -30,7 +31,6 @@ study_data <- read.xlsx("rtb_study1_composites.xlsx", sheetIndex = 1)
 str(study_data) 
 
 # data cleaning - renaming and drop second conscientiousness measure 
-
 study_data <- study_data %>%
   rename(accountability = accn_composite, furtherance = furth_composite, ownership = own_composite, encouragement = enc_composite, RTB_score = RTB_total., 
          conscientiousness = conscientiousness_1, OCB = org_citizenship_behavior) %>% 
@@ -97,24 +97,26 @@ ee_data %>% count(ee_levels)
 
 Build the visualization for the moderation analysis 
 
+[add in graphic annotations for the neutral and high lines for engagement]
 ```{r, message = FALSE}
 library(ggtext) 
 
 ee_data %>%
   ggplot(aes(x = conscientiousness, y = RTB_score, color = ee_levels)) + 
-  geom_point(position = "jitter", alpha = 0.5) + geom_smooth(method = lm, se = FALSE) +  scale_color_manual(
+  geom_point(position = "jitter", alpha = 0.5) + geom_smooth(method = lm, se = FALSE) + scale_color_manual(
     values = c(High = "#F8766D", Neutral = "#619CFF"), 
     guide = "none") + labs(x = "Conscientiousness", 
                            y = "Responsibility-Taking Behavior", 
                            title ="<span style = 'font-size:16pt; font-family:Helvetica;'> Conscientious employees that were more<strong><span style = 'color:#F8766D'><b> engaged  </strong>possessed higher RTB") + 
-  theme(plot.title = element_markdown(), axis.text.x=element_text(size=12), 
-        axis.text.y=element_text(size = 12)) + theme(axis.title = element_text(size = 14)) 
+  theme(plot.title = element_markdown(), axis.text.x=element_text(size=12), axis.text.y=element_text(size = 12)) + theme(axis.title = element_text(size = 14)) + geom_label(x = 2, y = 3.2 ,label="Neutral\n Engagement", size=4, color="#619CFF") + geom_label(x = 4.4, y = 4.7, label = "High Engagement", size = 4, color = "#F8766D") 
+```
 
-# confirm the interaction that we see with regression analysis
-# results indicate that the interaction b/w EE and conscientiousness is significant (p < .05) 
-lm(RTB_score ~ conscientiousness + employee_engagement + conscientiousness*employee_engagement, 
-   data = study_data) %>% summary() 
 
+Regression model with interaction term to confirm the visually depicted relationship
+```{r, message = FALSE}
+ee_con_mod <- lm(RTB_score ~ conscientiousness*employee_engagement, data = study_data)
+summary(ee_con_mod) # model summary 
+confint(ee_con_mod) # 95% CIs 
 ```
 
 
