@@ -11,15 +11,21 @@ output: html_document
 The current Rmarkdown file contains code and supporting documentation for the following study titled, *Individual Traits and Behaviors Related to Responsibility-Taking Behaviors (RTB): An Application of Hierarchical Cluster Analysis and Heatmapping*. This research explores the relationship between individual differences, motivation, and key employee behaviors and RTB. The paper write up provides an in-depth review of the RTB construct and its validation to date. Building on previous validation research, the current study seeks to better understand individual traits and behaviors that relate to RTB. 
 
 
-#### Libraries and Set Up 
+#### Set up  
 
+Libraries used in assignment 
 ```{r, warning = FALSE, message = FALSE}
 library(tidyverse) 
 library(ComplexHeatmap)
 library(xlsx) 
 library(psych) 
 library(ggtext) # used for HTML formatting in ggplot2 objects 
+library(circlize)
+library(hopach)
+```
 
+Load and clean data 
+```{r, warning = FALSE, message = FALSE}
 # working directory 
 setwd("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/Midterm")
 
@@ -122,7 +128,61 @@ confint(ee_con_mod) # 95% CIs
 
 
 
+#### Cluster Analysis 
 
+For the first HCA heatmap, I want to look at RTB at the construct level. To do so, I will drop the dimension-level composite variables for now. I will explore dimension level relationships in the second HCA heatmap. 
+
+```{r}
+# drop the RTB dimensions, leaving only the composite for participants' full RTB score
+hca_data_1 <- study_data %>% 
+  select(-c(accountability, ownership, encouragement, furtherance, RTB_score)) 
+
+# scale data and convert to matrix format 
+data_scaled <- scale(hca_data_1)
+data_mat <- as.matrix(hca_data_1) 
+```
+
+
+```{r}
+# Function for uncentered distance using cosangle
+uncenter.dist<-function(m) {
+  as.dist(as.matrix(distancematrix(m, d="cosangle")))
+}
+
+# Note that for the columns, we need to transpose the matrix, so we  include the t() function.
+
+row.clus<-hclust(uncenter.dist(data_mat), method = "ave")
+col.clus<-hclust(uncenter.dist(t(data_mat)), method = "ave")
+```
+
+
+#### HCA heatmap 1 
+```{r}
+
+h1 <- Heatmap(data_mat, name = "RTB Heatmap", 
+        cluster_rows=row.clus, cluster_columns=col.clus) 
+
+# create histogram for annotation; will use RTB score as annotation 
+rtb_only <- study_data %>% 
+  select(RTB_score) %>% as.matrix() 
+
+histo_anno = rowAnnotation(RTB = anno_barplot(rtb_only, gp = gpar(fill = 3))) 
+ht_anno <- Heatmap(rtb_only, name = "RTB Score", right_annotation = histo_anno)  
+
+
+
+# sample code 
+# format the international variable for
+ht_intl <-Heatmap(mt_full[, 13], name = "Int'l Model", right_annotation = histo_anno,
+                   col = colorRamp2(c(0,1),c("grey", "black")),
+                   heatmap_legend_param = list(at = c(0,1),
+                         labels = c("No", "Yes")),
+                   width = unit(0.5,"cm"), column_title = "U.S. and International Cars")
+
+
+ht1_list <- h1 + histo_anno
+draw(ht1_list) 
+```
 
 
 
