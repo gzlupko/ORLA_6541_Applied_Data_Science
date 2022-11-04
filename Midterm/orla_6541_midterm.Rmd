@@ -169,19 +169,39 @@ rtb_only <- study_data %>%
 histo_anno = rowAnnotation(RTB = anno_barplot(rtb_only, gp = gpar(fill = 3))) 
 ht_anno <- Heatmap(rtb_only, name = "RTB Score", right_annotation = histo_anno)  
 
+row_ha = rowAnnotation(bar1 = anno_barplot(rtb_only)) 
+Heatmap(data_mat, name = "RTB Heatmap", right_annotation = row_ha) 
+
+# generate a top annotation with bars representing correlations between the variable and RTB 
+
+cor_df <- study_data %>% 
+  cor() 
+cor_df <- as.data.frame(cor_df) 
+
+# convert row names to new column
+cor_df$variables <- row.names(cor_df) 
+# filter only by RTB 
+rtb_cors <- cor_df %>% 
+  filter(variables == "RTB_score")
+
+# transpose 
+rtb_cors <- as.data.frame(t(rtb_cors))
+rtb_cors$variables = row.names(rtb_cors)
+
+# now remove the RTB dimensions and the RTB measure itself 
+cors_no_rtb <- rtb_cors %>%
+  filter(!variables == "accountability" & !variables == "furtherance" & !variables == "ownership" & !variables == "encouragement" & !variables == "RTB_score" & !variables == "variables") %>% mutate(RTB_score = as.numeric(RTB_score)) %>% select(RTB_score)
+cors_mat <- cors_no_rtb %>% as.matrix()
+cors_mat
+
+# create a top annotation that is the correlation b/w RTB and the variables in the heatmap 
+cor_anno <- HeatmapAnnotation("RTB Correlation" = anno_barplot(cors_mat))
+
+# generate the heatmap 
+Heatmap(data_mat, name = "RTB Heatmap", top_annotation = cor_anno) 
 
 
-# sample code 
-# format the international variable for
-ht_intl <-Heatmap(mt_full[, 13], name = "Int'l Model", right_annotation = histo_anno,
-                   col = colorRamp2(c(0,1),c("grey", "black")),
-                   heatmap_legend_param = list(at = c(0,1),
-                         labels = c("No", "Yes")),
-                   width = unit(0.5,"cm"), column_title = "U.S. and International Cars")
 
-
-ht1_list <- h1 + histo_anno
-draw(ht1_list) 
 ```
 
 
