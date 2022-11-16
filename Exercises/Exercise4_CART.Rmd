@@ -1,0 +1,36 @@
+---
+title: "Exercise 4"
+author: "Nilima Ajaikumar, Hagay Jalon & Gian Zlupko"
+date: "2022-11-14"
+output: html_document
+---
+
+```{r message = FALSE, warning = FALSE}
+library(tidyverse) 
+library(xlsx) 
+library(pROC) 
+library(OptimalCutpoints) # for dealing with cutoff point
+library(naniar) # replaces missing data to NA
+```
+
+
+# Part I: NECS Data 
+
+#### Import Data 
+
+The following steps were implemented to access data from NCES' online repository. For our submission, we selected a wide range of predictors in addition to some of the predictor and outcome used in Bowers & Zhou (2019). The code below was used to load and clean the raw NCES data set. To cast a wide of potential predictor variables, we use a tidyverse approach with the `select()` function, specifically using a `var:var:` call within `select()` to capture a relatively large subset of rows. 
+```{r}
+setwd("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/NCES_Data") 
+
+# Load R Data File
+load("els_full_data.rdata")
+
+# simplify name of data frame 
+els_full_data <- els_02_12_byf3pststu_v1_0
+
+# outcome variables to add - drop out: F2EVERDO, College Enrollment: F2PS0601, GPA: F1RGPP2, post-secondary STEM: F3TZSTEM1TOT
+# add these outcome variables as well as some of the predictors used in Bowers and Zhou (2019). To select a wider rang e
+els_clean <- els_full_data %>%
+   select(STU_ID:bytxmthn, F2PS0601, F2EVERDO, F1RGPP2, F3TZSTEM1TOT) %>% rename(drop_out = F2EVERDO, college_enrollment = F2PS0601, GPA = F1RGPP2, post_sec_stem = F3TZSTEM1TOT)
+```
+
