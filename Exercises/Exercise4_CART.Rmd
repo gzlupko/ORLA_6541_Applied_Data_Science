@@ -79,11 +79,52 @@ els_vars <- els_clean %>%
 
 ```
 
-View summaries of the predictor variables 
+Remove missing data in the data set that are stored as -9, -8, -4, -1
+
 ```{r}
-summary(els_vars) 
+library(naniar)
+els_complete <- replace_with_na_if(els_vars,
+                                   .predicate = is.numeric,
+                                   condition = ~.x < 0)
+
+# Create the math t-score variable following Bowers' CART markdown 
+
+els_complete <- els_complete %>% 
+  mutate(math_t_score = ifelse(math_tscore < 44.065, 1, 0), 
+         reading_t_score = ifelse(reading_tscore < 43.64, 1, 0))
+
+
+# finally, view summary of clean variables 
+summary(els_complete) 
 ```
 
+
+Now that we have loaded and cleaned the data, we are ready to generate our first table and figure. Following Bowers & Zhou (2019), the first analysis that we run is to calculate and visualize an ROC AUC comparison of different predictors in the data on the drop out.  
+
+#### Figure 1 and Table 1
+
+Figure A depicts a ROC plot for some of the key following predictors of drop out that were presented in Bowers & Zhou (2019): any one flag, any two flags, absence, misbehavior, math t-score and reading t-score. 
+
+Figure B demonstrates ROC curves for continuous predictors. 
+
+
+```{r, message = FALSE}
+
+# ROC for math t-score
+roc1 = roc(els_complete$drop_out, els_complete$math_t_score, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=1, xaxs="i", yaxs="i", main = "ROC curves for predicting dropout: Comparison")
+
+# ROC for reading t-score 
+
+roc2 = roc(els_complete$drop_out, els_complete$reading_t_score,
+           plot=TRUE, add=TRUE, percent=roc1$percent, lty=2)
+
+# ROC for one flag 
+
+roc3 = roc(els_complete$drop_out, els_complete$flag_00, plot=TRUE, add=TRUE, percent=roc1$percent, lty=3)
+
+legend("bottomright", legend=c("Math t score (2002)","Reading t score (2002)"), lty=c(1,2), lwd=2)
+
+```
 
 
 
@@ -92,10 +133,10 @@ summary(els_vars)
 
 ```{r}
 
-table_1_stats <- c("Accuracy", "Precision", "Sensitivity (Recall / True-positive Proportion",
+fig_1_stats <- c("Accuracy", "Precision", "Sensitivity (Recall / True-positive Proportion",
                   "Specificity (True-negative Proportion", "1-Specificity (False-positive Proportion", "Kapp")
 
-table_1_equations <- c("(a + d) / N", 
+fig_1_equations <- c("(a + d) / N", 
                      "a / (a + b)", 
                      "a / (a + c)", 
                      "d / (b + d)", 
@@ -103,9 +144,9 @@ table_1_equations <- c("(a + d) / N",
                      "(Accuracy - R) / (1 - R)")
 
 # bind columns 
-table_1 <- data.frame(cbind(table_1_stats, table_1_equations)) 
-colnames(table_1) <- c("Statistic", "Equation")
-table_1
+fig_1 <- data.frame(cbind(fig_1_stats, fig_1_equations)) 
+colnames(fig_1) <- c("Statistic", "Equation")
+fig_1
 
 ```
 
