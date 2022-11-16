@@ -16,9 +16,13 @@ library(naniar) # replaces missing data to NA
 
 # Part I: NECS Data 
 
+For the first part of our Exercise 4, we are recreating the figures and tables published in Bowers & Zhou (2019). Our code and results for this section are organized as follows. First, we load and clean the NCES data. Then, we provide the code, documentation, and interpretation for Tables 1-3 and Figures 1-3 from Bowers & Zhou (2019) in the order in which they appear in the article. 
+
 #### Import Data 
 
-The following steps were implemented to access data from NCES' online repository. For our submission, we selected a wide range of predictors in addition to some of the predictor and outcome used in Bowers & Zhou (2019). The code below was used to load and clean the raw NCES data set. To cast a wide of potential predictor variables, we use a tidyverse approach with the `select()` function, specifically using a `var:var:` call within `select()` to capture a relatively large subset of rows. 
+The following steps were implemented to access data from NCES' online repository. 
+
+
 ```{r}
 setwd("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/NCES_Data") 
 
@@ -28,9 +32,86 @@ load("els_full_data.rdata")
 # simplify name of data frame 
 els_full_data <- els_02_12_byf3pststu_v1_0
 
-# outcome variables to add - drop out: F2EVERDO, College Enrollment: F2PS0601, GPA: F1RGPP2, post-secondary STEM: F3TZSTEM1TOT
-# add these outcome variables as well as some of the predictors used in Bowers and Zhou (2019). To select a wider rang e
-els_clean <- els_full_data %>%
-   select(STU_ID:bytxmthn, F2PS0601, F2EVERDO, F1RGPP2, F3TZSTEM1TOT) %>% rename(drop_out = F2EVERDO, college_enrollment = F2PS0601, GPA = F1RGPP2, post_sec_stem = F3TZSTEM1TOT)
+
+# variables that we would like to keep 
+
+keepvars <- c(
+   "STU_ID",
+   "F2EVERDO", # Dropout
+   "BYP52E", # Absent*
+   "BYS24F", # Suspension*
+   "BYP51", # Misbehavior*
+   "BYTXMSTD", # Math t score (2002) - lowercase in the data
+   "BYS42", # Extracurricular activities (2002) hours/wk
+   "BYTXRSTD", # Reading t score (2002)* - lowercase in the data
+   "F2PS0601", # College enrollment
+   "F1RGPP2", # GPA
+   "F1S27", # Extracurricular activities (2004) hours/wk
+   "BYS33A", # AP
+   "F3TZSTEM1CRED", # Postsecondary STEM degree
+   "F3TZSTEM1TOT", # Number of STEM Courses
+   "F3TZSTEM2GPA", # STEM course GPA
+   "F3STEMOCCCUR" # Hard STEM career
+)
+
+# select subset of variables that were used in Bowers & Zhou (2019)
+# also apply renaming to make the data readable 
+els_clean <- els_full_data %>% 
+  select(STU_ID, F2EVERDO, BYP52E, BYS24F, BYP51, bytxmstd, BYS42, bytxrstd,
+         F2PS0601, F1RGPP2, F1S27, BYS33A, F3TZSTEM1CRED, F3TZSTEM1TOT,
+         F3TZSTEM2GPA, F3STEMOCCCUR) %>%
+  rename(student_ID = STU_ID, drop_out = F2EVERDO, absent = BYP52E, suspension = BYS24F, 
+         misbehavior = BYP51, math_tscore = bytxmstd, extra_curr_2002 = BYS42, 
+         reading_tscore = bytxrstd, college_enroll = F2PS0601, GPA = F1RGPP2, extra_curr_2004 = F1S27, AP = BYS33A, post_sec_stem = F3TZSTEM1CRED, no_stem_courses = F3TZSTEM1TOT, stem_GPA = F3TZSTEM2GPA, hard_stem_career = F3STEMOCCCUR)   
+
+# inspect cleaning 
+els_clean
+
+
+# finally, create the feature engineered flags that Bowers & Zhou also tested to look at 
+# the impact of the potential implication of one or more 'flags' or common indicators of 
+# student drop out 
+# the flags include: absent, suspension math_tscore in the 1st percentile, and misbehavior 
+
+els_vars <- els_clean %>%
+  mutate(flag_00 = ifelse(rowSums(select(., c(3:6)), na.rm = T) >= 1, 1, 0), 
+         flag_01 = ifelse(absent == 1 | suspension == 1 | math_tscore == 1 | misbehavior == 1, 1,0), flag_04 = ifelse(absent == 1 & suspension == 1 & math_tscore == 1 & misbehavior == 1, 1, 0))
+
 ```
+
+View summaries of the predictor variables 
+```{r}
+summary(els_vars) 
+```
+
+
+
+
+#### Table 1: Confusion Table for Calculating Contingency Proportions 
+
+
+```{r}
+
+table_1_stats <- c("Accuracy", "Precision", "Sensitivity (Recall / True-positive Proportion",
+                  "Specificity (True-negative Proportion", "1-Specificity (False-positive Proportion", "Kapp")
+
+table_1_equations <- c("(a + d) / N", 
+                     "a / (a + b)", 
+                     "a / (a + c)", 
+                     "d / (b + d)", 
+                     "b / (b + d)", 
+                     "(Accuracy - R) / (1 - R)")
+
+# bind columns 
+table_1 <- data.frame(cbind(table_1_stats, table_1_equations)) 
+colnames(table_1) <- c("Statistic", "Equation")
+table_1
+
+```
+
+
+
+
+
+
 
