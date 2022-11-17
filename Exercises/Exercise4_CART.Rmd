@@ -101,30 +101,99 @@ summary(els_complete)
 
 Now that we have loaded and cleaned the data, we are ready to generate our first table and figure. Following Bowers & Zhou (2019), the first analysis that we run is to calculate and visualize an ROC AUC comparison of different predictors in the data on the drop out.  
 
-#### Figure 1 and Table 1
+#### Figures 2A and 2B 
 
-Figure A depicts a ROC plot for some of the key following predictors of drop out that were presented in Bowers & Zhou (2019): any one flag, any two flags, absence, misbehavior, math t-score and reading t-score. 
-
-Figure B demonstrates ROC curves for continuous predictors. 
+Figure A depicts a ROC plot that utilizes predictors used by Balfanz et al.  (2007) and Figure B uses predictors selected by Bowers & Zhou (2019). 
 
 
+Figure 2A
 ```{r, message = FALSE}
 
 # ROC for math t-score
-roc1 = roc(els_complete$drop_out, els_complete$math_t_score, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=1, xaxs="i", yaxs="i", main = "ROC curves for predicting dropout: Comparison")
-
-# ROC for reading t-score 
-
-roc2 = roc(els_complete$drop_out, els_complete$reading_t_score,
-           plot=TRUE, add=TRUE, percent=roc1$percent, lty=2)
+roc1 = roc(els_complete$drop_out, els_complete$math_t_score, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=1, xaxs="i", yaxs="i", main = "ROC curves for predicting dropout")
 
 # ROC for one flag 
+roc2 = roc(els_complete$drop_out, els_complete$flag_01, plot=TRUE, add=TRUE, percent=roc1$percent, lty=2)
 
+# ROC for any number of flags 
 roc3 = roc(els_complete$drop_out, els_complete$flag_00, plot=TRUE, add=TRUE, percent=roc1$percent, lty=3)
 
-legend("bottomright", legend=c("Math t score (2002)","Reading t score (2002)"), lty=c(1,2), lwd=2)
+# ROC for all four
+roc4 = roc(els_complete$drop_out, els_complete$flag_04, plot=TRUE, add=TRUE, percent=roc1$percent, lty=4)
+
+# ROC for suspension 
+roc5 = roc(els_complete$drop_out, els_complete$suspension, plot=TRUE, add=TRUE, percent=roc1$percent, lty=5)
+
+# ROC for misbehavior
+roc6 = roc(els_complete$drop_out, els_complete$misbehavior, plot=TRUE, add=TRUE, percent=roc1$percent, lty=6)
+
+# ROC for absent
+roc7 = roc(els_complete$drop_out, els_complete$absent, plot=TRUE, add=TRUE, percent=roc1$percent, lty=7)
+
+# legend for the plot 
+legend("bottomright", legend=c("Math t score (2002)","Any No. Flags","All Four Flags","Suspension", "Misbehavior", "Absent"), lty=c(1,2,3,4,5,6,7), lwd=2)
 
 ```
+
+
+Figure 2B: 
+```{r, message = FALSE}
+
+# ROC for math t-score
+roc1 = roc(els_complete$drop_out, els_complete$math_t_score, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=7, xaxs="i", yaxs="i", main = "ROC curves for predicting dropout")
+
+# ROC for reading t score   
+roc8 = roc(els_complete$drop_out, els_complete$reading_t_score, plot=TRUE, add=TRUE, percent=roc1$percent, lty=8)
+
+# ROC for absent 
+roc9 = roc(els_complete$drop_out, els_complete$absent, plot=TRUE, add=TRUE, percent=roc1$percent, lty=9)
+
+# ROC for suspension 
+roc10 = roc(els_complete$drop_out, els_complete$absent, plot=TRUE, add=TRUE, percent=roc1$percent, lty=10)
+
+# ROC for suspension 
+roc9 = roc(els_complete$drop_out, els_complete$extra_curr_2002, plot=TRUE, add=TRUE, percent=roc1$percent, lty=11)
+
+
+# legend for the plot 
+legend("bottomright", legend=c("Math t score (2002)", "Reading t score (2002)", "Extrac. activities (2002)", "Absence", "Suspension"), lty=c(7,8,9,10,11), lwd=2)
+  
+  
+```
+##### AUC Values Corresponding with Figure 2A and 2B 
+
+Below, we create the data table that is pictured below Figures 2A and 2B in Bowers & Zhou (2019) to show the AUC values that correspond with their respective ROC curves. 
+
+Table under 2A: 
+```{r}
+# print AUC values and store to a vector
+auc_fig2a <- c(roc1$auc, roc2$auc, roc3$auc, roc4$auc, roc5$auc, roc6$auc, roc7$auc) 
+
+# store predictor names in a vector
+predictor_fig2a <- c("Math t score (2002)", "One Flag", "Any # of Flags", "All Four Flags", "Suspension", "Misbehavior", "Absent")
+
+# combine vector into a data frame, rename columns, adjust decimal points, and sort desceding by top AUC
+
+fig2a_table <- data.frame(cbind(predictor_fig2a, auc_fig2a)) 
+colnames(fig2a_table) <- c("Predictor", "AUC") 
+
+# roundabout convert from factor, have to go through character format first
+fig2a_table$AUC <- as.numeric(as.character(fig2a_table$AUC)) 
+
+fig2a_table %>% 
+   dplyr::mutate_if(is.numeric, round, 2) 
+
+```
+
+Table under 2B: 
+```{r}
+
+```
+
+
+
+
+
 
 
 
