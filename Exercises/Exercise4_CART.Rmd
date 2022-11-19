@@ -295,6 +295,98 @@ table_1 %>%
 Results in Table 1 show that math t score (2002) performed significantly better at predicting dropout than one flag, any number of flags, all four flags, and suspension. In contrast, the results also demonstrated that math t score did not have a significantly different AUC than misbehavior and absence.
 
 
+### Figure 3: ROC Curves for Predicting College Enrollment and Postsecondary STEM Degree 
+
+Figure 3A
+```{r, message = FALSE}
+
+# filter data to only include two values for college enroll: 0 (No), and 1 (Yes)
+fig_3_data <- els_complete %>% 
+   filter(college_enroll == 1 | college_enroll == 0) 
+
+# ROC curves for GPA, extracurriculars, and AP 5 
+# 'roc_enroll'... get it?.... couldn't resist...
+
+roc_enroll_1 = roc(fig_3_data$college_enroll, fig_3_data$GPA, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=12, xaxs="i", yaxs="i", main = "ROC curve for predicting college enrollment - GPA")
+
+roc_enroll_2 = roc(fig_3_data$college_enroll, fig_3_data$extra_curr_2004, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=13, xaxs="i", yaxs="i", main = "ROC curve for predicting college enrollment - Extra Curriculars")
+
+
+roc_enroll_3 = roc(fig_3_data$college_enroll, fig_3_data$AP, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=14, xaxs="i", yaxs="i", main = "ROC curve for predicting college enrollment - AP")
+
+
+# legend for the plot 
+legend("bottomright", legend=c("GPA", "Extracur. (2004)", "AP"), lty=c(12, 13,14), lwd = 2)
+
+```
+
+The table below shows the AUC values for each of the ROC curves above: 
+
+```{r}
+
+# print AUC values and store to a vector
+auc_fig3a <- c(stem_degree1$auc, stem_degree2$auc, stem_degree3$auc) 
+
+# store predictor names in a vector
+predictor_fig3a <- c("Number of STEM Courses", "Math t score (2002)", "STEM GPA")    
+
+# combine vector into a data frame, rename columns, adjust decimal points, and sort desceding by top AUC
+
+fig3b_table <- data.frame(cbind(predictor_fig3b, auc_fig3b)) 
+colnames(fig3b_table) <- c("Predictor", "AUC") 
+
+# roundabout convert from factor, have to go through character format first
+fig3b_table$AUC <- as.numeric(as.character(fig3b_table$AUC)) 
+fig3b_table %>% 
+   dplyr::mutate_if(is.numeric, round, 2) 
+
+```
+
+
+
+#### Figure 3B 
+
+Post-secondary STEM degree 
+
+```{r, message = FALSE}
+fig_3b_data <- els_complete %>% 
+   filter(post_sec_stem == 1 | post_sec_stem == 0) %>% 
+   mutate(as.factor(post_sec_stem)) 
+
+# build ROC curves for number of STEM courses, math t scores, and STEM course GPA 
+stem_degree1 = roc(fig_3b_data$post_sec_stem, fig_3b_data$no_stem_courses, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=1, xaxs="i", yaxs="i", main = "ROC curve for predicting STEM degree - Num. STEM Courses")
+
+stem_degree2 = roc(fig_3b_data$post_sec_stem, fig_3b_data$math_tscore, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=2, xaxs="i", yaxs="i", main = "ROC curve for predicting STEM degree - Math t score (2002)")
+
+
+stem_degree3 = roc(fig_3b_data$post_sec_stem, fig_3b_data$stem_GPA, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=3, xaxs="i", yaxs="i", main = "ROC curve for predicting STEM degree - STEM GPA")
+
+```
+
+
+Results for the ROC curves plotted in Figure 3B indicate that Number of STEM courses was the best predictor of whether or not students obtained a postsecondary STEM degree. Results also indicated that math t score predicted whether students obtained a STEM degree after high school. The table below shows the AUC values for each of the ROC curves above: 
+
+```{r}
+# print AUC values and store to a vector
+auc_fig3b <- c(stem_degree1$auc, stem_degree2$auc, stem_degree3$auc) 
+
+# store predictor names in a vector
+predictor_fig3b <- c("Number of STEM Courses", "Math t score (2002)", "STEM GPA")    
+
+# combine vector into a data frame, rename columns, adjust decimal points, and sort desceding by top AUC
+
+fig3b_table <- data.frame(cbind(predictor_fig3b, auc_fig3b)) 
+colnames(fig3b_table) <- c("Predictor", "AUC") 
+
+# roundabout convert from factor, have to go through character format first
+fig3b_table$AUC <- as.numeric(as.character(fig3b_table$AUC)) 
+fig3b_table %>% 
+   dplyr::mutate_if(is.numeric, round, 2) 
+
+```
+
+
+
 
 
 
