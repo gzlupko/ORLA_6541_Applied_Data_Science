@@ -314,10 +314,6 @@ roc_enroll_2 = roc(fig_3_data$college_enroll, fig_3_data$extra_curr_2004, legacy
 
 roc_enroll_3 = roc(fig_3_data$college_enroll, fig_3_data$AP, legacy.axes=TRUE, asp=FALSE, plot=TRUE, grid=FALSE, lty=14, xaxs="i", yaxs="i", main = "ROC curve for predicting college enrollment - AP")
 
-
-# legend for the plot 
-legend("bottomright", legend=c("GPA", "Extracur. (2004)", "AP"), lty=c(12, 13,14), lwd = 2)
-
 ```
 
 The table below shows the AUC values for each of the ROC curves above: 
@@ -325,22 +321,25 @@ The table below shows the AUC values for each of the ROC curves above:
 ```{r}
 
 # print AUC values and store to a vector
-auc_fig3a <- c(stem_degree1$auc, stem_degree2$auc, stem_degree3$auc) 
+auc_fig3a <- c(roc_enroll_1$auc, roc_enroll_2$auc, roc_enroll_3$auc) 
 
 # store predictor names in a vector
-predictor_fig3a <- c("Number of STEM Courses", "Math t score (2002)", "STEM GPA")    
+predictor_fig3a <- c("GPA", "Extra Curriculars", "AP")     
 
-# combine vector into a data frame, rename columns, adjust decimal points, and sort desceding by top AUC
+# combine vector into a data frame, rename columns, adjust decimal points, and sort descending by top AUC
 
-fig3b_table <- data.frame(cbind(predictor_fig3b, auc_fig3b)) 
-colnames(fig3b_table) <- c("Predictor", "AUC") 
+fig3a_table <- data.frame(cbind(predictor_fig3a, auc_fig3a)) 
+colnames(fig3a_table) <- c("Predictor", "AUC") 
 
 # roundabout convert from factor, have to go through character format first
-fig3b_table$AUC <- as.numeric(as.character(fig3b_table$AUC)) 
-fig3b_table %>% 
+fig3a_table$AUC <- as.numeric(as.character(fig3a_table$AUC)) 
+fig3a_table %>% 
    dplyr::mutate_if(is.numeric, round, 2) 
 
 ```
+
+The AUC values reported in the table indicate that GPA was the best predictor of college enrollment, followed by students' involvement in extra curricular activities. Finally, AP performed only slightly better than chance at predicting student college enrollment. 
+
 
 
 
@@ -384,6 +383,76 @@ fig3b_table %>%
    dplyr::mutate_if(is.numeric, round, 2) 
 
 ```
+
+
+Results for AUC values reported in the table above indicate that the number of STEM courses students took was the best predictor of whether students received a postsecondary degree in a STEM field. 
+
+
+#### Table 2: Significance of AUC Difference for College Enrollment Predictors and STEM Degree Predictors
+
+The table below conducts difference tests between the predictors of college enrollment and STEM careers that were reported above to determine which of the predictors were significantly different from one another. The first code chunk reports results from Delong's test of AUC comparisons for the predictors of college enrollment. The second code chunk does the same for STEM degree. 
+
+
+```{r}
+# code below utilizes custom created function from above 
+# that spits out results from Delong's test
+roc_sig_diff(roc_enroll_1, roc_enroll_2) 
+roc_sig_diff(roc_enroll_1, roc_enroll_3) 
+roc_sig_diff(roc_enroll_2, roc_enroll_3) 
+
+# create columns for table 
+pred_list_1 <- c("GPA", "GPA", "Extra Curricular (2004)")   
+pred_list_2 <- c("Extra Curricular (2004)", "AP", "AP")
+
+# create z score column 
+z_scores <- c(15.19, 29.85, 8.82)
+
+# create p-value column 
+p_values <- c("<.001", "<.001", "<.001")
+
+# combine all columns and rename columns 
+
+table_1 <- data.frame(cbind(pred_list_1, pred_list_2, z_scores, p_values)) 
+table_1 %>% 
+   rename("Predictor 1 " = pred_list_1, "Predictor 2" = pred_list_2, "Z" = z_scores, "p_value" = p_values)
+
+```
+
+Predictor comparisons for STEM degree. 
+
+```{r}
+roc_sig_diff(stem_degree1, stem_degree2) 
+roc_sig_diff(stem_degree1, stem_degree3) 
+roc_sig_diff(stem_degree2, stem_degree3) 
+
+# create columns for table 
+pred_list_1 <- c("Number of STEM Courses", "Number of STEM Courses", "Math t score (2002)")     
+pred_list_2 <- c("Math t score (2002)", "GPA", "GPA")
+
+# create z score column 
+z_scores <- c(31.62,39.65,8.71)
+
+# create p-value column 
+p_values <- c("<.001", "<.01", "<.001")
+
+# combine all columns and rename columns 
+
+table_1 <- data.frame(cbind(pred_list_1, pred_list_2, z_scores, p_values)) 
+table_1 %>% 
+   rename("Predictor 1 " = pred_list_1, "Predictor 2" = pred_list_2, "Z" = z_scores, "p_value" = p_values)
+```
+
+These results indicate that all of the AUC values were significantly different from one another. The largest difference was between that of number of STEM courses taken and GPA. This finding supports trends visualized by the ROC curves in Figure 3B, where the plots clearly indicate that number of STEM courses taken significantly outperformed student GPA on the prediction task. 
+
+
+
+
+
+
+
+
+
+
 
 
 
