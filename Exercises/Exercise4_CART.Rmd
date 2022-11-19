@@ -447,17 +447,71 @@ These results indicate that all of the AUC values were significantly different f
 
 
 
+# Part II
+
+
+# Part III 
+
+#### Provide a 2-3 page single spaced brief research proposal in which you argue for and justify the use of ROC AUC accuracy analysis and/or regression trees applied to a research topic that you are interested in. Please address the following questions in this order as you apply your new knowledge of these techniques (feel free to write this part in MS Word or similar and copy/paste into the markdown)
+
+*a. What is the purpose of your study? *
+	
+	The purpose of this study is to apply CART analysis to predict which employees are likely to voluntarily leave their job. By using machine learning (ML), this study will train an ML model on prior employee turnover records to produce turnover likelihood scores for current employees. In addition, through the use of ROC AUC analysis and regression tree models (CART), this study will identify the strongest predictors of voluntary turnover. 
+
+*b. Is there any research literature and theory that supports this argument? How so? *
+
+   Past literature suggests that numerous variables are related to turnover decisions. Due to the complexity behind turnover decisions, it is beyond the scope of this research proposal to discuss them all. That being said, variables that have been shown to predict turnover include job satisfaction, burnout, perception of leadership, and disengagement at work. 
+
+   To explore key predictors of voluntary turnover, this study hopes to analyze either the IBM HR Analytics Employee Attrition & Performance data set or the Work, Family and Health Network data set. The IBM data set contains attrition rate, as well as demographic and work environments variables, including age, business travel demands, gender, job satisfaction, environment satisfaction, education field, job role, income, overtime, percentage salary hike, tenure, training time, years in current role, relationship status, work life balance, distance from home, years since last promotion, and more. While the Work, Family and Health data set includes variables such as intention to quit, control over work schedule, burnout, job strain, low value work, work-family conflict, job satisfaction, and more. 
+
+*c. Why is ROC AUC accuracy and/or regression trees (or both) a means to address this purpose? *
+	
+   CART analysis allows us to use the available data to identify the relationship between employees and work characteristics and turnover outcomes. By applying a CART analysis, the decision tree can then be applied to current employees to identify employees who are at risk of quitting. This analysis can help inform organizations which current employees might benefit from additional intervention or support to prevent attrition. Furthermore, the use of CART models will allow us to visualize variable importance in the prediction of turnover. Doing so will allow us to identify the most important predictors of turnover. In addition, CART models will allow us to identify the proportion of participants in our data set that are predicted to have specific levels of a given variable based on the variable cut point. For example, we anticipate that employee engagement will be a key predictor of turnover. CART will partition the employee engagement variable using gini index calculations to determine which level of engagement meaningfully separates those that turnover and those that do not turnover. For those that do turnover, we will want to know how many participants from our overall sample are in the sub-sets corresponding to specific levels of engagement. Doing so will contribute to our overall understanding of which variables predict turnover the best. 
+
+
+*d. What would be the research question(s)? (To what extent…) *
+
+This study hopes to identify the most important predictors of voluntary employee turnover and to identify current employees that are most at risk of turning over. 
+
+*e. What type of data set would you need? Is there a data set you know of that would work? *
+	
+   We will need a data set with numerical and/or categorical variables that also contains historical turnover records for employees. As mentioned above, we will work with either the IBM HR Analytics Employee Attrition & Performance data set or the Work, Family and Health data set, both of which satisfy these requirements. The advantages of the IBM data set are 1) unlike the Work, Family and Health data set, it includes demographic variables, which had been found to relate to voluntary decisions 2) it contains turnover outcome, whereas the Work, Family and Health data set only measures intention to quit. On the other hand, the Work, Family and Health data set contains various psychological and work environment variables. Most importantly, the Work, Family and Health data set is real, whereas the IBM data set is fictional. 
+
+*f. What types of data would you be looking for? *
+
+We can use continuous and categorical variables as predictors. Turnover will be a binary variable. 
+
+*g. Provide the generalized equation for the relevant underlying mathematical functions and a brief narrative in which you specify the type of calculation following the examples from the readings. *
+	
+In CART, the data are split into sub-nodes in each decision node based on the best predictor and its threshold value. CART algorithm splits subsequent sub-nodes with the help of the Gini or entropy indices.
+
+According to Bulut and Desjardins (2021):
+
+“When building a classification tree, either the Gini index or the entropy is typically used to evaluate the quality of a particular split, as they are more sensitive to the changes in the splits than the classification error rate. Typically, the Gini index is better for minimizing mis-classification, while the Entropy is better for exploratory analysis.
+
+Gini Index is calculated as follows: 
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("gini_index.png")
+```
+where KK represents the number of classes. This is essentially a measure of total variance across the KK classes. A small Gini index indicates that a node contains predominantly observations from a single class (Bulut & Desjardins, 2021). 
+
+Entropy can be calculated as follows: 
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("entropy_equation.png")
+```
 
 
 
 
+*h. What do you think you would find? *
 
-
-
-
-
-
-
+   We believe we will find which employees are at risk of voluntarily leaving their job and the pattern of variables associated with this risk. The specific variables will depend on the data set we pick. 
+ 
+*i. Why would this be important? What would be the implications for this research domain? *
+	
+   Employee turnover is a workplace outcome that has significantly interested researchers and practitioners for decades due to the high cost and negative effects associated with turnover. For example, recruiting for vacant positions is time intensive and on-boarding new hires is costly. By applying CART analysis to predict which employees are at risk of quitting, we intent to contribute to this rich and important area of research in which organizations can benefit.
 
 
 
