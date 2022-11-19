@@ -187,6 +187,11 @@ legend("bottomright", legend=c("Math t score (2002)", "Reading t score (2002)", 
   
   
 ```
+
+Figure 2A and 2B depict ROC curves for key variables used to predict high school drop out. All of the predictors in Figure 2B predicted drop out better than chance. This result can be seen by visually inspecting each ROC curve and their distance from the diagonal line in the center of the plot, which indicates a random guess of 0.5. In contrast to Figure 2B, some of the predictors visualized in Figure 2A did not perform better than chance at predicting drop out. In particular, results in Figure 2A demonstrate that any number of flags performed worse than a random guess and all four flags performed about equivalent to a random guess in predictive capacity. 
+
+
+
 ##### AUC Values Corresponding with Figure 2A and 2B 
 
 Below, we create the data table that is pictured below Figures 2A and 2B in Bowers & Zhou (2019) to show the AUC values that correspond with their respective ROC curves. 
@@ -236,9 +241,58 @@ fig2b_table %>%
 ```
 
 
+Results from tables corresponding with Figures 2A and 2B indicated that math t score (2002) was the best predictor of high school drop out. Other predictors that performed well in predicting drop out were absences and involvement in extracurricular activities. 
+
+
+#### Table 1: Significance of AUC Difference for Predictors of Continuous Dropout 
+
+In our recreation of Table 1 below, we present results from a Delong test of the difference of two correlated ROC curves. Large Z scores and small p-values (below the conventional p < .05) indicate that the area under the respective curves is significantly different. For our table, we compared each predictor to math t score (2002) which was the predictor with the best AUC value observed on the current data. 
+
+```{r}
+
+# custom function to extra Z scores and p-values 
+roc_sig_diff <- function(x, y) { 
+   
+test1 <- roc.test(x,y) 
+print(test1$p.value) 
+print(test1$statistic) 
+   
+   }
+
+# cycle through all comparisons needed to build the table: 
+roc_sig_diff(roc1, roc2)  
+roc_sig_diff(roc1, roc3)  
+roc_sig_diff(roc1, roc4)  
+roc_sig_diff(roc1, roc5)  
+roc_sig_diff(roc1, roc6)  
+roc_sig_diff(roc1, roc7)  
+
+# create columns for table 
+
+pred_list_1 <- c("Math t score (2002)", "Math t score (2002)", "Math t score (2002)",
+                 "Math t score (2002)", "Math t score (2002)", "Math t score (2002)")  
+
+pred_list_2 <- c("One Flag", "Any number of flags", "All four flags", "Suspension", "Misbehavior", 
+                 "Absence")
+
+# create z score column 
+
+z_scores <- c(26.78, 23.85, 23.85, 8.55, 6.45, 0.62)
+
+# create p-value column 
+p_values <- c("<.001","<.001", "<.001", "<.001", "0.53", "0.61")
+
+
+# combine all columns and rename columns 
+
+table_1 <- data.frame(cbind(pred_list_1, pred_list_2, z_scores, p_values)) 
+table_1 %>% 
+   rename("Predictor 1 " = pred_list_1, "Predictor 2" = pred_list_2, "Z" = z_scores, "p_value" = p_values)
+```
 
 
 
+Results in Table 1 show that math t score (2002) performed significantly better at predicting dropout than one flag, any number of flags, all four flags, and suspension. In contrast, the results also demonstrated that math t score did not have a significantly different AUC than misbehavior and absence.
 
 
 
