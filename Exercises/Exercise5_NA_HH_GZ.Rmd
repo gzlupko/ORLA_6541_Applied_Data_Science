@@ -1,0 +1,53 @@
+---
+title: "Exercise5_NA_HJ_GZ"
+author: "Gian Zlupko"
+date: "2022-12-305"
+output: html_document
+---
+
+
+
+#### Libraries Used
+```{r, message = FALSE}
+
+library(tidytext) 
+library(tidyr)
+library(slam)
+library(ggrepel) 
+library(MASS)
+library(textstem)
+library(readtext)
+
+```
+
+
+Read in text data 
+
+```{r}
+# Read .txt files directly from a folder
+# Set a directory first
+data_dir <- "/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/imdb_pos_reviews"
+
+# Read in .txt data using
+# We need the encoding line to scrub weird non-standard characters out of the text data
+data_big <- readtext(paste0(data_dir, "/*.txt"), encoding = "UTF-8")
+# check dimensions 
+dim(data_big)
+```
+
+
+
+Sample 100 rows from the full data set of postive reviews 
+
+```{r}
+# collect a random sample and look at a data preview 
+sample_reviews <- sample_n(data_big, 100) 
+head(sample_reviews) 
+
+```
+
+
+
+
+
+
