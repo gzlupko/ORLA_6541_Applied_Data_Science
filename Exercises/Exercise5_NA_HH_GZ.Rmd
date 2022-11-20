@@ -9,7 +9,9 @@ output: html_document
 
 #### Libraries Used
 ```{r, message = FALSE}
-
+library(topicmodels)
+library(tm)
+library(tidyverse)
 library(tidytext) 
 library(tidyr)
 library(slam)
@@ -17,7 +19,6 @@ library(ggrepel)
 library(MASS)
 library(textstem)
 library(readtext)
-
 ```
 
 
@@ -44,7 +45,98 @@ Sample 100 rows from the full data set of postive reviews
 sample_reviews <- sample_n(data_big, 100) 
 head(sample_reviews) 
 
+
+# export the subset of the larget data set to local and share with team members 
+library(xlsx) 
+write.csv(sample_reviews, "subset_imdbd_pos_reviews.csv") 
+write.xlsx(sample_reviews, "subset_imdbd_pos_reviews.xlsx") 
 ```
+
+
+[optional] read in random sample of IMDB positive reviews from local (per step above). This step is optional if user wants to skip over importing the raw data each time.
+
+```{r}
+```
+
+
+
+#### Document-term matrix (DTM)
+
+Topic models need a DTM. To create one, the `Corpus()` function is used from the `tm` package. 
+
+```{r}
+# corpus
+corpus <- Corpus(VectorSource(sample_reviews$text))
+corpus
+
+# build DTM 
+text_DTM <- DocumentTermMatrix(corpus,control = list(stemming=TRUE, stopwords = TRUE, minWordLength = 3, removeNumbers = TRUE, removePunctuation = TRUE))
+
+# view characteristics of the DTM created 
+text_DTM
+
+# dimensions 
+dim(text_DTM)
+
+```
+
+The dimensions of the DTM [100,3741] show that there are the 100 rows that were randomly selected and 3,741 columns. Those columns are the terms (e.g. words). 
+
+
+Next we use term frequency-inverse document frequent (TF-IDF) to 
+
+This measure allows to omit terms which have low frequency as well as those occurring in many documents (Hornik & Grun, 2011) 
+```{r}
+term_tfidf <- tapply(text_DTM$v / row_sums(text_DTM)[text_DTM$i], text_DTM$j, mean) * log2(nDocs(text_DTM)/col_sums(text_DTM > 0))
+summary(term_tfidf)
+```
+
+Plot TF-IDF 
+
+```{r}
+plot(density(term_tfidf))
+```
+
+Use median tf-idf to select terms to retain for topic modeling. Per the output above, the median was 0.04. 
+```{r}
+# use median
+alpha <- 0.04
+text_DTM_trimmed <- text_DTM[row_sums(text_DTM) > 0, term_tfidf >= alpha]
+dim(text_DTM_trimmed)
+```
+
+
+
+#### 10-fold cross validation 
+
+```{r}
+# Cross validation
+
+control_CTM_VEM <- list(
+  estimate.beta = TRUE, verbose = 0, prefix = tempfile(), save = 0, keep = 0,
+  seed = as.integer(Sys.time()), nstart=1L, best = TRUE,
+  var = list(iter.max=100, tol=10^-6),
+  em = list(iter.max=500, tol=10^-4),
+  cg = list(iter.max=100, tol=10^5)
+)
+
+# use 10-fold CV to determine k!
+# randomly divide the data into 10 folds.
+
+set.seed(100)
+topics <- c(2, 3, 4, 5, 6, 7, 8, 9, 10, 15) ##set k equals to 2 3 4 5 6 7 8 9 10 15.
+seed <- 2
+D <- length(sample_reviews$text) 
+folding <- sample(rep(seq_len(10), ceiling(D))[seq_len(D)])
+table(folding)
+```
+
+We train and test using the 10-fold cross validation that we just set up. Then plot by perlexity to see where the elbow is to select the correct number of topics k. This step can take a little while to run. 
+
+
+
+
+
 
 
 
