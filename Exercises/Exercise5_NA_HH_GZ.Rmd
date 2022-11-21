@@ -331,11 +331,30 @@ colnames(plot_data) <- c("Coordinate1", "Coordinate2", "Main_Topic")
 
 
 # Part II: Additional Data Visualizations 
-After replicating the analysis in the example markdown in #1above, please extend the analysis using additional code, visualizations, or inclusion of additional data from the IMDB movie review dataset. Please include at least three additional extensions that you include at the end of the markdown for Exercise 5. Please include at least one of the following ideas as one of your three, the other two are up to you or feel free to stick to this list, it’s up to your team:
-Display the full text of each of the top 3 highest probability documents for each identified topic (using code, not copy paste from the .txt).
-Include additional visualizations of the final CTM model, perhaps using ideas from the optional tidytext reading, or interesting data visualizations from the data visualization readings from early in the semester including Wickham, Healy, and Bulut, etc.
-Using the additional data in the IMDB movie review dataset, examine the extent to which sentiment (how positive or negative the reviews are) relates to the topics. The sentiment data is already calculated and provided in the dataset, or you may want to use the tidytext sentiment analysis.
-Using the data and links to the movies that the movie reviews in the IMDB dataset review to, compare the movies to the latent topics you have identified in the CTM. Consider running the code in #1 above with a larger sample to have enough documents and movies per topic to do a comparison.
-Search on google scholar or other examples of textmining using the IMDB dataset, and include some aspect of the extended analysis in the literature into the positive reviews IMDB CTM.
+
+#### Instructions for Part II: 
+*After replicating the analysis in the example markdown in #1 above, please extend the analysis using additional code, visualizations, or inclusion of additional data from the IMDB movie review data set. Please include at least three additional extensions that you include at the end of the markdown for Exercise 5. Please include at least one of the following ideas as one of your three, the other two are up to you or feel free to stick to this list, it’s up to your team:* 
+
+*Display the full text of each of the top 3 highest probability documents for each identified topic (using code, not copy paste from the .txt).*
+
+* Extension options to choose from (select at least one)
+   * Display full text for top 3 highest probability documents for each topic 
+   * Develop a visualization from the Silge & Robinson (2017) tidytext reading
+   * Examine how sentiment relates to the topics 
+   * Using the data and links to the movies that the movie reviews in the IMDB 
+   * Other text mining examples from google scholar or elsewhere using the IMDB ddta set 
+
+### Extension 1 
+
+[choose one of the above]
+
+### Extension 2 
+
+
+### Extension 3 
+
+
+
+
 
 # Part III: 
