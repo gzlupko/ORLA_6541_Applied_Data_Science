@@ -809,8 +809,8 @@ printcp(dt_fit4)
 
 #### We use `plotcp() `function to visualize the cross-validation results.
 
-Results indicate using cp = 0.0039
-# NA GZ to discuss 
+Results indicate using cp = 0.0039. Researchers recommend that the ideal value of cp to select is at or below the median line. 
+
 
 ```{r}
 plotcp(dt_fit4)
@@ -862,8 +862,6 @@ plotcp(rt_fit1)
 
 #### Then, adjust  model based on the suggestions from the previous plot. 
 
-We see that the value of cp below the mean horizontal line is cp = 0.007
-# Check with Gian cp = 0.007
 ```{r}
 
 rt_fit2 <- rpart(formula = math ~ WEALTH + HEDRES + ENVAWARE + 
@@ -876,6 +874,7 @@ rt_fit2 <- rpart(formula = math ~ WEALTH + HEDRES + ENVAWARE +
                 parms = list(split = "gini"))
 
 printcp(rt_fit2)
+
 ```
 
 #### Visualize. Note that we use `extra = 100` in the `rpart.plot()` function to show percentages 
@@ -946,7 +945,6 @@ print(rf_fit2)
 ```
 
 #### We can see the overall accuracy of model (92.42% ) as follows:
-
 
 ```{r}
 sum(diag(rf_fit2$confusion)) / nrow(train_dat)
