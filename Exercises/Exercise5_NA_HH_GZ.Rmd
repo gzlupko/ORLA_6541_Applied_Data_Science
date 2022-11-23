@@ -103,6 +103,25 @@ Plot TF-IDF
 plot(density(term_tfidf))
 ```
 
+
+ggplot2 version of the same plot above: 
+
+```{r}
+# uses data from above, creates a df, and pipes directly into ggplot2 
+data.frame(term_tfidf) %>% 
+  mutate(doc_id = seq(length(term_tfidf))) %>% 
+  rename(tf_idf = term_tfidf) %>% 
+  ggplot(aes(x = tf_idf)) + geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) + ylab("Density") + xlab("TF-IDF")
+  
+
+```
+
+
+
+
+
+
+
 Use median tf-idf to select terms to retain for topic modeling. Per the output above, the median was 0.04. 
 ```{r}
 # use median
@@ -222,6 +241,7 @@ topics9 <- posterior(CTM9)$topics
 topics3 <- as.data.frame(topics9)
 rownames(topics9) <- sample_reviews$name
 #print(topics9)
+
 ```
 
 
@@ -346,7 +366,52 @@ colnames(plot_data) <- c("Coordinate1", "Coordinate2", "Main_Topic")
 
 ### Extension 1 
 
-[choose one of the above]
+
+Relationship between sentiment and topics
+
+Using the R library `texfeatures`
+
+```{r}
+library(textfeatures) 
+
+
+# assign topic from CTM to observations 
+# use the function topics() from topicmodels library to assign the most
+# likely topics for each document (in this case combined reasons) 
+
+topicmodels::topics(CTM9) 
+topic_assigned <- as.data.frame(topicmodels::topics(CTM9)) 
+topic_assigned$row_id <- rownames(topic_assigned) 
+colnames(topic_assigned) <- c("topic_assigned", "row_id") 
+topic_assigned
+
+# add the same row_id column to the original data: 
+sample_clean <- data.frame(sample_reviews) 
+sample_clean$row_id <- rownames(sample_clean) 
+
+# perform data join to attach topic proportions to original data
+sample_clean <- sample_clean %>% 
+  left_join(topic_assigned, by = "row_id")
+
+head(sample_clean) 
+
+# now we'll look at sentiment in a tidy text format following 
+# Silge and Robinson (2017) 
+
+sample_clean %>%
+  filter(topic_assigned == 7) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  inner_join(get_sentiments("bing")) %>%
+  mutate(sent_score = ifelse(sentiment == "negative", 1, -1)) %>% 
+  group_by(row_id) %>% 
+  summarize(sent_count = sum(sent_score)) %>% 
+  ggplot(aes(x = row_id, y = sent_count)) + geom_histogram(stat = 'identity') + 
+  labs(x = "Review ID", y = "Sentiment Total", title = "Sentiment Distribution for Movie Reviews Categorized by Topic 7")
+
+
+```
+
 
 ### Extension 2 
 
