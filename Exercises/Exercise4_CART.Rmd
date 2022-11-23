@@ -65,7 +65,7 @@ els_clean <- els_full_data %>%
          reading_tscore = bytxrstd, college_enroll = F2PS0601, GPA = F1RGPP2, extra_curr_2004 = F1S27, AP = BYS33A, post_sec_stem = F3TZSTEM1CRED, no_stem_courses = F3TZSTEM1TOT, stem_GPA = F3TZSTEM2GPA, hard_stem_career = F3STEMOCCCUR)   
 
 # inspect cleaning 
-els_clean
+#els_clean
 
 
 # finally, create the feature engineered flags that Bowers & Zhou also tested to look at 
@@ -102,9 +102,7 @@ summary(els_complete)
 Following Bowers & Zhou (2019), the first table that we create below is Figure 1, which presents a confusion table that specifies common metrics used in machine learning to evaluate prediction performance. 
 
 
-
 ### Table 1: Confusion Table for Calculating Contingency Proportions 
-
 
 ```{r}
 
@@ -1085,7 +1083,7 @@ According to Bulut and Desjardins (2021):
 
 Gini Index is calculated as follows: 
 
-```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
 knitr::include_graphics("gini_index.png")
 ```
 where KK represents the number of classes. This is essentially a measure of total variance across the KK classes. A small Gini index indicates that a node contains predominantly observations from a single class (Bulut & Desjardins, 2021). 
