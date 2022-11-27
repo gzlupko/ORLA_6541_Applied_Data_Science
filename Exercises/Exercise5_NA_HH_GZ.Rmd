@@ -449,31 +449,99 @@ Visualizing word frequencies
 
 
 ```{r}
-# start with raw data again
+# generate bigrams with each term of bi-gram in separate column 
+library(tidyr) 
 
-sample_clean %>% 
-  unnest_tokens(word, text) %>% 
-  anti_join(stop_words) %>% 
-  count(word) %>% 
-  arrange(desc(n)) %>%
-  mutate(freq = (n/3892)) %>%
-  ggplot(aes(x = freq, y  = freq)) + geom_point(position = "jitter", alpha = .25) + 
-  scale_x_log10() + scale_y_log10() 
-
-word_freq
-
-ggplot(data = word_freq, aes(x = freq))
+bigrams <- sample_clean %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ") %>% 
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  unite(bigram, word1, word2, sep = " ") %>%
+  filter(!bigram == "br br")
 
 
-review_topics %>% 
-  group_by(term) %>%
-  count(term) %>% 
-  arrange(desc(n))  
+bigrams %>% 
+  count(bigram) %>%
+  arrange(desc(n)) %>% 
+  head(10) %>%
+  ggplot(aes(x = reorder(bigram, n), y = n, fill = bigram)) + geom_histogram(stat = "identity") + coord_flip() + theme(legend.position = "none") + xlab("Bigram") + ylab("Count") 
+
+  
+```
+
+The sample histogram output is useful in visualizing the most common n-grams in the data set. However, additional visualizations can lend deeper insights into word co-occurances within the data set. For example, the following visualization presents a network of word co-occurances. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
+
+
+
+
+```{r}
+# wo
+
+bigram_counts <- sample_clean %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ") %>% 
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>% 
+  count(word1, word2, sort = TRUE) 
+
+# bi-gram network visualization 
+library(igraph) 
+library(ggraph) 
+bigram_graph <- bigram_counts %>% 
+  filter(n > 2) %>%
+  graph_from_data_frame()
+
+set.seed(2017)
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1)
+
 ```
 
 
 
 
-
-
 # Part III: 
+
+
+
+
+
+
+# Appendix 
+
+### A1. R solutions for common NLP tasks 
+
+
+N-grams 
+
+```{r}
+
+# create column with n-grams 
+sample_clean %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) 
+
+# generate bigrams with each term of bi-gram in separate column 
+library(tidyr) 
+
+bigrams <- sample_clean %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  separate(bigram, c("word1", "word2"), sep = " ") %>% 
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  unite(bigram, word1, word2, sep = " ") %>%
+  filter(!bigram == "br br")
+
+
+bigrams %>% 
+  count(bigram) %>%
+  arrange(desc(n)) %>% 
+  head(10) %>%
+  ggplot(aes(x = reorder(bigram, n), y = n, fill = bigram)) + geom_histogram(stat = "identity") + coord_flip() + theme(legend.position = "none") + xlab("Bigram") + ylab("Count") 
+  
+
+  
+```
+
