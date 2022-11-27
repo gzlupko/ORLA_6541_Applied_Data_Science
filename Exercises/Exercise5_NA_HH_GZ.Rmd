@@ -369,8 +369,6 @@ colnames(plot_data) <- c("Coordinate1", "Coordinate2", "Main_Topic")
 
 Relationship between sentiment and topics
 
-Using the R library `texfeatures`
-
 ```{r}
 library(textfeatures) 
 
@@ -415,8 +413,64 @@ sample_clean %>%
 
 ### Extension 2 
 
+visualize word differences from the Tidytext book 
+```{r}
+
+library(tidyr)
+
+# using CTM model object, extract beta values and store in a matrix 
+review_topics <- tidy(CTM9, matrix = "beta")
+
+# pivot from long to a wide data format and 
+# calculate a ratio of topic 2: topic 1 likelihood (uses beta) 
+beta_wide <- review_topics %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>% 
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+# create the plot with a random selection of 15 rows 
+beta_wide %>% 
+  sample_n(size = 15) %>% 
+  ggplot(aes(x = reorder(term, desc(log_ratio)), y = log_ratio)) + geom_histogram(stat = 'identity') + coord_flip() + ylab("Log Ratio of beta in Topic 2 / Topic 1") + xlab("Term") 
+
+
+
+```
+
+
+
+
+
 
 ### Extension 3 
+
+Visualizing word frequencies 
+
+
+```{r}
+# start with raw data again
+
+sample_clean %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>% 
+  count(word) %>% 
+  arrange(desc(n)) %>%
+  mutate(freq = (n/3892)) %>%
+  ggplot(aes(x = freq, y  = freq)) + geom_point(position = "jitter", alpha = .25) + 
+  scale_x_log10() + scale_y_log10() 
+
+word_freq
+
+ggplot(data = word_freq, aes(x = freq))
+
+
+review_topics %>% 
+  group_by(term) %>%
+  count(term) %>% 
+  arrange(desc(n))  
+```
+
 
 
 
