@@ -334,8 +334,8 @@ colnames(plot_data) <- c("Coordinate1", "Coordinate2", "Main_Topic")
 ```{r}
 # Need to use as.factor for Main_Topic for aes color so that there is a discrete color palette
 
-(p4 <- ggplot(data = plot_data) +
-    geom_point(mapping = aes(x = Coordinate1, y = Coordinate2, color = as.factor(Main_Topic))))
+ggplot(data = plot_data) +
+    geom_point(mapping = aes(x = Coordinate1, y = Coordinate2, color = as.factor(Main_Topic))) + theme(legend.position = "none") 
 ```
 
 
@@ -544,4 +544,80 @@ bigrams %>%
 
   
 ```
+
+
+#### A2: Stop Words 
+
+
+Stop words using `tidytext` package 
+```{r}
+
+library(tidytext) 
+# remove stop word dictionary from tidytext package 
+sample_clean %>%
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words)
+
+
+# remove custom list of stop words 
+
+# create custom vector of words that you don't want
+words_to_remove <- c("movie", "amc", "picture", "amc", "hollywood", "Sandra")
+
+# remove custom list from words 
+sample_clean %>% 
+  unnest_tokens(word, text) %>% 
+  filter(!word %in% words_to_remove)
+
+sample_clean %>% 
+  anti_join()
+
+
+str <- c("I have zero a accordance")
+
+custom_stopwords = c("a", "able", "about", "above", "abst", "accordance", "yourself",
+"yourselves", "you've", "z", "zero")
+
+
+df_stopwords <-
+  tibble(
+    word = c("em", "de", "o", "para")
+  )
+
+sample_clean %>% 
+  anti_join(df_stopwords)  
+
+
+
+```
+
+
+
+#### A3: Create DTM in tidy format 
+
+```{r}
+
+
+test_1 <- sample_clean %>% 
+  rename(document = doc_id) 
+
+sample_dtm <- test_1  %>%
+  unnest_tokens(word, text) %>% 
+  anti_join(stop_words) %>%
+  count(document, word, sort = T) %>%
+  cast_dtm(document = document, term = word, n) 
+
+# sample LDA using the DTM 
+test_CTM <- CTM(sample_dtm, k = 5, control = list(seed = 1234))
+test_CTM 
+
+```
+
+
+
+
+
+
+
+
 
