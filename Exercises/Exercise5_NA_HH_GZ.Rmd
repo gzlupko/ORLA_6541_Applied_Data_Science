@@ -234,6 +234,8 @@ CTM9
 
 #### CTM Output 
 
+Now we can see the probabilities for each document across the topic
+
 ```{r}
 ## A CTM_VEM topic model with 9 topics.
 
@@ -257,7 +259,7 @@ print(main_topic9)
 
 #### Top terms by topic 
 
-Now, we can visualize the terms (words) that are 
+We can list the top terms for each topic. Here we ask for 10 terms. These terms are how we “tell the story” and name the topic.
 
 ```{r}
 # Using this: https://www.tidytextmining.com/topicmodeling.html
