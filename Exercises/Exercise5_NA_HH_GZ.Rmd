@@ -7,6 +7,17 @@ output: html_document
 
 
 
+# Part I: Recreate CTM Markdown Analysis 
+
+The following code in Part I of this exercise submission recreates code provided by Professor Bowers used to fit correlated topic models (CTM) and to use CTM to summarize large text data. The text data used in this assignment are positive movie reviews posted on International Movie Data Base (IMDB)'s online movie review platform. Data was accessed at the following URL: https://ai.stanford.edu/~amaas/data/sentiment/
+
+
+Note: the
+
+
+
+To get started, first we read in text data 
+
 #### Libraries used through exercise 
 ```{r, message = FALSE}
 library(topicmodels)
@@ -21,13 +32,7 @@ library(textstem)
 library(readtext)
 ```
 
-
-# Part I: Recreate CTM Markdown Analysis 
-
-The following code in Part I of this exercise submission recreates code provided by Professor Bowers used to fit correlated topic models (CTM) and to use CTM to summarize large text data. The text data used in this assignment are positive movie reviews posted on International Move Data Base (IMDB)'s online movie review platform. 
-
-
-To get started, first we read in text data 
+Import Data
 
 ```{r}
 # Read .txt files directly from a folder
@@ -42,7 +47,7 @@ dim(data_big)
 ```
 
 
-Next, we collect a sample 100 rows from the full data set of postive reviews. 
+Next, we collect a sample 100 rows from the full data set of positive reviews. 
 
 ```{r}
 # collect a random sample and look at a data preview 
@@ -52,8 +57,8 @@ head(sample_reviews)
 
 # export the subset of the larget data set to local and share with team members 
 library(xlsx) 
-write.csv(sample_reviews, "subset_imdbd_pos_reviews.csv") 
-write.xlsx(sample_reviews, "subset_imdbd_pos_reviews.xlsx") 
+#write.csv(sample_reviews, "subset_imdbd_pos_reviews.csv") 
+#write.xlsx(sample_reviews, "subset_imdbd_pos_reviews.xlsx") 
 ```
 
 
@@ -112,10 +117,9 @@ data.frame(term_tfidf) %>%
 ```
 
 
+A good rule of thumb is to use the median for alpha. Here it’s around 0.04
 
-
-
-
+Note that we’ve cut down the total number of terms by setting alpha so that we don’t have too many common terms nor unique terms (trimming both sides of the distribution a little)
 
 Use median tf-idf to select terms to retain for topic modeling. Per the output above, the median was 0.04. 
 ```{r}
@@ -128,6 +132,8 @@ dim(text_DTM_trimmed)
 
 
 #### 10-fold cross validation 
+
+We set up the 10 fold cross validation, selecting 10% of the data for each of the 10 folds. 
 
 ```{r}
 # Cross validation
@@ -173,8 +179,9 @@ for (k in topics) {
 
 Plot perplexity following 10-fold cross validation 
 
-Perplexity is a loglikelihood measure of topic model performance. It indicates the extent to which the topic model was able to predict data that was left out. Another way to understand left-out likelihood is a measure of how well the topic model reproduces the characteristics of data that was left out. 
+Perplexity is a log likelihood measure of topic model performance. It indicates the extent to which the topic model was able to predict data that was left out. Another way to understand left-out likelihood is a measure of how well the topic model reproduces the characteristics of data that was left out. 
 
+Plot the perplexity for each of the 10 folds, and then in the following code chunk, plot the average perplexity: 
 
 ```{r}
 # Plot perplexity
@@ -511,7 +518,7 @@ Despite the useful information already provided by Glassdoor, we hope that apply
 
 *c. Why is a Correlated Topic Model a means to address this purpose? *
 
-  Correlated Topic Model identifies latent topics as features across the employee reviews. These topics can then be used as independent variables in subsequent models evaluating their relationship to the overall rating. 
+  Correlated Topic Model (CTM) identifies latent topics as features across the employee reviews. CTM is a useful approach for identifying themes underlying text at scale. In addition, unlike LDA, CTM allows for correlations between topics identified. This is an important extension of the LDA topic model as certain topics related to employee experience would be expected to relate to one another. For example, a topic related to 'career development opportunities' would be expected to relate to a topic corresponding with 'perceived organizational support'. Finally, CTM offers a useful means to explore employee company reviews as CTM output can be used in subsequent modeling techniques. For example, topic proportions assigned to individual reviews by CTM can be treated as predictors in regression-based frameworks. By doing so, researchers can identify meaningful relationships between identified topics and relevant meta-data like company demographics, compensation, and turnover rates. 
 
 
 *d. What would be the research question(s)? (To what extent…) *
@@ -521,11 +528,12 @@ Despite the useful information already provided by Glassdoor, we hope that apply
 
 *f. What types of data would you be looking for? *
 
-I will be looking for unique terms across the reviews which repeat themselves frequently enough to be classified into topics, excluding high and extremely low-frequency words.
+To carry out this study, we will need a data set containing employee company reviews that are stored as raw text data. The raw text will serve as input for topic modeling techniques, including pre-processing methods that will render the text available for quantitative analysis. In addition to the text data, the data set that we would be looking for would also have additional fields containing columns of data with characteristics about the three consulting firms. For example, to perform follow-up analyses that utilize the topic model output, we would need a column containing the employees' overall rating of the firm. In addition, as previously discussed, we would be interested variables like firm location, which could be used as a control variable in the analysis of the relationship between topic and overall employee rating. 
+
 
 *g. Provide the generalized equation for the topic model and a brief narrative in which you specify the type of model, following the examples from the readings. *
 
-Topic modeling takes an unsupervised approach to uncover latent topics in documents. Unlike LDA, correlated topic modeling uses the multivariate normal distribution instead of the Dirichlet with the goal of generating k values. To do so, it needs k means and k standard deviations. To transform the multivariate normal distribution into probabilities, CTM passes the values through a variant of the logistic function. 
+Topic modeling takes an unsupervised approach to uncover latent topics in documents. Unlike LDA, correlated topic modeling uses the multivariate normal distribution instead of the Dirichlet with the goal of generating *k* values. To do so, it needs *k* means and *k* standard deviations. To transform the multivariate normal distribution into probabilities, CTM passes the values through a variant of the logistic function. 
 
 ```{r}
 # Load libraries needed
@@ -553,7 +561,7 @@ Where η ('eta') is a vector k of values of arbitrary sizes, ηⱼ is every outp
 
 *h. What do you think you would find? *
 
-I believe that work-life balance, managers, hours, culture, salary, and flexibility will be the prevailing latent topics in employee reviews. In addition, I hope that further analysis will reveal these topics' relationship with the overall rating. For example, while culture and managers might prevail as review topics, they might be associated with both positive and negative reviews. 
+We believe that we will find topics related to work-life balance, managers, hours, culture, salary, and role flexibility in employee reviews. In addition, we hope that further analysis will reveal which of these topics are most related to the overall rating. For example, given a list of 10+ topics, it would be helpful to know which are most related to employees' overall rating of the firm. Moreover, between firm comparisons would highlight which firms these relationships were most strong. For example, the relationship between pay and overall rating may vary based on the firm under examination. 
 
 *i. Why would this be important? What would be the implications for this research domain?*
 	
