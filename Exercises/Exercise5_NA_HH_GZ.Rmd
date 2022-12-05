@@ -57,11 +57,6 @@ write.xlsx(sample_reviews, "subset_imdbd_pos_reviews.xlsx")
 ```
 
 
-[optional] Here we can read in the subset of the larger data set if we want to instead of running the import code from the raw text data each time. 
-
-```{r}
-```
-
 
 
 #### Document-term matrix (DTM)
@@ -417,6 +412,7 @@ visualize word differences from the Tidytext book
 ```{r}
 
 library(tidyr)
+library(htmltools)
 
 # using CTM model object, extract beta values and store in a matrix 
 review_topics <- tidy(CTM9, matrix = "beta")
@@ -432,9 +428,7 @@ beta_wide <- review_topics %>%
 # create the plot with a random selection of 15 rows 
 beta_wide %>% 
   sample_n(size = 15) %>% 
-  ggplot(aes(x = reorder(term, desc(log_ratio)), y = log_ratio)) + geom_histogram(stat = 'identity') + coord_flip() + ylab("Log Ratio of beta in Topic 2 / Topic 1") + xlab("Term") 
-
-
+  ggplot(aes(x = reorder(term, desc(log_ratio)), y = log_ratio, fill = log_ratio >0)) + geom_histogram(stat = 'identity') + coord_flip() + ylab("Log Ratio of beta in Topic 2 / Topic 1") + xlab("Term") + scale_fill_manual(values = c("red", "blue")) + theme(legend.position = "none")
 
 ```
 
@@ -457,17 +451,18 @@ bigrams <- sample_clean %>%
   separate(bigram, c("word1", "word2"), sep = " ") %>% 
   filter(!word1 %in% stop_words$word) %>%
   filter(!word2 %in% stop_words$word) %>%
-  unite(bigram, word1, word2, sep = " ") %>%
-  filter(!bigram == "br br")
+  filter(!word1 == "br") %>% 
+  filter(!word2 == "br") %>%
+  unite(bigram, word1, word2, sep = " ")
 
-
+# visualize the most common bigrams
 bigrams %>% 
   count(bigram) %>%
   arrange(desc(n)) %>% 
   head(10) %>%
-  ggplot(aes(x = reorder(bigram, n), y = n, fill = bigram)) + geom_histogram(stat = "identity") + coord_flip() + theme(legend.position = "none") + xlab("Bigram") + ylab("Count") 
+  ggplot(aes(x = reorder(bigram, n), y = n, fill = bigram)) + geom_histogram(stat = "identity") + coord_flip() + theme(legend.position = "none") + xlab("Bigram") + ylab("Count") + ggtitle("Most Common Bigrams in Sample Reviews")
 
-  
+
 ```
 
 The sample histogram output is useful in visualizing the most common n-grams in the data set. However, additional visualizations can lend deeper insights into word co-occurances within the data set. For example, the following visualization presents a network of word co-occurances. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
@@ -476,7 +471,6 @@ The sample histogram output is useful in visualizing the most common n-grams in 
 
 
 ```{r}
-# wo
 
 bigram_counts <- sample_clean %>% 
   unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
@@ -500,11 +494,73 @@ ggraph(bigram_graph, layout = "fr") +
 
 ```
 
-
+This is a small data set so there aren't too many clusters of term correlations that contain three or more terms but we can see a few network clusters that emerged from the visualization above. One cluster of common word co-occurances contains the terms, 'films', 'horror', 'budget', and 'low'. This cluster of terms is likely being discussed in reviews that are about low budget horror films. Another cluster of terms contains the words, 'park', 'wook', and 'chan'. These terms were likely stated in movie reviews about Park Chan-Wook, a South Korean movie director. In a larger data set with more data, a network approach to n-gram visualization would likely provide larger network communities. 
 
 
 # Part III: 
 
+#### Provide a 2-3 page single spaced brief research proposal in which you argue for and justify the use of Correlated Topic Models applied to a research topic that you are interested in. Please address the following questions in this order as you apply your new knowledge of these techniques (feel free to write this part in MS Word or similar and copy/paste into the markdown). 
+
+*a. What is the purpose of your study?*
+
+The purpose of the study is to apply Correlated Topic Models to analyze written reviews regarding the "Big Three" consulting firms (McKinsey & Co., The Boston Consulting Company, and Bain & Co) to examine which topics are associated with higher or lower overall ratings, as described by employees. 
+
+*b. Is there any research literature and theory that supports this argument? How so? *
+
+  Examining the overall rating given to given to these firms can serve as a proxy for employee satisfaction. Roznowski and Hulin (1992, p. 26) described job satisfaction as "the most informative data a manager or researcher can have for predicting employee behavior." Additionally, Lambert et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions (2001).     Additionally, analyzing Glassdoor's "Top Review Highlights by Sentiment" for these companies identified culture, salary, and flexibility as common pros, whereas work-life balance, managers, and late hours are recurrent cons. Past literature suggests that culture, specifically Organizational Citizenship Behaviors (OCB), which measures the extent to which workers report willingness to help their coworkers (Lambert, 2000), is associated with lower intentions to quit. Likewise, control over work schedule, which could serve as a proxy for flexibility, was found to be related to lower odds of reporting an intent to quit (Kennedy and Mohr, 2022), and salary has been historically positively associated with job satisfaction. 						On the other hand, poor work-life balance and long hours can induce work to family conflict, which is positively related to burnout (Pleck et al. 1980) and absenteeism (Goff et al. 2006) while negatively associated with job satisfaction (Bedeian et al. 1988; Bacharach et al. 1991). In addition, poor management is related to job satisfaction. For example, Family-Supportive Supervisor Behaviors, which evaluates supervisors' support for integrating work and family, as perceived by employees (Hammer et al., 2009), is significantly related to family-work conflict (Han & Mclean, 2020) and was found to have a positive effect on reducing employees' intentions to quit (Virdo & Daly, 2019).
+Despite the useful information already provided by Glassdoor, we hope that applying Correlated Topic Model will reveal more topics and allow for further analysis to examine their relationship with overall rating. 
+
+
+*c. Why is a Correlated Topic Model a means to address this purpose? *
+
+  Correlated Topic Model identifies latent topics as features across the employee reviews. These topics can then be used as independent variables in subsequent models evaluating their relationship to the overall rating. 
+
+
+*d. What would be the research question(s)? (To what extent…) *
+
+  How many distinct topics exist across employee reviews of the "big three" consulting firms, what are they, and do they differ between the firms? To what extent are these topics associated with overall rating, controlling for other variables such as location?
+
+
+*f. What types of data would you be looking for? *
+
+I will be looking for unique terms across the reviews which repeat themselves frequently enough to be classified into topics, excluding high and extremely low-frequency words.
+
+*g. Provide the generalized equation for the topic model and a brief narrative in which you specify the type of model, following the examples from the readings. *
+
+Topic modeling takes an unsupervised approach to uncover latent topics in documents. Unlike LDA, correlated topic modeling uses the multivariate normal distribution instead of the Dirichlet with the goal of generating k values. To do so, it needs k means and k standard deviations. To transform the multivariate normal distribution into probabilities, CTM passes the values through a variant of the logistic function. 
+
+```{r}
+# Load libraries needed
+library(png)
+library(magick)
+
+# Read in image
+img <- image_read("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/ctm_formula.png")
+
+# Visualize the image
+plot(img)
+```
+In addition to the CTM model formula, a plate diagram for CTM is shown below. 
+
+```{r}
+# Read in image
+img1 <- image_read("/Users/gianzlupko/Desktop/ORLA 6541 Data Science/ORLA_6541_Applied_Data_Science/ctm_platediagram.png")
+
+# Visualize the image
+plot(img1)
+```
+
+Where η ('eta') is a vector k of values of arbitrary sizes, ηⱼ is every output multivariate normal, and j corresponds to a topic.
+
+
+*h. What do you think you would find? *
+
+I believe that work-life balance, managers, hours, culture, salary, and flexibility will be the prevailing latent topics in employee reviews. In addition, I hope that further analysis will reveal these topics' relationship with the overall rating. For example, while culture and managers might prevail as review topics, they might be associated with both positive and negative reviews. 
+
+*i. Why would this be important? What would be the implications for this research domain?*
+	
+	Due to the demanding nature of working for the "big three" consulting firms, it is important to understand employees' perspectives and the underlying factors affecting their job satisfaction. Taking an unsupervised approach to identify these factors and analyzing their relationship to employees' objective rating of their firm could provide these organizations with directions to increase their employees' satisfaction. 
+	
 
 
 
