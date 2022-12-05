@@ -361,12 +361,10 @@ ggplot(data = plot_data) +
 
 ### Extension 1 
 
+For the first extension, we decided to explore how sentiment related to our topics. To do so, we followed recommendations from Silge & Robinson (2017) text to use the Bing sentiment dictionary. In particular, we classified sentiment at the token (word) level and then generated a sentiment score for each movie review based on the sum of its words' sentiment scores. We then recreated a bar chart demonstrated in Silge & Robinson (2017) after applying the sentiment classification. Our charts shows the differences in sentiment across reviews that were tagged by the CTM model as being highly associated with Topic 7. In this way, we have combined topic modeling output with sentiment analysis techniques. 
 
-Relationship between sentiment and topics
 
 ```{r}
-library(textfeatures) 
-
 
 # assign topic from CTM to observations 
 # use the function topics() from topicmodels library to assign the most
@@ -408,7 +406,7 @@ sample_clean %>%
 
 ### Extension 2 
 
-visualize word differences from the Tidytext book 
+For our second extension, we explore the difference in term beta values for topic model outputs. Beta represents the probability of a given word appearing in a particular topic. For this extension, we look at a set of 15 terms from our corpus vocabulary and compare the likelihood that the terms are in topic 1 or 2. While the terms may have higher beta values for other topics, this extension represents one way to produce a more fine-grained comparison of two given topics. This extension also parallels a visual presented in the Silge & Robinson (2017) text, Text Mining in R. 
 ```{r}
 
 library(tidyr)
@@ -439,7 +437,9 @@ beta_wide %>%
 
 ### Extension 3 
 
-Visualizing word frequencies 
+Finally, for our third extension, we explore n-grams in the data set. N-grams word co-occurances. Below, we start by exploring the top 10 most frequently stated bigrams in the movie review data base. Bi-grams represent two words that appeared consecutively and that, as a result, may indicate a meaningful compound word or phase.
+
+To generate bigrams, we followed the tidyverse-based approach, which was also demonstrated in Silge & Robinson (2017). 
 
 
 ```{r}
@@ -465,9 +465,7 @@ bigrams %>%
 
 ```
 
-The sample histogram output is useful in visualizing the most common n-grams in the data set. However, additional visualizations can lend deeper insights into word co-occurances within the data set. For example, the following visualization presents a network of word co-occurances. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
-
-
+The sample histogram output is useful in visualizing the most common bigrams in the data set. However, additional modes of visualizing n-gram patterns in the corpus may support deeper insights into word co-occurances within the data set. For example, the following visualization presents a network of word co-occurances. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
 
 
 ```{r}
@@ -503,11 +501,11 @@ This is a small data set so there aren't too many clusters of term correlations 
 
 *a. What is the purpose of your study?*
 
-The purpose of the study is to apply Correlated Topic Models to analyze written reviews regarding the "Big Three" consulting firms (McKinsey & Co., The Boston Consulting Company, and Bain & Co) to examine which topics are associated with higher or lower overall ratings, as described by employees. 
+The purpose of the study is to apply Correlated Topic Models to analyze written reviews regarding the "Big Three" consulting firms (McKinsey & Co., The Boston Consulting Company, and Bain & Co) to examine which topics are associated with higher or lower overall ratings related to employee experience.
 
 *b. Is there any research literature and theory that supports this argument? How so? *
 
-  Examining the overall rating given to given to these firms can serve as a proxy for employee satisfaction. Roznowski and Hulin (1992, p. 26) described job satisfaction as "the most informative data a manager or researcher can have for predicting employee behavior." Additionally, Lambert et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions (2001).     Additionally, analyzing Glassdoor's "Top Review Highlights by Sentiment" for these companies identified culture, salary, and flexibility as common pros, whereas work-life balance, managers, and late hours are recurrent cons. Past literature suggests that culture, specifically Organizational Citizenship Behaviors (OCB), which measures the extent to which workers report willingness to help their coworkers (Lambert, 2000), is associated with lower intentions to quit. Likewise, control over work schedule, which could serve as a proxy for flexibility, was found to be related to lower odds of reporting an intent to quit (Kennedy and Mohr, 2022), and salary has been historically positively associated with job satisfaction. 						On the other hand, poor work-life balance and long hours can induce work to family conflict, which is positively related to burnout (Pleck et al. 1980) and absenteeism (Goff et al. 2006) while negatively associated with job satisfaction (Bedeian et al. 1988; Bacharach et al. 1991). In addition, poor management is related to job satisfaction. For example, Family-Supportive Supervisor Behaviors, which evaluates supervisors' support for integrating work and family, as perceived by employees (Hammer et al., 2009), is significantly related to family-work conflict (Han & Mclean, 2020) and was found to have a positive effect on reducing employees' intentions to quit (Virdo & Daly, 2019).
+  Examining the overall rating given to given to these firms can serve as a proxy for employee satisfaction. Roznowski and Hulin (1992, p. 26) described job satisfaction as "the most informative data a manager or researcher can have for predicting employee behavior." Additionally, Lambert et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions (2001). Additionally, analyzing Glassdoor's "Top Review Highlights by Sentiment" for these companies identified culture, salary, and flexibility as common pros, whereas work-life balance, managers, and late hours are recurrent cons. Past literature suggests that culture, specifically Organizational Citizenship Behaviors (OCB), which measures the extent to which workers report willingness to help their coworkers (Lambert, 2000), is associated with lower intentions to quit. Likewise, control over work schedule, which could serve as a proxy for flexibility, was found to be related to lower odds of reporting an intent to quit (Kennedy and Mohr, 2022), and salary has been historically positively associated with job satisfaction. 						On the other hand, poor work-life balance and long hours can induce work to family conflict, which is positively related to burnout (Pleck et al. 1980) and absenteeism (Goff et al. 2006) while negatively associated with job satisfaction (Bedeian et al. 1988; Bacharach et al. 1991). In addition, poor management is related to job satisfaction. For example, Family-Supportive Supervisor Behaviors, which evaluates supervisors' support for integrating work and family, as perceived by employees (Hammer et al., 2009), is significantly related to family-work conflict (Han & Mclean, 2020) and was found to have a positive effect on reducing employees' intentions to quit (Virdo & Daly, 2019).
 Despite the useful information already provided by Glassdoor, we hope that applying Correlated Topic Model will reveal more topics and allow for further analysis to examine their relationship with overall rating. 
 
 
