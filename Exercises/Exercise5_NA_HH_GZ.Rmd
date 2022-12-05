@@ -12,11 +12,7 @@ output: html_document
 The following code in Part I of this exercise submission recreates code provided by Professor Bowers used to fit correlated topic models (CTM) and to use CTM to summarize large text data. The text data used in this assignment are positive movie reviews posted on International Movie Data Base (IMDB)'s online movie review platform. Data was accessed at the following URL: https://ai.stanford.edu/~amaas/data/sentiment/
 
 
-Note: the
-
-
-
-To get started, first we read in text data 
+To get started, first we called the libraries used throughout this exercise and then we read in text data.
 
 #### Libraries used through exercise 
 ```{r, message = FALSE}
@@ -62,8 +58,6 @@ library(xlsx)
 ```
 
 
-
-
 #### Document-term matrix (DTM)
 
 After loading in the data, we need to create a special data structure that topic models use to perform their clustering-like, and dimensionality reduction-like, methods of the data. Specifically, topic models need a DTM. DTMs are matrices that contain word frequency counts for documents for all words in the corpus' overall vocabulary. 
@@ -87,7 +81,6 @@ dim(text_DTM)
 ```
 
 The dimensions of the DTM [100,3741] show that there are the 100 rows that were randomly selected and 3,741 columns. Those columns are the terms (e.g. words). 
-
 
 Next we use term frequency-inverse document frequent (TF-IDF) to 
 
@@ -415,7 +408,8 @@ sample_clean %>%
 
 ### Extension 2 
 
-For our second extension, we explore the difference in term beta values for topic model outputs. Beta represents the probability of a given word appearing in a particular topic. For this extension, we look at a set of 15 terms from our corpus vocabulary and compare the likelihood that the terms are in topic 1 or 2. While the terms may have higher beta values for other topics, this extension represents one way to produce a more fine-grained comparison of two given topics. This extension also parallels a visual presented in the Silge & Robinson (2017) text, Text Mining in R. 
+For our second extension, we explored the difference in term beta values for topic model outputs. Beta represents the probability of a given word appearing in a particular topic. For this extension, we looked at a set of 15 terms from our corpus vocabulary and compared the likelihood that the terms were in topic 1 or 2. While the terms may have higher beta values for other topics that are not contained in this visualization, this extension represents one way to produce a more fine-grained comparison between two given topics. This extension also parallels a visual presented in the Silge & Robinson (2017) text, Text Mining in R. 
+
 ```{r}
 
 library(tidyr)
@@ -442,11 +436,9 @@ beta_wide %>%
 
 
 
-
-
 ### Extension 3 
 
-Finally, for our third extension, we explore n-grams in the data set. N-grams word co-occurances. Below, we start by exploring the top 10 most frequently stated bigrams in the movie review data base. Bi-grams represent two words that appeared consecutively and that, as a result, may indicate a meaningful compound word or phase.
+Finally, for our third extension, we explore n-grams in the data set. N-grams are word co-occurances in the original data. Below, we start by exploring the top 10 most frequently stated bigrams in the movie review data base. Bigrams represent two words that appeared consecutively. Bigrams that occured often in the data, as is shown below, are n-grams that likely indicate a meaningful phase.
 
 To generate bigrams, we followed the tidyverse-based approach, which was also demonstrated in Silge & Robinson (2017). 
 
@@ -474,7 +466,7 @@ bigrams %>%
 
 ```
 
-The sample histogram output is useful in visualizing the most common bigrams in the data set. However, additional modes of visualizing n-gram patterns in the corpus may support deeper insights into word co-occurances within the data set. For example, the following visualization presents a network of word co-occurances. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
+The sample histogram output above is useful in visualizing the most common bigrams in the data set. However, additional modes of visualizing n-gram patterns in the corpus may support deeper insights into word co-occurrences within the data set. For example, the following visualization presents a network of word co-occurrences. The network is based on words that co-occur with one another. By using a network visualization, we can see which words were written, not only in bi-term patterns, but in denser network clusters. 
 
 
 ```{r}
@@ -514,8 +506,8 @@ The purpose of the study is to apply Correlated Topic Models to analyze written 
 
 *b. Is there any research literature and theory that supports this argument? How so? *
 
-  Examining the overall rating given to given to these firms can serve as a proxy for employee satisfaction. Roznowski and Hulin (1992, p. 26) described job satisfaction as "the most informative data a manager or researcher can have for predicting employee behavior." Additionally, Lambert et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions (2001). Additionally, analyzing Glassdoor's "Top Review Highlights by Sentiment" for these companies identified culture, salary, and flexibility as common pros, whereas work-life balance, managers, and late hours are recurrent cons. Past literature suggests that culture, specifically Organizational Citizenship Behaviors (OCB), which measures the extent to which workers report willingness to help their coworkers (Lambert, 2000), is associated with lower intentions to quit. Likewise, control over work schedule, which could serve as a proxy for flexibility, was found to be related to lower odds of reporting an intent to quit (Kennedy and Mohr, 2022), and salary has been historically positively associated with job satisfaction. 						On the other hand, poor work-life balance and long hours can induce work to family conflict, which is positively related to burnout (Pleck et al. 1980) and absenteeism (Goff et al. 2006) while negatively associated with job satisfaction (Bedeian et al. 1988; Bacharach et al. 1991). In addition, poor management is related to job satisfaction. For example, Family-Supportive Supervisor Behaviors, which evaluates supervisors' support for integrating work and family, as perceived by employees (Hammer et al., 2009), is significantly related to family-work conflict (Han & Mclean, 2020) and was found to have a positive effect on reducing employees' intentions to quit (Virdo & Daly, 2019).
-Despite the useful information already provided by Glassdoor, we hope that applying Correlated Topic Model will reveal more topics and allow for further analysis to examine their relationship with overall rating. 
+  Examining the overall rating given to given to these firms can serve as a proxy for employee satisfaction. Roznowski and Hulin (1992, p. 26) described job satisfaction as "the most informative data a manager or researcher can have for predicting employee behavior." Additionally, Lambert et al. concluded that job satisfaction is a highly prominent predictor of turnover intentions (2001). Additionally, analyzing Glassdoor's "Top Review Highlights by Sentiment" for these companies identified culture, salary, and flexibility as common pros, whereas work-life balance, managers, and late hours are recurrent cons. Past literature suggests that culture, specifically Organizational Citizenship Behaviors (OCB), which measures the extent to which workers report willingness to help their coworkers (Lambert, 2000), is associated with lower intentions to quit. Likewise, control over work schedule, which could serve as a proxy for flexibility, was found to be related to lower odds of reporting an intent to quit (Kennedy and Mohr, 2022), and salary has been historically positively associated with job satisfaction. On the other hand, poor work-life balance and long hours can induce work to family conflict, which is positively related to burnout (Pleck et al. 1980) and absenteeism (Goff et al. 2006) while negatively associated with job satisfaction (Bedeian et al. 1988; Bacharach et al. 1991). In addition, poor management is related to job satisfaction. For example, Family-Supportive Supervisor Behaviors, which evaluates supervisors' support for integrating work and family, as perceived by employees (Hammer et al., 2009), is significantly related to family-work conflict (Han & Mclean, 2020) and was found to have a positive effect on reducing employees' intentions to quit (Virdo & Daly, 2019).
+  Despite the useful information already provided by Glassdoor, we hope that applying Correlated Topic Model will reveal more topics and allow for further analysis to examine their relationship with overall rating. 
 
 
 *c. Why is a Correlated Topic Model a means to address this purpose? *
@@ -530,12 +522,12 @@ Despite the useful information already provided by Glassdoor, we hope that apply
 
 *f. What types of data would you be looking for? *
 
-To carry out this study, we will need a data set containing employee company reviews that are stored as raw text data. The raw text will serve as input for topic modeling techniques, including pre-processing methods that will render the text available for quantitative analysis. In addition to the text data, the data set that we would be looking for would also have additional fields containing columns of data with characteristics about the three consulting firms. For example, to perform follow-up analyses that utilize the topic model output, we would need a column containing the employees' overall rating of the firm. In addition, as previously discussed, we would be interested variables like firm location, which could be used as a control variable in the analysis of the relationship between topic and overall employee rating. 
+  To carry out this study, we will need a data set containing employee company reviews that are stored as raw text data. The raw text will serve as input for topic modeling techniques, including pre-processing methods that will render the text available for quantitative analysis. In addition to the text data, the data set that we would be looking for would also have additional fields containing columns of data with characteristics about the three consulting firms. For example, to perform follow-up analyses that utilize the topic model output, we would need a column containing the employees' overall rating of the firm. In addition, as previously discussed, we would be interested variables like firm location, which could be used as a control variable in the analysis of the relationship between topic and overall employee rating. 
 
 
 *g. Provide the generalized equation for the topic model and a brief narrative in which you specify the type of model, following the examples from the readings. *
 
-Topic modeling takes an unsupervised approach to uncover latent topics in documents. Unlike LDA, correlated topic modeling uses the multivariate normal distribution instead of the Dirichlet with the goal of generating *k* values. To do so, it needs *k* means and *k* standard deviations. To transform the multivariate normal distribution into probabilities, CTM passes the values through a variant of the logistic function. 
+  Topic modeling takes an unsupervised approach to uncover latent topics in documents. Unlike LDA, correlated topic modeling uses the multivariate normal distribution instead of the Dirichlet with the goal of generating *k* values. To do so, it needs *k* means and *k* standard deviations. To transform the multivariate normal distribution into probabilities, CTM passes the values through a variant of the logistic function. 
 
 ```{r}
 # Load libraries needed
@@ -563,124 +555,12 @@ Where η ('eta') is a vector k of values of arbitrary sizes, ηⱼ is every outp
 
 *h. What do you think you would find? *
 
-We believe that we will find topics related to work-life balance, managers, hours, culture, salary, and role flexibility in employee reviews. In addition, we hope that further analysis will reveal which of these topics are most related to the overall rating. For example, given a list of 10+ topics, it would be helpful to know which are most related to employees' overall rating of the firm. Moreover, between firm comparisons would highlight which firms these relationships were most strong. For example, the relationship between pay and overall rating may vary based on the firm under examination. 
+  We believe that we will find topics related to work-life balance, managers, hours, culture, salary, and role flexibility in employee reviews. In addition, we hope that further analysis will reveal which of these topics are most related to the overall rating. For example, given a list of 10+ topics, it would be helpful to know which are most related to employees' overall rating of the firm. Moreover, between firm comparisons would highlight which firms these relationships were most strong. For example, the relationship between pay and overall rating may vary based on the firm under examination. 
 
 *i. Why would this be important? What would be the implications for this research domain?*
 	
 	Due to the demanding nature of working for the "big three" consulting firms, it is important to understand employees' perspectives and the underlying factors affecting their job satisfaction. Taking an unsupervised approach to identify these factors and analyzing their relationship to employees' objective rating of their firm could provide these organizations with directions to increase their employees' satisfaction. 
 	
-
-
-
-
-
-# Appendix 
-
-### A1. R solutions for common NLP tasks 
-
-
-N-grams 
-
-```{r}
-
-# create column with n-grams 
-sample_clean %>% 
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) 
-
-# generate bigrams with each term of bi-gram in separate column 
-library(tidyr) 
-
-bigrams <- sample_clean %>% 
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
-  separate(bigram, c("word1", "word2"), sep = " ") %>% 
-  filter(!word1 %in% stop_words$word) %>%
-  filter(!word2 %in% stop_words$word) %>%
-  unite(bigram, word1, word2, sep = " ") %>%
-  filter(!bigram == "br br")
-
-
-bigrams %>% 
-  count(bigram) %>%
-  arrange(desc(n)) %>% 
-  head(10) %>%
-  ggplot(aes(x = reorder(bigram, n), y = n, fill = bigram)) + geom_histogram(stat = "identity") + coord_flip() + theme(legend.position = "none") + xlab("Bigram") + ylab("Count") 
-  
-
-  
-```
-
-
-#### A2: Stop Words 
-
-
-Stop words using `tidytext` package 
-```{r}
-
-library(tidytext) 
-# remove stop word dictionary from tidytext package 
-sample_clean %>%
-  unnest_tokens(word, text) %>% 
-  anti_join(stop_words)
-
-
-# remove custom list of stop words 
-
-# create custom vector of words that you don't want
-words_to_remove <- c("movie", "amc", "picture", "amc", "hollywood", "Sandra")
-
-# remove custom list from words 
-sample_clean %>% 
-  unnest_tokens(word, text) %>% 
-  filter(!word %in% words_to_remove)
-
-sample_clean %>% 
-  anti_join()
-
-
-str <- c("I have zero a accordance")
-
-custom_stopwords = c("a", "able", "about", "above", "abst", "accordance", "yourself",
-"yourselves", "you've", "z", "zero")
-
-
-df_stopwords <-
-  tibble(
-    word = c("em", "de", "o", "para")
-  )
-
-sample_clean %>% 
-  anti_join(df_stopwords)  
-
-
-
-```
-
-
-
-#### A3: Create DTM in tidy format 
-
-```{r}
-
-
-test_1 <- sample_clean %>% 
-  rename(document = doc_id) 
-
-sample_dtm <- test_1  %>%
-  unnest_tokens(word, text) %>% 
-  anti_join(stop_words) %>%
-  count(document, word, sort = T) %>%
-  cast_dtm(document = document, term = word, n) 
-
-# sample LDA using the DTM 
-test_CTM <- CTM(sample_dtm, k = 5, control = list(seed = 1234))
-test_CTM 
-
-```
-
-
-
-
-
 
 
 
